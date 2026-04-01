@@ -1,0 +1,2348 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Viceconsulado Honorario de España en Nueva Esparta, Venezuela. Información de trámites consulares, requisitos y citas previas.">
+<title>Viceconsulado Honorario de España — Nueva Esparta, Venezuela</title>
+
+<link rel="icon" type="image/png" href="images/LogoPng.png">
+
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================
+   CONFIGURACIÓN FÁCIL — CAMBIA ESTOS VALORES
+   ============================================ */
+:root {
+  --rojo: #AA151B;
+  --rojo-oscuro: #8B1016;
+  --dorado: #F8CE46;
+  --dorado-oscuro: #C9A227;
+  --verde-wa: #25D366;
+  --fondo: #FAFAF7;
+  --borde: #e8e5df;
+  --texto: #1a1a1a;
+  --gris: #555;
+  --gris-claro: #888;
+  /* ↓↓↓ CAMBIA POR EL NÚMERO DE WHATSAPP REAL (sin + ni espacios) ↓↓↓ */
+  --whatsapp-numero: "584248429665";
+}
+
+/* ============================================ */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Libre Baskerville', Georgia, serif;
+  font-size: 18px;
+  background: var(--fondo);
+  color: var(--texto);
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.65;
+}
+.sans { font-family: 'DM Sans', sans-serif; }
+a { color: var(--rojo); }
+
+/* NAV */
+.nav {
+  background: transparent;
+  border-bottom: 1px solid transparent;
+  position: sticky; top: 0; z-index: 100; padding: 0 20px;
+  transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+}
+.nav--scrolled {
+  background: #fff;
+  border-bottom-color: var(--borde);
+  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+}
+.nav-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 72px; position: relative; }
+.nav-logo { display: flex; align-items: center; gap: 12px; cursor: pointer; min-width: 0; text-decoration: none; }
+
+/* Logo stack: grey (top) y color (debajo), se cruzan en scroll */
+.nav-logo-stack { position: relative; width: 52px; height: 52px; flex-shrink: 0; }
+.nav-shield { position: absolute; inset: 0; width: 52px; height: 52px; border-radius: 50%; object-fit: cover; transition: opacity 0.4s ease; }
+.nav-shield-grey  { opacity: 1; filter: brightness(1.25); }
+.nav-shield-color { opacity: 0; }
+.nav--scrolled .nav-shield-grey  { opacity: 0; }
+.nav--scrolled .nav-shield-color { opacity: 1; }
+
+/* Nombre: aparece al scrollear */
+.nav-brand { overflow: hidden; max-width: 0; opacity: 0; white-space: nowrap; transition: max-width 0.4s ease, opacity 0.3s ease; }
+.nav--scrolled .nav-brand { max-width: 260px; opacity: 1; }
+.nav-title { font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 14px; line-height: 1.3; color: var(--texto); }
+.nav-sub   { font-family: 'DM Sans', sans-serif; font-size: 11px; color: var(--gris-claro); }
+
+.nav-links { display: flex; gap: 2px; }
+.nav-btn {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: var(--gris);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px 9px;
+  border-radius: 4px;
+  transition: color 0.2s, background 0.2s;
+}
+.nav-btn:hover, .nav-btn.active { color: var(--rojo); background: rgba(170,21,27,0.06); }
+a.nav-btn { text-decoration: none; display: inline-block; }
+
+/* HAMBURGER */
+.hamburger { display: none; flex-direction: column; justify-content: center; gap: 5px; background: none; border: none; cursor: pointer; padding: 10px 6px; flex-shrink: 0; }
+.hamburger span { display: block; width: 24px; height: 2px; background: #666; border-radius: 2px; transition: all 0.3s; }
+.hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+.hamburger.open span:nth-child(2) { opacity: 0; transform: translateX(-8px); }
+.hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+/* HERO */
+.hero {
+  background: linear-gradient(135deg, #8B0000 0%, #500000 50%, #0a0a0a 100%);
+  padding: 60px 20px 64px;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -40%; right: -10%;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(248,206,70,0.10) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(to right, var(--rojo), var(--dorado), var(--rojo));
+}
+.hero-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 52px;
+  position: relative;
+  z-index: 1;
+}
+.hero-logo-wrap {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hero-shield {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  object-fit: cover;
+  filter: drop-shadow(0 6px 28px rgba(0,0,0,0.45));
+  border: 3px solid rgba(248,206,70,0.4);
+}
+.hero-text { flex: 1; }
+.hero-badge {
+  font-family: 'DM Sans';
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  color: var(--dorado);
+  margin-bottom: 16px;
+  opacity: 0.9;
+}
+.hero h1 {
+  font-size: clamp(28px, 4.5vw, 46px);
+  color: white;
+  line-height: 1.15;
+  margin-bottom: 12px;
+}
+.hero-sub {
+  font-family: 'DM Sans';
+  font-size: 17px;
+  color: rgba(255,255,255,0.72);
+  margin-bottom: 0;
+}
+.hero-divider {
+  width: 60px;
+  height: 3px;
+  background: var(--dorado);
+  margin: 18px 0;
+  opacity: 0.7;
+}
+
+/* BIO SECTION */
+.bio-section {
+  background: white;
+  border-top: 1px solid var(--borde);
+  border-bottom: 1px solid var(--borde);
+  padding: 52px 20px;
+  margin-top: 40px;
+}
+.bio-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 52px;
+  align-items: start;
+}
+.bio-text h2 {
+  font-size: clamp(22px, 3vw, 30px);
+  color: var(--rojo);
+  margin-bottom: 20px;
+  line-height: 1.25;
+}
+.bio-text p {
+  font-size: 17px;
+  color: #444;
+  line-height: 1.85;
+  margin-bottom: 16px;
+  text-align: justify;
+}
+.bio-text p:last-child { margin-bottom: 0; }
+/* BIO BUILDING PHOTO */
+.bio-edificio { border-radius: 12px; overflow: hidden; box-shadow: 0 8px 28px rgba(0,0,0,0.12); }
+.bio-edificio img { width: 100%; height: 100%; min-height: 260px; object-fit: cover; display: block; }
+
+/* BIO PHOTO CAROUSEL */
+.bio-photo-carousel { position: relative; border-radius: 12px; overflow: hidden; background: #1a1a1a; }
+.bio-photo-track { display: flex; transition: transform 0.5s ease; }
+.bio-photo-slide { min-width: 100%; }
+.bio-photo-slide img { width: 100%; height: 320px; object-fit: cover; display: block; }
+.bio-photo-btn {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  background: rgba(0,0,0,0.45); color: white; border: none; cursor: pointer;
+  width: 38px; height: 38px; border-radius: 50%; font-size: 22px; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s;
+}
+.bio-photo-btn:hover { background: rgba(0,0,0,0.65); }
+.bio-photo-prev { left: 10px; }
+.bio-photo-next { right: 10px; }
+.bio-photo-dots { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 7px; }
+.bio-photo-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.45); border: none; cursor: pointer; padding: 0; transition: background 0.2s; }
+.bio-photo-dot.active { background: white; }
+
+/* CAROUSEL BANNERS */
+.carousel-section { padding: 36px 20px 0; max-width: 1200px; margin: 0 auto; }
+.carousel-wrap {
+  position: relative;
+  overflow: hidden;
+  border-radius: 14px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04);
+}
+.carousel-track { display: flex; transition: transform 0.55s cubic-bezier(0.4,0,0.2,1); }
+.carousel-slide { min-width: 100%; padding: 30px 36px; box-sizing: border-box; }
+.slide-jornada {
+  background: linear-gradient(135deg, #fffdf0 0%, #fff8d6 60%, #fff3c0 100%);
+  border: 1px solid #d4b94a;
+  border-left: 6px solid var(--dorado-oscuro);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.8);
+}
+.slide-aviso {
+  background: linear-gradient(135deg, #fdfcfc 0%, #faf8f6 100%);
+  border: 1px solid var(--borde);
+  border-left: 6px solid var(--rojo);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.9);
+}
+.slide-info {
+  background: linear-gradient(135deg, #f6f9fd 0%, #edf3fa 100%);
+  border: 1px solid #c0d4e8;
+  border-left: 6px solid #2c7bb6;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.9);
+}
+.slide-label {
+  font-family: 'DM Sans';
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.slide-jornada .slide-label { color: #7a5c00; }
+.slide-aviso .slide-label { color: var(--rojo-oscuro); }
+.slide-info .slide-label { color: #1a5580; }
+.slide-title {
+  font-family: 'DM Sans';
+  font-size: 21px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  letter-spacing: -0.2px;
+}
+.slide-jornada .slide-title { color: #5a4200; }
+.slide-aviso .slide-title { color: #1a1a1a; }
+.slide-info .slide-title { color: #0d3a5c; }
+.slide-body {
+  font-family: 'DM Sans';
+  font-size: 15px;
+  line-height: 1.65;
+}
+.slide-jornada .slide-body { color: #6b5210; }
+.slide-aviso .slide-body { color: #444; }
+.slide-info .slide-body { color: #2c4a62; }
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 14px;
+}
+.carousel-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--borde);
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.3s;
+  padding: 0;
+}
+.carousel-dot.active { background: var(--rojo); transform: scale(1.35); }
+.carousel-dot:hover:not(.active) { background: #ccc; }
+
+/* CTA ROW */
+.cta-row {
+  padding: 32px 20px 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+/* BUTTONS */
+.btn {
+  font-family: 'DM Sans';
+  font-weight: 600;
+  font-size: 15px;
+  border: none;
+  padding: 14px 26px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn-red { background: var(--rojo); color: white; }
+.btn-red:hover { background: var(--rojo-oscuro); box-shadow: 0 4px 14px rgba(170,21,27,0.3); }
+.btn-outline { background: none; border: 2px solid var(--rojo); color: var(--rojo); }
+.btn-outline:hover { background: rgba(170,21,27,0.06); }
+.btn-sm { font-size: 14px; padding: 11px 20px; }
+.btn-green { background: var(--verde-wa); color: white; }
+.btn-green:hover { background: #1fb855; box-shadow: 0 4px 12px rgba(37,211,102,0.3); }
+
+/* SECTIONS */
+.section { padding: 44px 20px; max-width: 1200px; margin: 0 auto; display: none; }
+.section.active { display: block; }
+.section-label {
+  font-family: 'DM Sans';
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--rojo);
+  margin-bottom: 22px;
+}
+
+/* ACCORDION TRAMITES */
+.tramite-list { display: flex; flex-direction: column; gap: 12px; }
+.tramite-item { border: 1px solid var(--borde); border-radius: 10px; overflow: hidden; background: white; }
+.tramite-header { padding: 22px 26px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; transition: all 0.2s; }
+.tramite-header:hover { background: #fdfcfa; }
+.tramite-left { display: flex; align-items: center; gap: 18px; }
+.tramite-badge {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: rgba(170,21,27,0.08);
+  border: 1.5px solid rgba(170,21,27,0.15);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  font-family: 'DM Sans';
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--rojo);
+  letter-spacing: 0.5px;
+}
+.tramite-title { font-family: 'DM Sans'; font-size: 18px; font-weight: 700; }
+.tramite-subtitle { font-family: 'DM Sans'; font-size: 14px; color: var(--gris-claro); margin-top: 2px; }
+.tramite-arrow { font-size: 14px; color: #bbb; transition: transform 0.3s; flex-shrink: 0; margin-left: 12px; }
+.tramite-item.open .tramite-arrow { transform: rotate(180deg); }
+.tramite-item.open .tramite-header { border-bottom: 1px solid #f0ede8; }
+.tramite-body { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+.tramite-item.open .tramite-body { max-height: 2000px; }
+.tramite-content { padding: 24px 26px 28px; }
+.tramite-content ul {
+  font-family: 'DM Sans';
+  font-size: 16px;
+  color: #444;
+  line-height: 2.1;
+  padding-left: 22px;
+}
+.tramite-content ul li { margin-bottom: 2px; }
+.subsection-label {
+  font-family: 'DM Sans';
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--rojo);
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  margin: 0 0 12px 0;
+}
+.tramite-note {
+  background: #f8f7f4;
+  border-radius: 8px;
+  border-left: 3px solid var(--dorado-oscuro);
+  padding: 16px 18px;
+  margin-top: 16px;
+  font-family: 'DM Sans';
+  font-size: 14px;
+  color: #555;
+  line-height: 1.7;
+}
+.tramite-note strong { color: #333; }
+.tramite-links { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+.tramite-link {
+  font-family: 'DM Sans';
+  font-size: 13px;
+  color: var(--rojo);
+  font-weight: 600;
+  text-decoration: none;
+  padding: 7px 14px;
+  border: 1.5px solid var(--rojo);
+  border-radius: 5px;
+  transition: background 0.2s;
+}
+.tramite-link:hover { background: rgba(170,21,27,0.06); }
+.no-tramites {
+  background: #f8f7f4;
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  padding: 28px;
+  margin-top: 16px;
+}
+.no-tramites h4 {
+  font-family: 'DM Sans';
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--gris);
+  margin-bottom: 12px;
+}
+.no-tramites ul {
+  font-family: 'DM Sans';
+  font-size: 15px;
+  color: var(--gris);
+  line-height: 2.1;
+  padding-left: 20px;
+  margin-bottom: 14px;
+}
+
+/* FORM */
+.form-card { background: white; border: 1px solid var(--borde); border-radius: 10px; padding: 32px; max-width: 720px; margin: 0 auto; }
+.form-group { margin-bottom: 22px; }
+.form-label { font-family: 'DM Sans'; font-size: 15px; font-weight: 600; color: #333; display: block; margin-bottom: 7px; }
+.form-input {
+  font-family: 'DM Sans';
+  width: 100%;
+  padding: 13px 16px;
+  border: 1.5px solid #d4d0c8;
+  border-radius: 7px;
+  font-size: 16px;
+  background: var(--fondo);
+  transition: border-color 0.2s;
+  color: var(--texto);
+}
+.form-input:focus { outline: none; border-color: var(--rojo); box-shadow: 0 0 0 3px rgba(170,21,27,0.07); }
+textarea.form-input { resize: vertical; }
+select.form-input { appearance: auto; }
+.form-hint { font-family: 'DM Sans'; font-size: 13px; color: #999; margin-top: 5px; }
+.form-info {
+  background: #f8f7f4;
+  border-radius: 7px;
+  padding: 16px 18px;
+  margin: 20px 0;
+  font-family: 'DM Sans';
+  font-size: 14px;
+  color: var(--gris);
+  line-height: 1.75;
+}
+
+/* SLOTS */
+.slots-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-top: 8px; }
+.slot-btn {
+  font-family: 'DM Sans';
+  font-size: 15px;
+  font-weight: 600;
+  padding: 14px 6px;
+  border: 2px solid #d4d0c8;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+  color: #555;
+  line-height: 1.3;
+}
+.slot-btn:hover { border-color: var(--rojo); color: var(--rojo); background: rgba(170,21,27,0.04); }
+.slot-btn.selected { border-color: var(--rojo); background: var(--rojo); color: white; }
+
+/* TEAM SECTION */
+.team-intro {
+  font-family: 'DM Sans';
+  font-size: 17px;
+  color: #555;
+  line-height: 1.85;
+  margin-bottom: 52px;
+  max-width: 760px;
+  text-align: justify;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  margin-left: auto;
+  margin-right: auto;
+}
+.team-section {
+  background: linear-gradient(135deg, #fdfcfa 0%, #f5f2ec 100%);
+  border-radius: 16px;
+  padding: 52px 40px;
+  margin-bottom: 56px;
+  display: flex;
+  gap: 0;
+  justify-content: center;
+}
+.team-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0 52px;
+  position: relative;
+}
+.team-card:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: 0; top: 20%; bottom: 20%;
+  width: 1px;
+  background: var(--borde);
+}
+.team-photo {
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  background: #ece9e3;
+  border: 4px solid var(--dorado-oscuro);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  overflow: hidden;
+  flex-shrink: 0;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.10);
+}
+.team-card--single { padding: 0 80px; }
+.team-photo svg { opacity: 0.3; }
+.team-photo img { width: 100%; height: 100%; object-fit: cover; }
+.team-name {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--texto);
+  margin-bottom: 6px;
+}
+.team-role {
+  font-family: 'DM Sans';
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--rojo);
+  margin-bottom: 12px;
+}
+.team-desc {
+  font-family: 'DM Sans';
+  font-size: 17px;
+  color: #555;
+  line-height: 1.85;
+  max-width: 540px;
+  text-align: justify;
+}
+
+/* INFO STRIP (reemplaza los loc-cards) */
+.info-strip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  overflow: hidden;
+  background: white;
+}
+.info-block {
+  padding: 32px 28px;
+  border-right: 1px solid var(--borde);
+}
+.info-block:last-child { border-right: none; }
+.info-block-title {
+  font-family: 'DM Sans';
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--rojo);
+  margin-bottom: 16px;
+}
+.info-block p, .info-block div {
+  font-family: 'DM Sans';
+  font-size: 15px;
+  color: #444;
+  line-height: 1.9;
+}
+.info-block strong { color: #222; }
+.info-block .info-highlight {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--texto);
+  line-height: 1.2;
+  margin: 6px 0;
+}
+.info-block .info-muted {
+  font-size: 13px;
+  color: #999;
+  margin-top: 4px;
+}
+.consulado-block {
+  background: #1a1a1a;
+  border-radius: 12px;
+  padding: 28px;
+  margin-top: 16px;
+  display: flex;
+  gap: 32px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.consulado-block p, .consulado-block div {
+  font-family: 'DM Sans';
+  font-size: 14px;
+  color: #bbb;
+  line-height: 1.9;
+}
+.consulado-block strong { color: white; }
+.consulado-block a { color: var(--dorado); text-decoration: none; font-weight: 600; font-size: 13px; }
+.consulado-block a:hover { color: #ffe066; }
+
+/* LOCATION */
+.loc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 18px; }
+.loc-card { background: white; border: 1px solid var(--borde); border-radius: 10px; padding: 28px; }
+.loc-card h3 { font-family: 'DM Sans'; font-size: 17px; font-weight: 700; margin-bottom: 14px; color: var(--rojo); }
+.loc-card p, .loc-card div { font-family: 'DM Sans'; font-size: 15px; color: #555; line-height: 1.9; }
+.schedule-row { display: flex; justify-content: space-between; padding: 3px 0; }
+/* Botón WhatsApp dentro de loc-card y footer — forzar color blanco */
+.loc-card .btn-green, .footer-col .btn-green { color: white !important; }
+.footer-col .btn-green svg { fill: white; }
+
+/* PAGE HEADING */
+.back-btn { font-family: 'DM Sans'; font-size: 14px; font-weight: 600; color: var(--rojo); background: none; border: none; cursor: pointer; margin-bottom: 18px; padding: 0; display: inline-flex; align-items: center; gap: 4px; }
+.inline-link { background: none; border: none; padding: 0; font: inherit; color: inherit; text-decoration: underline; cursor: pointer; }
+.page-title { font-size: clamp(28px, 4vw, 38px); margin-bottom: 8px; line-height: 1.2; }
+.page-desc { font-family: 'DM Sans'; font-size: 16px; color: var(--gris); line-height: 1.65; margin-bottom: 32px; }
+
+/* FOOTER */
+footer { background: #1a1a1a; margin-top: 60px; }
+.footer-info { border-bottom: 1px solid #333; padding: 48px 20px; }
+.footer-info-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+}
+.footer-col-title {
+  font-family: 'DM Sans';
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--dorado);
+  margin-bottom: 14px;
+}
+.footer-col p, .footer-col div, .footer-col a {
+  font-family: 'DM Sans';
+  font-size: 14px;
+  color: #bbb;
+  line-height: 1.9;
+  text-decoration: none;
+}
+.footer-col a:hover { color: white; }
+.footer-col .schedule-row { display: flex; justify-content: space-between; gap: 12px; }
+.footer-col .schedule-row span:last-child { color: white; font-weight: 500; }
+.footer-legal { padding: 30px 20px 100px; text-align: center; }
+.footer-logo-row { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 14px; }
+.footer-shield { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; }
+.footer-name { font-family: 'DM Sans'; font-size: 13px; font-weight: 600; color: white; }
+.footer-text { font-family: 'DM Sans'; font-size: 12px; color: #555; line-height: 1.9; }
+.foot-links { margin-top: 14px; display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+.foot-links a { font-family: 'DM Sans'; font-size: 12px; color: var(--rojo); text-decoration: none; }
+.foot-links a:hover { color: #e03030; }
+
+/* WHATSAPP FLOAT — legacy, reemplazado por stickyWa */
+.wa-float {
+  display: none !important;
+  width: 60px;
+  height: 60px;
+  background: var(--verde-wa);
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px rgba(37,211,102,0.45);
+  z-index: 200;
+  opacity: 1;
+  transition: transform 0.3s ease, opacity 0.4s ease, box-shadow 0.2s;
+  text-decoration: none;
+}
+.wa-float:hover { transform: scale(1.1); }
+.wa-float.oculto { opacity: 0; transform: scale(0.7); pointer-events: none; }
+
+/* TOAST */
+.toast {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  background: #1a7a3a;
+  color: white;
+  padding: 16px 24px;
+  border-radius: 8px;
+  font-family: 'DM Sans';
+  font-weight: 500;
+  font-size: 15px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  z-index: 300;
+  transform: translateX(120%);
+  transition: transform 0.3s ease;
+}
+.toast.show { transform: translateX(0); }
+
+/* TABLET (≤ 960px) */
+@media (max-width: 960px) {
+  .hero-inner { gap: 32px; }
+  .hero-shield { width: 110px; }
+  .bio-inner { grid-template-columns: 1fr; gap: 32px; }
+  .bio-images { grid-template-columns: repeat(3, 1fr); }
+  .bio-img-main { grid-column: auto; aspect-ratio: 4/3; }
+  .footer-info-inner { grid-template-columns: 1fr 1fr; gap: 32px; }
+  .footer-col:last-child { grid-column: 1 / -1; }
+}
+
+/* MOBILE (≤ 768px) */
+@media (max-width: 768px) {
+  body { font-size: 17px; }
+
+  /* NAV hamburger */
+  .hamburger { display: flex; }
+  .nav-links {
+    display: none;
+    position: fixed;
+    top: 72px; left: 0; right: 0;
+    background: #fff;
+    border-top: 1px solid var(--borde);
+    border-bottom: 3px solid var(--rojo);
+    flex-direction: column;
+    padding: 8px 20px 22px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    z-index: 999;
+    gap: 2px;
+  }
+  .nav-links.open { display: flex; }
+  .nav-btn { font-size: 16px; padding: 16px; text-align: left; border-radius: 6px; width: 100%; }
+  .nav-sub { display: none; }
+
+  /* HERO */
+  .hero { padding: 40px 20px 48px; }
+  .hero-inner { flex-direction: column; gap: 28px; text-align: center; }
+  .hero-shield { width: 130px; height: 130px; }
+  .hero-divider { margin: 14px auto; }
+  .hero h1 { font-size: 30px; }
+
+  /* BIO — mobile */
+  .bio-section { padding: 28px 16px; }
+  .bio-inner { gap: 20px; }
+  .bio-text h2 { font-size: 20px; margin-bottom: 14px; }
+  .bio-text p { font-size: 16px; line-height: 1.75; }
+  .bio-photo-slide img { height: 220px; }
+  /* Imágenes legacy: scroll horizontal en móvil */
+  .bio-images {
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    gap: 12px;
+    padding-bottom: 8px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    grid-template-columns: unset;
+  }
+  .bio-images::-webkit-scrollbar { display: none; }
+  .bio-img-placeholder {
+    min-width: 220px;
+    flex-shrink: 0;
+    aspect-ratio: 4/3;
+  }
+  .bio-img-main {
+    min-width: 280px;
+    grid-column: unset;
+    aspect-ratio: 4/3;
+  }
+
+  /* CAROUSEL — mobile: altura cómoda, texto legible */
+  .carousel-section { padding: 20px 16px 0; }
+  .carousel-slide { padding: 22px 20px; min-height: 130px; display: flex; flex-direction: column; justify-content: center; }
+  .slide-label { font-size: 10px; margin-bottom: 6px; }
+  .slide-title { font-size: 16px; margin-bottom: 6px; line-height: 1.3; }
+  .slide-body { font-size: 14px; line-height: 1.6; }
+  .carousel-dots { margin-top: 10px; }
+
+  /* SECTIONS */
+  .section { padding: 32px 16px; }
+  .cta-row { padding: 24px 16px 36px; }
+
+  /* TRAMITES */
+  .tramite-header { padding: 18px 18px; }
+  .tramite-badge { width: 38px; height: 38px; font-size: 12px; }
+  .tramite-title { font-size: 16px; }
+  .tramite-subtitle { font-size: 13px; }
+  .tramite-content { padding: 18px 18px 22px; }
+  .tramite-content ul { font-size: 15px; line-height: 2.0; }
+
+  /* FORM */
+  .form-card { padding: 22px 18px; }
+  .form-label { font-size: 16px; }
+  .slots-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .slot-btn { font-size: 14px; padding: 12px 4px; }
+  .btn[type="submit"] { padding: 16px 22px; font-size: 16px; }
+
+  /* NOSOTROS — mobile */
+  .team-intro { font-size: 16px; }
+  .team-desc { font-size: 16px; max-width: 100%; }
+  .team-section { flex-direction: column; padding: 32px 24px; gap: 32px; }
+  .team-card { padding: 0; }
+  .team-card:not(:last-child)::after { display: none; }
+  .team-card:not(:last-child) { padding-bottom: 32px; border-bottom: 1px solid var(--borde); }
+  .team-photo { width: 200px; height: 200px; }
+  .team-card--single { padding: 0; }
+  .info-strip { grid-template-columns: 1fr; }
+  .info-block { border-right: none; border-bottom: 1px solid var(--borde); }
+  .info-block:last-child { border-bottom: none; }
+  .consulado-block { flex-direction: column; gap: 14px; padding: 22px 20px; align-items: flex-start; }
+
+  /* LOCATION */
+  .loc-grid { grid-template-columns: 1fr; }
+  .loc-card h3 { font-size: 16px; }
+
+  /* FOOTER */
+  .footer-info-inner { grid-template-columns: 1fr; gap: 28px; }
+  .footer-col:last-child { grid-column: auto; }
+  .footer-info { padding: 36px 20px; }
+
+  /* WA FLOAT */
+  .wa-float { width: 54px; height: 54px; bottom: 18px; right: 18px; }
+}
+
+/* MOBILE PEQUEÑO (≤ 420px) */
+@media (max-width: 420px) {
+  .nav-title { font-size: 13px; }
+  .hero h1 { font-size: 26px; }
+  .bio-images { grid-template-columns: 1fr; }
+  .bio-img-main { grid-column: auto; }
+  .tramite-left { gap: 12px; }
+  .loc-card p, .loc-card div { font-size: 15px; }
+  .cta-row { flex-direction: column; }
+  .cta-row .btn { justify-content: center; }
+}
+
+/* ── TRAMITE TAGS ── */
+.tramite-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 7px; }
+.t-tag {
+  display: inline-flex; align-items: center;
+  font-family: 'DM Sans'; font-size: 10px; font-weight: 700;
+  letter-spacing: 0.6px; text-transform: uppercase;
+  padding: 3px 7px; border-radius: 4px;
+}
+.t-tag-cita    { background: #e8f0fe; color: #1a56c4; }
+.t-tag-gratis  { background: #e6f9f0; color: #1a7a4a; }
+.t-tag-tasa    { background: #fff3e0; color: #b35c00; }
+.t-tag-caracas { background: #fce8e8; color: #aa151b; }
+
+/* ── FAQ ACCORDION ── */
+.faq-intro { font-family:'DM Sans'; font-size:16px; color:#555; line-height:1.85; margin-bottom:28px; max-width:680px; }
+.faq-list  { display:flex; flex-direction:column; gap:8px; max-width:800px; }
+.faq-item  { border:1px solid var(--borde); border-radius:9px; background:white; overflow:hidden; }
+.faq-q {
+  font-family:'DM Sans'; font-size:16px; font-weight:600;
+  padding:18px 22px; cursor:pointer;
+  display:flex; justify-content:space-between; align-items:center; gap:12px;
+  transition:background 0.2s; color:var(--texto);
+}
+.faq-q:hover { background:#fdfcfa; }
+.faq-arrow { font-size:13px; color:#bbb; flex-shrink:0; transition:transform 0.3s; }
+.faq-item.open .faq-arrow { transform:rotate(180deg); }
+.faq-item.open .faq-q { border-bottom:1px solid #f0ede8; color:var(--rojo); }
+.faq-a { max-height:0; overflow:hidden; transition:max-height 0.35s ease; }
+.faq-item.open .faq-a { max-height:800px; }
+.faq-a-inner { padding:16px 22px 22px; font-family:'DM Sans'; font-size:15px; color:#555; line-height:1.85; }
+.faq-a-inner strong { color:#333; }
+@media(max-width:768px){
+  .faq-q { font-size:15px; padding:16px 18px; }
+  .faq-a-inner { padding:14px 18px 18px; font-size:14px; }
+}
+
+/* ── STICKY CTA FAB — todos los dispositivos ── */
+.sticky-cta {
+  position: fixed; bottom: 24px; left: 24px;
+  z-index: 150;
+}
+.sticky-wa {
+  position: fixed; bottom: 24px; right: 24px;
+  z-index: 150;
+}
+.sticky-cta-btn {
+  font-family: 'DM Sans'; font-weight: 700; font-size: 15px;
+  background: var(--rojo); color: white;
+  border: none; border-radius: 30px;
+  padding: 14px 22px;
+  display: flex; align-items: center; gap: 8px;
+  box-shadow: 0 4px 20px rgba(170,21,27,0.40);
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(16px) scale(0.85);
+  pointer-events: none;
+  transition: opacity 0.4s ease, transform 0.45s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s;
+  text-decoration: none;
+}
+.sticky-cta-btn:hover { box-shadow: 0 6px 24px rgba(170,21,27,0.50); }
+.sticky-cta.visible .sticky-cta-btn {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+.sticky-wa-btn {
+  width: 52px; height: 52px; border-radius: 50%;
+  background: #25D366; color: white; border: none;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 16px rgba(37,211,102,0.45);
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(16px) scale(0.85);
+  pointer-events: none;
+  transition: opacity 0.4s ease, transform 0.45s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s;
+  text-decoration: none;
+}
+.sticky-wa-btn:hover { box-shadow: 0 6px 22px rgba(37,211,102,0.55); }
+.sticky-wa.visible .sticky-wa-btn {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+/* ── REQ BOX (formulario citas) ── */
+.req-box {
+  display:none; margin-top:10px;
+  background:#f0f4f8; border:1px solid #c8d8e8; border-left:4px solid #2c7bb6;
+  border-radius:7px; padding:14px 16px;
+  font-family:'DM Sans'; font-size:14px; color:#2c4a62; line-height:1.8;
+}
+.req-box.warning { background:#fff8f0; border-color:#f0a040; border-left-color:#d07000; color:#7a4000; }
+.req-box-title { font-weight:700; font-size:12px; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; }
+.req-box ul { padding-left:18px; margin:0; }
+.req-box ul li { margin-bottom:3px; }
+.req-box .req-nota { margin-top:10px; padding-top:8px; border-top:1px solid rgba(0,0,0,0.08); font-size:13px; }
+
+/* ── CHANNEL DESCRIPTIONS (contacto) ── */
+.channel-label { font-family:'DM Sans'; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1.1px; color:#aaa; margin-bottom:3px; }
+</style>
+</head>
+<body>
+
+<!-- ============================================
+     CONFIGURACIÓN RÁPIDA:
+     Busca "CAMBIAR:" en este archivo para encontrar
+     todos los datos que debes personalizar.
+     ============================================ -->
+
+<!-- ESCUDO SVG — inline reutilizable -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="escudo-espana" viewBox="0 0 80 96">
+      <defs>
+        <clipPath id="shield-main"><path d="M4,4 H76 V72 Q40,94 4,72 Z"/></clipPath>
+      </defs>
+      <!-- Cuarteles -->
+      <rect x="0" y="0" width="40" height="38" clip-path="url(#shield-main)" fill="#AA151B"/>
+      <!-- Castillo simplificado -->
+      <rect x="10" y="12" width="20" height="22" fill="#F8CE46" clip-path="url(#shield-main)"/>
+      <rect x="8"  y="10" width="5"  height="8"  fill="#F8CE46" clip-path="url(#shield-main)"/>
+      <rect x="18" y="10" width="4"  height="8"  fill="#F8CE46" clip-path="url(#shield-main)"/>
+      <rect x="27" y="10" width="5"  height="8"  fill="#F8CE46" clip-path="url(#shield-main)"/>
+      <rect x="15" y="24" width="5"  height="10" fill="#AA151B" clip-path="url(#shield-main)"/>
+      <!-- León (cuartel plata) -->
+      <rect x="40" y="0" width="40" height="38" clip-path="url(#shield-main)" fill="#f0f0f0"/>
+      <ellipse cx="60" cy="14" rx="7" ry="6" fill="#8B2FC4" clip-path="url(#shield-main)"/>
+      <rect x="54" y="20" width="12" height="14" rx="2" fill="#8B2FC4" clip-path="url(#shield-main)"/>
+      <path d="M54,30 Q50,34 52,38 Q56,40 60,36" fill="#8B2FC4" clip-path="url(#shield-main)"/>
+      <!-- Aragón (franjas) -->
+      <rect x="0" y="38" width="40" height="36" clip-path="url(#shield-main)" fill="#F8CE46"/>
+      <rect x="4"  y="38" width="5" height="36" clip-path="url(#shield-main)" fill="#AA151B"/>
+      <rect x="13" y="38" width="5" height="36" clip-path="url(#shield-main)" fill="#AA151B"/>
+      <rect x="22" y="38" width="5" height="36" clip-path="url(#shield-main)" fill="#AA151B"/>
+      <rect x="31" y="38" width="5" height="36" clip-path="url(#shield-main)" fill="#AA151B"/>
+      <!-- Navarra (cadenas) -->
+      <rect x="40" y="38" width="40" height="36" clip-path="url(#shield-main)" fill="#AA151B"/>
+      <path d="M42,46 H78 M42,54 H78 M42,62 H78 M50,38 V74 M60,38 V74 M70,38 V74" stroke="#F8CE46" stroke-width="1.5" clip-path="url(#shield-main)" fill="none"/>
+      <!-- Granada (base) -->
+      <!-- Borde escudo -->
+      <path d="M4,4 H76 V72 Q40,94 4,72 Z" fill="none" stroke="#C9A227" stroke-width="3"/>
+      <!-- División cuarteles -->
+      <line x1="40" y1="4" x2="40" y2="74" stroke="#C9A227" stroke-width="1.5"/>
+      <line x1="4" y1="38" x2="76" y2="38" stroke="#C9A227" stroke-width="1.5"/>
+      <!-- Corona real simplificada -->
+      <rect x="26" y="0" width="28" height="6" rx="2" fill="#C9A227"/>
+      <rect x="22" y="-4" width="6" height="8" rx="2" fill="#C9A227"/>
+      <rect x="37" y="-4" width="6" height="8" rx="2" fill="#C9A227"/>
+      <rect x="52" y="-4" width="6" height="8" rx="2" fill="#C9A227"/>
+      <circle cx="25" cy="-1" r="2" fill="#AA151B"/>
+      <circle cx="40" cy="-1" r="2" fill="#AA151B"/>
+      <circle cx="55" cy="-1" r="2" fill="#AA151B"/>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="#" onclick="showSection('inicio');return false;">
+      <div class="nav-logo-stack">
+        <img class="nav-shield nav-shield-grey"  src="images/LogoForMenu.png" alt="">
+        <img class="nav-shield nav-shield-color" src="images/LogoPng.png" alt="Logo Viceconsulado Honorario de España en Porlamar">
+      </div>
+      <div class="nav-brand">
+        <div class="nav-title">Viceconsulado Honorario de España</div>
+        <div class="nav-sub">Nueva Esparta, Venezuela</div>
+      </div>
+    </a>
+    <div class="nav-links" id="navLinks">
+      <button class="nav-btn active" data-section="inicio">Inicio</button>
+      <button class="nav-btn" data-section="tramites">Servicios Consulares</button>
+      <button class="nav-btn" data-section="citas">Citas</button>
+      <a class="nav-btn" href="https://sutramiteconsular.maec.es" target="_blank" rel="noopener noreferrer">Estado de Trámite</a>
+      <button class="nav-btn" data-section="ubicacion">Nosotros</button>
+      <button class="nav-btn" data-section="faq">FAQ</button>
+      <button class="nav-btn" onclick="document.getElementById('emergencia-anchor').scrollIntoView({behavior:'smooth'});closeMenu()">Contacto de emergencia</button>
+    </div>
+    <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Abrir menú">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div id="hero-wrapper">
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-logo-wrap">
+        <img class="hero-shield" src="images/Logo.jpeg" alt="Escudo Viceconsulado Honorario de España en Porlamar">
+      </div>
+      <div class="hero-text">
+        <div class="hero-badge" style="font-size:10px;opacity:0.65;letter-spacing:2px;margin-bottom:4px">GOBIERNO DE ESPAÑA</div>
+        <div class="hero-badge">Ministerio de Asuntos Exteriores, Unión Europea y Cooperación</div>
+        <h1>Viceconsulado Honorario<br>de España</h1>
+        <div class="hero-divider"></div>
+        <p class="hero-sub">Porlamar — Estado Nueva Esparta, Venezuela</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ==================== INICIO ==================== -->
+<div id="sec-inicio" class="section active">
+
+  <!-- CARRUSEL DE AVISOS — carga dinámicamente desde /api/banners -->
+  <div class="carousel-section" id="carousel-section" style="display:none;">
+    <div class="section-label">Avisos y Comunicados</div>
+    <div class="carousel-wrap" id="carousel">
+      <div class="carousel-track" id="carouselTrack"></div>
+    </div>
+    <div class="carousel-dots" id="carouselDots"></div>
+  </div>
+
+  <!-- BIO SECTION — debajo del carrusel -->
+  <section class="bio-section">
+    <div class="bio-inner">
+      <div class="bio-text">
+        <h2>Viceconsulado Honorario de España en Nueva Esparta</h2>
+        <p>
+          El Viceconsulado Honorario de España en Porlamar atiende a los ciudadanos españoles residentes
+          en el Estado Nueva Esparta y a quienes deseen realizar gestiones consulares en la región.
+          Dependiente del Consulado General de España en Caracas, ofrece un servicio presencial y
+          personalizado para las comunidades de Margarita, Coche y las demás islas del archipiélago.
+        </p>
+        <p>
+          Brindamos asistencia consular en materia de documentación, registro civil, nacionalidad y
+          servicios de identificación. Todos los servicios se prestan exclusivamente con cita previa,
+          garantizando una atención de calidad y ordenada a cada ciudadano.
+        </p>
+      </div>
+      <div class="bio-photo-carousel" id="bioCarousel">
+        <div class="bio-photo-track" id="bioPhotoTrack">
+          <div class="bio-photo-slide">
+            <img src="images/Edif1.jpeg" alt="Oficina del Viceconsulado — vista exterior">
+          </div>
+          <div class="bio-photo-slide">
+            <img src="images/Edif2.jpeg" alt="Oficina del Viceconsulado — acceso">
+          </div>
+        </div>
+        <button type="button" class="bio-photo-btn bio-photo-prev" onclick="bioPhotoPrev()" aria-label="Anterior">&#8249;</button>
+        <button type="button" class="bio-photo-btn bio-photo-next" onclick="bioPhotoNext()" aria-label="Siguiente">&#8250;</button>
+        <div class="bio-photo-dots">
+          <button type="button" class="bio-photo-dot active" onclick="bioPhotoGoTo(0)" aria-label="Foto 1"></button>
+          <button type="button" class="bio-photo-dot" onclick="bioPhotoGoTo(1)" aria-label="Foto 2"></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <div class="cta-row">
+    <button class="btn btn-red" onclick="showSection('tramites')">Servicios Consulares</button>
+  </div>
+
+</div>
+
+<!-- ==================== TRÁMITES ==================== -->
+<div id="sec-tramites" class="section">
+  <button class="back-btn" onclick="showSection('inicio')">← Volver al inicio</button>
+  <h1 class="page-title">Servicios Consulares</h1>
+  <p class="page-desc">Seleccione un servicio para ver los requisitos completos y los documentos necesarios para su cita.</p>
+
+  <div class="tramite-list">
+
+    <!-- PASAPORTES -->
+    <div class="tramite-item" id="tramite-pasaportes">
+      <div class="tramite-header" onclick="toggleTramite('pasaportes')">
+        <div class="tramite-left">
+          <div class="tramite-badge">PAS</div>
+          <div>
+            <div class="tramite-title">Pasaportes</div>
+            <div class="tramite-subtitle">Primera expedición y renovación</div>
+            <div class="tramite-tags"><span class="t-tag t-tag-cita">Con Cita</span><span class="t-tag t-tag-tasa">Tasa Aplicable</span></div>
+          </div>
+        </div>
+        <span class="tramite-arrow">▼</span>
+      </div>
+      <div class="tramite-body"><div class="tramite-content">
+
+        <p class="subsection-label">Primera Expedición</p>
+        <ul>
+          <li>Certificación literal de nacimiento del Registro Civil español (original y fotocopia)</li>
+          <li>3 fotografías recientes, 32 × 26 mm, fondo blanco, de frente <em>— La cara debe ocupar el 80% de la superficie total de la foto</em></li>
+          <li>Cédula de Identidad venezolana del interesado (original y fotocopia recortada)</li>
+          <li>Cédula de Identidad de Extranjero <em>o</em> Gaceta de Naturalización del progenitor que transmite la nacionalidad española (fotocopia)</li>
+          <li>Pasaporte del progenitor español (original y fotocopia)</li>
+        </ul>
+        <div class="tramite-note" style="margin-top:12px">
+          El trámite debe hacerse <strong>personalmente</strong>. Los menores de edad deben venir acompañados del <strong>padre y la madre</strong>.
+        </div>
+
+        <div style="height:20px"></div>
+
+        <p class="subsection-label">Renovación</p>
+        <ul>
+          <li>Pasaporte anterior <em>(si fue robado o extraviado: denuncia policial)</em></li>
+          <li><strong>3 fotografías</strong> recientes, 32 × 26 mm, fondo blanco, de frente</li>
+          <li>Cédula de identidad (original y fotocopia recortada) del solicitante. <strong>Si es menor de edad:</strong> original y fotocopia recortada de la cédula del padre y la madre</li>
+          <li>Partida literal de nacimiento (original y fotocopia)</li>
+          <li>Fotocopia de la <strong>página 2</strong> del pasaporte del progenitor español</li>
+          <li><strong>Menores de edad:</strong> deben acudir con padre <em>y</em> madre. Si alguno no comparece: autorización notariada (apostillada si el notario no es español)</li>
+        </ul>
+
+        <div class="tramite-note">
+          <strong>Mayores de 12 años</strong> requieren toma de huellas dactilares, disponible solo en Caracas o durante operativos especiales en Margarita. Consulte fechas de próximos operativos.<br><br>
+          El trámite debe realizarse <strong>personalmente</strong>. Se puede renovar cuando quede menos de 1 año para su caducidad.
+        </div>
+        <div class="tramite-links">
+          <a class="tramite-link" href="https://www.exteriores.gob.es/Consulados/caracas/es/Consulado/Paginas/Tasas-consulares.aspx" target="_blank">Consultar tasas ↗</a>
+        </div>
+        <div style="margin-top:16px"><button class="btn btn-red btn-sm" onclick="showSection('citas')">Solicitar cita para pasaporte</button></div>
+
+      </div></div>
+    </div>
+
+    <!-- NACIMIENTO -->
+    <div class="tramite-item" id="tramite-nacimiento">
+      <div class="tramite-header" onclick="toggleTramite('nacimiento')">
+        <div class="tramite-left">
+          <div class="tramite-badge">NAC</div>
+          <div>
+            <div class="tramite-title">Inscripción de Nacimiento</div>
+            <div class="tramite-subtitle">Registro Civil — Nacionalidad</div>
+            <div class="tramite-tags"><span class="t-tag t-tag-cita">Con Cita</span><span class="t-tag t-tag-gratis">Gratuito</span></div>
+          </div>
+        </div>
+        <span class="tramite-arrow">▼</span>
+      </div>
+      <div class="tramite-body"><div class="tramite-content">
+        <ul>
+          <li>Hoja declaratoria de datos para inscripción de nacimiento (firmada)</li>
+          <li>Formulario de inscripción como residente y municipio electoral</li>
+          <li>Acta de nacimiento venezolana apostillada (Apostilla de La Haya)</li>
+          <li>Cédula de identidad del interesado (original y fotocopia centrada)</li>
+          <li>2 fotografías 3×4 cm, fondo blanco, cara al 80%</li>
+          <li><strong>Progenitor español:</strong>
+            <ul style="margin-top:8px;margin-left:18px;line-height:2.0">
+              <li>Original y fotocopia de la literal.</li>
+              <li>Original y fotocopia del pasaporte español (páginas 2 y 7).</li>
+              <li>Cédula de identidad venezolana (original y fotocopia).</li>
+              <li>Si es naturalizado venezolano, fotocopia de la Gaceta Oficial o datos filiatorios.</li>
+            </ul>
+          </li>
+          <li><strong>Progenitor extranjero:</strong>
+            <ul style="margin-top:8px;margin-left:18px;line-height:2.0">
+              <li>Original y fotocopia de la cédula venezolana.</li>
+              <li>Acta de nacimiento (fotocopia certificada).</li>
+            </ul>
+          </li>
+          <li>Libro de Familia o Acta de Matrimonio (si existe matrimonio entre los padres)</li>
+        </ul>
+        <div class="tramite-note">
+          Trámite <strong>GRATUITO</strong>. Documentos deben tener máximo 5 años de emitidos. Excepción: literales inscritas en el Consulado de Caracas no vencen. Debe acudir el interesado personalmente.
+        </div>
+        <div class="tramite-links">
+          <a class="tramite-link" href="https://www.exteriores.gob.es/DocumentosAuxiliaresSC/Venezuela/CARACAS%20(C)/Hoja%20declaratoria%20inscripci%C3%B3n%20nacimiento.pdf" target="_blank">Hoja declaratoria ↗</a>
+          <a class="tramite-link" href="https://www.exteriores.gob.es/Documents/DocumentosSC/Inscripci%C3%B3n%20Consular/20240812%20SOLICITUD%20DE%20INSCRIPCION%20COMO%20RESIDENTE.pdf" target="_blank">Formulario residente ↗</a>
+          <a class="tramite-link" href="documentos/Requisitos inscripcion de nacimiento.pdf" download>⬇ Requisitos (PDF)</a>
+        </div>
+        <div style="margin-top:16px"><button class="btn btn-red btn-sm" onclick="showSection('citas')">Solicitar cita</button></div>
+      </div></div>
+    </div>
+
+    <!-- MATRIMONIO -->
+    <div class="tramite-item" id="tramite-matrimonio">
+      <div class="tramite-header" onclick="toggleTramite('matrimonio')">
+        <div class="tramite-left">
+          <div class="tramite-badge">MAT</div>
+          <div>
+            <div class="tramite-title">Inscripción de Matrimonio</div>
+            <div class="tramite-subtitle">Registro Civil</div>
+            <div class="tramite-tags"><span class="t-tag t-tag-cita">Con Cita</span><span class="t-tag t-tag-gratis">Gratuito</span></div>
+          </div>
+        </div>
+        <span class="tramite-arrow">▼</span>
+      </div>
+      <div class="tramite-body"><div class="tramite-content">
+        <ul>
+          <li>Hoja declaratoria de datos para matrimonio</li>
+          <li>Acta de matrimonio venezolana apostillada (La Haya)</li>
+          <li>Declaración jurada o afirmación de estado civil</li>
+          <li><strong>Contrayente español:</strong> literal de nacimiento, pasaporte, cédula</li>
+          <li><strong>Contrayente extranjero:</strong> cédula o pasaporte y acta de nacimiento</li>
+          <li>Si hubo matrimonio anterior: acta de ese matrimonio y sentencia de divorcio</li>
+        </ul>
+        <div class="tramite-note">
+          Trámite <strong>GRATUITO</strong>. Se expide Libro de Familia. Deben acudir <strong>ambos contrayentes</strong>. La cita la obtiene el ciudadano español.
+        </div>
+        <div class="tramite-links">
+          <a class="tramite-link" href="https://www.exteriores.gob.es/DocumentosAuxiliaresSC/Venezuela/CARACAS%20(C)/Hoja%20declaratoria%20inscripci%C3%B3n%20matrimonio.pdf" target="_blank">Hoja declaratoria ↗</a>
+          <a class="tramite-link" href="documentos/Requisitos inscripcion de matrimonio.pdf" download>⬇ Requisitos (PDF)</a>
+        </div>
+        <div style="margin-top:16px"><button class="btn btn-red btn-sm" onclick="showSection('citas')">Solicitar cita</button></div>
+      </div></div>
+    </div>
+
+    <!-- DEFUNCIÓN -->
+    <div class="tramite-item" id="tramite-defuncion">
+      <div class="tramite-header" onclick="toggleTramite('defuncion')">
+        <div class="tramite-left">
+          <div class="tramite-badge">DEF</div>
+          <div>
+            <div class="tramite-title">Inscripción de Defunción</div>
+            <div class="tramite-subtitle">Registro Civil</div>
+            <div class="tramite-tags"><span class="t-tag t-tag-cita">Con Cita</span><span class="t-tag t-tag-gratis">Gratuito</span></div>
+          </div>
+        </div>
+        <span class="tramite-arrow">▼</span>
+      </div>
+      <div class="tramite-body"><div class="tramite-content">
+        <ul>
+          <li>Hoja declaratoria de datos para defunción</li>
+          <li>Acta de defunción venezolana (original)</li>
+          <li>Literal de nacimiento española (original y fotocopia)</li>
+          <li>Pasaporte español del difunto (original)</li>
+          <li>Cédula si era venezolano o residente</li>
+          <li>Gaceta de naturalización (si aplicaba)</li>
+        </ul>
+        <div class="tramite-note">
+          El trámite debe ser realizado por un <strong>familiar directo</strong>.
+        </div>
+        <div class="tramite-links">
+          <a class="tramite-link" href="https://www.exteriores.gob.es/DocumentosAuxiliaresSC/Venezuela/CARACAS%20(C)/Hoja%20declaratoria%20inscripci%C3%B3n%20defunci%C3%B3n.pdf" target="_blank">Hoja declaratoria ↗</a>
+        </div>
+        <div style="margin-top:16px"><button class="btn btn-red btn-sm" onclick="showSection('citas')">Solicitar cita</button></div>
+      </div></div>
+    </div>
+
+    <!-- FE DE VIDA -->
+    <div class="tramite-item" id="tramite-fevida">
+      <div class="tramite-header" onclick="toggleTramite('fevida')">
+        <div class="tramite-left">
+          <div class="tramite-badge">FEV</div>
+          <div>
+            <div class="tramite-title">Fe de Vida</div>
+            <div class="tramite-subtitle">Certificado de existencia</div>
+            <div class="tramite-tags"><span class="t-tag t-tag-cita">Con Cita</span><span class="t-tag t-tag-gratis">Gratuito</span></div>
+          </div>
+        </div>
+        <span class="tramite-arrow">▼</span>
+      </div>
+      <div class="tramite-body"><div class="tramite-content">
+        <ul>
+          <li>Certificado médico no mayor a 3 meses</li>
+          <li>Pasaporte español (original y fotocopia, páginas 2, 3, 6 y 7)</li>
+          <li>Cédula de identidad (original y fotocopia)</li>
+        </ul>
+        <div class="tramite-note">Requiere cita previa en el Viceconsulado.</div>
+        <div style="margin-top:16px"><button class="btn btn-red btn-sm" onclick="showSection('citas')">Solicitar cita</button></div>
+      </div></div>
+    </div>
+
+    <!-- OTROS TRÁMITES -->
+    <div class="tramite-item" id="tramite-otros">
+      <div class="tramite-header" onclick="toggleTramite('otros')">
+        <div class="tramite-left">
+          <div class="tramite-badge">OTR</div>
+          <div>
+            <div class="tramite-title">Otros Trámites</div>
+            <div class="tramite-subtitle">Alta/Baja consular, NIF, NIE, Poderes, Residencia</div>
+            <div class="tramite-tags"><span class="t-tag t-tag-cita">Con Cita</span><span class="t-tag t-tag-gratis">Gratuito (mayoría)</span><span class="t-tag t-tag-caracas">Poderes: firma en Caracas</span></div>
+          </div>
+        </div>
+        <span class="tramite-arrow">▼</span>
+      </div>
+      <div class="tramite-body"><div class="tramite-content">
+        <ul>
+          <li><strong>Alta consular</strong> como residente</li>
+          <li><strong>Baja consular</strong> (solicitar 1 mes antes del viaje)</li>
+          <li><strong>Certificado de residencia</strong></li>
+          <li><strong>Certificado de No Residente</strong></li>
+          <li><strong>Certificado de Antecedentes Penales</strong> — la solicitud se tramita aquí; el retiro es en el Ministerio de Justicia en España</li>
+          <li><strong>NIF</strong> — Número de Identificación Fiscal</li>
+          <li><strong>NIE</strong> — Número de Identidad de Extranjero</li>
+          <li><strong>Poderes notariales</strong> — se <em>inician</em> en este Viceconsulado pero deben <em>firmarse</em> obligatoriamente en el Consulado General en Caracas</li>
+          <li><strong>Conservación / Recuperación</strong> de nacionalidad</li>
+          <li><strong>Cambio de censo electoral</strong></li>
+        </ul>
+        <div style="height:20px"></div>
+        <p class="subsection-label">Certificaciones con Extensión Plurilingüe</p>
+        <ul>
+          <li><strong>Certificado de Matrimonio</strong> — disponible con extensión plurilingüe (válida en países del Convenio de Viena)</li>
+          <li><strong>Certificado de Nacimiento</strong> — disponible con extensión plurilingüe</li>
+          <li><strong>Certificación literal para DNI</strong></li>
+        </ul>
+        <div class="tramite-note">
+          <strong>Observación:</strong> Los certificados de matrimonio y nacimiento pueden solicitarse con extensión plurilingüe para su uso en países adheridos al Convenio de Viena. Indíquelo al momento de solicitar su cita.
+        </div>
+        <div style="height:16px"></div>
+        <div class="tramite-note">Para requisitos detallados de cada servicio, solicite cita o contáctenos por WhatsApp.</div>
+        <div class="tramite-links">
+          <a class="tramite-link" href="https://www.exteriores.gob.es/Consulados/caracas/es/ServiciosConsulares/Paginas/index.aspx" target="_blank">Web Consulado Caracas ↗</a>
+        </div>
+        <div style="margin-top:16px"><button class="btn btn-red btn-sm" onclick="showSection('citas')">Solicitar cita</button></div>
+      </div></div>
+    </div>
+
+  </div>
+
+  <!-- Trámites que NO se realizan aquí -->
+  <div style="margin-top:32px;border:2px solid var(--rojo);border-radius:12px;overflow:hidden">
+    <div style="background:var(--rojo);padding:16px 24px;display:flex;align-items:center;gap:12px">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+      <div>
+        <div style="font-family:'DM Sans';font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.7);margin-bottom:2px">Solo en Caracas</div>
+        <div style="font-family:'DM Sans';font-size:17px;font-weight:700;color:white">Estos trámites NO se realizan en este Viceconsulado</div>
+      </div>
+    </div>
+    <div style="background:white;padding:22px 24px">
+      <p style="font-family:'DM Sans';font-size:15px;color:#555;margin-bottom:14px">Los siguientes trámites son competencia exclusiva del <strong>Consulado General de España en Caracas</strong>:</p>
+      <ul style="font-family:'DM Sans';font-size:15px;color:#444;line-height:2.2;padding-left:20px;margin-bottom:16px">
+        <li>Visados (todos los tipos: turista, estudiante, trabajo, etc.)</li>
+        <li>Compulsas de documentos</li>
+        <li>Legalización y Apostilla</li>
+        <li>Homologaciones de títulos</li>
+      </ul>
+      <div style="background:#fff8f0;border:1px solid #f0c070;border-left:4px solid #d07000;border-radius:7px;padding:14px 16px;font-family:'DM Sans';font-size:14px;color:#7a4000;margin-bottom:16px">
+        <strong>Poderes Notariales:</strong> la documentación inicial se tramita aquí, pero la firma debe realizarse obligatoriamente en persona en el Consulado General en Caracas.
+      </div>
+      <a href="https://www.exteriores.gob.es/Consulados/caracas/es/Paginas/index.aspx" target="_blank" class="btn btn-outline btn-sm">Web oficial del Consulado General ↗</a>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== CITAS ==================== -->
+<div id="sec-citas" class="section">
+  <button class="back-btn" onclick="showSection('inicio')">← Volver al inicio</button>
+  <h1 class="page-title">Solicitar Cita</h1>
+  <p class="page-desc">Complete el formulario y le contactaremos para confirmar fecha y hora. Cada cita es individual y para un solo trámite.</p>
+
+  <form class="form-card" id="citaForm" onsubmit="return submitForm(event)">
+    <div class="form-group" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div>
+        <label class="form-label">Nombres *</label>
+        <input class="form-input" name="nombres" required placeholder="Ej: María José">
+      </div>
+      <div>
+        <label class="form-label">Apellidos *</label>
+        <input class="form-input" name="apellidos" required placeholder="Ej: García López">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Tipo y número de documento *</label>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <select name="tipoDocumento" id="tipoDocSelect" required style="flex-shrink:0;padding:10px 10px;border:1.5px solid #d1cdc7;border-radius:8px;font-family:inherit;font-size:.93rem;background:#fff;cursor:pointer;min-width:140px;" onchange="onTipoDocChange(this.value)">
+          <option value="">Tipo...</option>
+          <option value="CI Venezuela">Cédula VEN</option>
+          <option value="Pasaporte">Pasaporte</option>
+          <option value="DNI España">DNI</option>
+          <option value="NIE">NIE</option>
+          <option value="NIF">NIF</option>
+          <option value="CI Colombia">Cédula COL</option>
+          <option value="Otro">Otro</option>
+        </select>
+        <input class="form-input" name="cedula" id="cedulaInput" required placeholder="Número de documento" style="margin:0;" oninput="validarCedula(this)">
+      </div>
+      <div id="cedulaHint" style="font-size:.78rem;color:#888;margin-top:4px;display:none;"></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Teléfono de contacto *</label>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <select name="codigoPais" id="codigoPaisSelect" style="flex-shrink:0;padding:10px 8px;border:1.5px solid #d1cdc7;border-radius:8px;font-family:inherit;font-size:.93rem;background:#fff;cursor:pointer;min-width:140px;">
+          <option value="+58">🇻🇪 +58</option>
+          <option value="+34">🇪🇸 +34</option>
+          <option value="+1">🇺🇸 +1</option>
+          <option value="+57">🇨🇴 +57</option>
+          <option value="+54">🇦🇷 +54</option>
+          <option value="+51">🇵🇪 +51</option>
+          <option value="+56">🇨🇱 +56</option>
+          <option value="+55">🇧🇷 +55</option>
+          <option value="+593">🇪🇨 +593</option>
+          <option value="+591">🇧🇴 +591</option>
+          <option value="+595">🇵🇾 +595</option>
+          <option value="+598">🇺🇾 +598</option>
+          <option value="+507">🇵🇦 +507</option>
+          <option value="+52">🇲🇽 +52</option>
+          <option value="+44">🇬🇧 +44</option>
+          <option value="+33">🇫🇷 +33</option>
+          <option value="+49">🇩🇪 +49</option>
+          <option value="+39">🇮🇹 +39</option>
+          <option value="+351">🇵🇹 +351</option>
+        </select>
+        <input class="form-input" name="telefono" type="tel" required placeholder="Ej: 4121234567" style="margin:0;" oninput="this.value=this.value.replace(/[^\d]/g,'')">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Correo electrónico *</label>
+      <input class="form-input" name="email" type="email" required placeholder="Ej: correo@ejemplo.com">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Trámite a realizar *</label>
+      <select class="form-input" name="tramite" id="tramiteSelect" required onchange="onTramiteChange(this.value)">
+        <option value="">Seleccione un trámite</option>
+        <option>Pasaporte — Primera expedición</option>
+        <option>Pasaporte — Renovación</option>
+        <option>Pasaporte — Menores de 12 años</option>
+        <option>Inscripción de nacimiento</option>
+        <option>Inscripción de matrimonio</option>
+        <option>Inscripción de defunción</option>
+        <option>Fe de vida</option>
+        <option>Alta consular</option>
+        <option>Baja consular</option>
+        <option>Certificado de residencia</option>
+        <option>Certificado de no residente</option>
+        <option>Poder notarial</option>
+        <option>NIF — Identificación fiscal</option>
+        <option>NIE — Identidad de extranjero</option>
+        <option>Conservación de nacionalidad</option>
+        <option>Recuperación de nacionalidad</option>
+        <option>Ley de Memoria Democrática (LMD)</option>
+        <option>Cambio de censo electoral</option>
+        <option>Otro trámite</option>
+      </select>
+      <div class="req-box" id="reqBox"></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Fecha preferida</label>
+      <input class="form-input" name="fecha" type="date" id="fechaInput">
+      <div class="form-hint" id="cfg-citas-hint">
+        <div class="desc" id="cfg-horario-atencion">8:00 AM — 12:00 PM</div>
+        <div class="small">Solo con cita previa</div>
+      </div>
+    </div>
+    <div class="form-group" id="horaGroup" style="display:none">
+      <label class="form-label">Hora preferida *</label>
+      <div class="slots-grid" id="slotsGrid">
+        <button type="button" class="slot-btn" data-hora="08:30" onclick="selectSlot(this)">8:30<br><span style="font-size:11px;font-weight:400">AM</span></button>
+        <button type="button" class="slot-btn" data-hora="09:00" onclick="selectSlot(this)">9:00<br><span style="font-size:11px;font-weight:400">AM</span></button>
+        <button type="button" class="slot-btn" data-hora="09:30" onclick="selectSlot(this)">9:30<br><span style="font-size:11px;font-weight:400">AM</span></button>
+        <button type="button" class="slot-btn" data-hora="10:00" onclick="selectSlot(this)">10:00<br><span style="font-size:11px;font-weight:400">AM</span></button>
+        <button type="button" class="slot-btn" data-hora="10:30" onclick="selectSlot(this)">10:30<br><span style="font-size:11px;font-weight:400">AM</span></button>
+        <button type="button" class="slot-btn" data-hora="11:00" onclick="selectSlot(this)">11:00<br><span style="font-size:11px;font-weight:400">AM</span></button>
+        <button type="button" class="slot-btn" data-hora="11:30" onclick="selectSlot(this)">11:30<br><span style="font-size:11px;font-weight:400">AM</span></button>
+      </div>
+      <input type="hidden" name="hora" id="horaInput">
+      <div class="form-hint">Duración: 30 min por cita · Su hora queda sujeta a confirmación</div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Observaciones adicionales</label>
+      <textarea class="form-input" name="observaciones" rows="3" placeholder="Ej: Somos un grupo familiar de 3, necesitamos 3 citas el mismo día..."></textarea>
+    </div>
+    <div class="form-info">
+      <strong>Antes de su cita,</strong> consulte los requisitos en la sección de Trámites. Debe traer toda la documentación el día de la cita. No se atenderá sin documentación completa.
+    </div>
+    <button type="submit" class="btn btn-red" style="width:100%;justify-content:center;font-size:17px;padding:16px 26px;">Enviar solicitud de cita</button>
+  </form>
+
+  <div style="text-align:center;margin-top:24px">
+    <p class="sans" style="font-size:15px;color:#999;margin-bottom:12px">¿Prefiere contactarnos directamente?</p>
+    <a class="btn btn-green" href="https://wa.me/584248429665?text=Hola%2C%20deseo%20solicitar%20una%20cita" target="_blank">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+      Escribir por WhatsApp
+    </a>
+  </div>
+</div>
+
+<!-- ==================== NOSOTROS ==================== -->
+<div id="sec-ubicacion" class="section">
+  <button class="back-btn" onclick="showSection('inicio')">← Volver al inicio</button>
+  <h1 class="page-title">Nosotros</h1>
+
+  <p class="team-intro">
+    El Viceconsulado Honorario de España en Porlamar es una representación oficial del
+    Ministerio de Asuntos Exteriores, Unión Europea y Cooperación del Reino de España,
+    con jurisdicción en el Estado Nueva Esparta. Atendemos a la comunidad española
+    residente en las islas de Margarita, Coche y Cubagua, brindando servicios consulares
+    de registro civil, documentación y asistencia a ciudadanos.
+  </p>
+
+  <!-- Equipo -->
+  <div class="team-section">
+    <div class="team-card team-card--single">
+      <div class="team-photo">
+        <img src="images/Pic_Manuel.png" alt="Manuel Leiros">
+      </div>
+      <div class="team-name">Manuel Leiros</div>
+      <div class="team-role">Vicecónsul Honorario</div>
+      <div class="team-desc">
+        <div class="desc" id="cfg-ubicacion-completa">Porlamar, Isla de Margarita, Nueva Esparta</div>
+        <div class="small" style="margin-top:8px;line-height:1.6">
+          <span style="display:block"><strong>Circunscripción:</strong> Estado Nueva Esparta</span>
+          <span style="display:block"><strong>Vicecónsul Honorario:</strong> <span id="cfg-viceconsul-nombre">D. Manuel Leiros Pampinella</span></span>
+        </div>
+        Representante del Gobierno de España en el estado Nueva Esparta. Dependiente del Consulado General de España en Caracas. Encargado de las obligaciones consulares y las relaciones institucionales en la región insular.
+      </div>
+    </div>
+  </div>
+
+  <!-- Info strip: reemplaza los 4 cuadros -->
+  <div class="info-strip">
+    <div class="info-block">
+      <div class="info-block-title">Dirección</div>
+      <div>Av. José Asunción Rodríguez</div>
+      <div>Porlamar 6301, Nueva Esparta</div>
+      <div style="margin-top:16px">
+        <a class="btn btn-red btn-sm" href="https://maps.app.goo.gl/d9gfnNzqo79YbMp48" target="_blank">Ver en Google Maps ↗</a>
+      </div>
+    </div>
+    <div class="info-block">
+      <div class="info-block-title">Horario de Atención</div>
+      <div id="cfg-horario-dias">Lunes a Viernes</div>
+      <div class="info-highlight" id="cfg-horario-atencion">8:00 — 12:00</div>
+      <div class="info-muted" id="cfg-horario-nota">Atención presencial e información general</div>
+      <div class="info-muted" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--borde)">Sábado y Domingo: Cerrado</div>
+    </div>
+    <div class="info-block">
+      <div class="info-block-title">Contacto</div>
+      <!-- CAMBIAR: datos reales -->
+      <div class="channel-label">WhatsApp · Consultas rápidas</div>
+      <div style="margin-bottom:14px"><a href="https://wa.me/584248429665" style="color:var(--texto);text-decoration:none;font-weight:600">+58 424-8429665</a><div style="font-size:13px;color:#999">Respuesta en horario laboral</div></div>
+      <div class="channel-label">Correo · Solicitudes formales</div>
+      <div style="margin-bottom:14px"><a href="mailto:ch.porlamar@maec.es" style="color:var(--rojo);text-decoration:none;font-weight:500">ch.porlamar@maec.es</a></div>
+      <div class="channel-label">Instagram · Noticias y avisos</div>
+      <div style="margin-bottom:16px;color:#555;font-size:14px">@viceconsulado_espana_ne</div>
+      <div style="margin-top:0;display:flex;gap:8px;flex-wrap:wrap">
+        <a class="btn btn-green btn-sm" href="https://wa.me/584248429665" target="_blank" style="color:white">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="white" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+          WhatsApp
+        </a>
+        <a class="btn btn-sm" href="https://www.instagram.com/viceconsulado_espana_ne" target="_blank" style="background:#E1306C;color:white">Instagram</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Consulado General -->
+  <div class="consulado-block">
+    <div>
+      <div style="font-family:'DM Sans';font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--dorado);margin-bottom:8px">Consulado General en Caracas</div>
+      <div><strong>Edif. Bancaracas, Piso 7</strong> — Plaza La Castellana, Caracas 1060</div>
+    </div>
+    <div>
+      <div>Tel: +58 212 2660333</div>
+      <div>Emergencias 24h: <button type="button" class="inline-link" onclick="document.getElementById('emergencia-anchor').scrollIntoView({behavior:'smooth'})">+58 424 2090264</button></div>
+    </div>
+    <div>
+      <a href="https://www.exteriores.gob.es/Consulados/caracas/es/Paginas/index.aspx" target="_blank">Web oficial del Consulado ↗</a>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== FAQ ==================== -->
+<div id="sec-faq" class="section">
+  <button class="back-btn" onclick="showSection('inicio')">← Volver al inicio</button>
+  <h1 class="page-title">Preguntas Frecuentes</h1>
+  <p class="faq-intro">Respuestas a las dudas más comunes. Si su pregunta no está aquí, contáctenos por WhatsApp.</p>
+
+  <div class="faq-list">
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        ¿Con cuánto tiempo de anticipación debo pedir la cita?
+        <span class="faq-arrow">▼</span>
+      </div>
+      <div class="faq-a"><div class="faq-a-inner">
+        Recomendamos solicitarla con al menos <strong>2 semanas de anticipación</strong>. En períodos de alta demanda (antes de jornadas de pasaporte) puede necesitar más tiempo. Reserve lo antes posible.
+      </div></div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        ¿Puedo hacer más de un trámite en la misma cita?
+        <span class="faq-arrow">▼</span>
+      </div>
+      <div class="faq-a"><div class="faq-a-inner">
+        <strong>No.</strong> Cada cita es individual, personal e intransferible. Si necesita realizar varios trámites, debe solicitar <strong>una cita independiente para cada uno</strong>. Indíquelo en las observaciones al solicitar.
+      </div></div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        ¿Qué pasa si no tengo toda la documentación el día de la cita?
+        <span class="faq-arrow">▼</span>
+      </div>
+      <div class="faq-a"><div class="faq-a-inner">
+        Sin documentación completa <strong>no se realiza el trámite</strong>. La cita se pierde y debe solicitar una nueva. Consulte los requisitos de su trámite en la sección <a href="#" onclick="showSection('tramites');return false" style="color:var(--rojo)">Trámites</a> antes de venir.
+      </div></div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        ¿Puedo renovar el pasaporte aquí si tengo más de 12 años?
+        <span class="faq-arrow">▼</span>
+      </div>
+      <div class="faq-a"><div class="faq-a-inner">
+        El trámite se puede <strong>iniciar</strong> en el Viceconsulado, pero para mayores de 12 años la <strong>toma de huellas dactilares</strong> solo se realiza en Caracas o durante operativos especiales en Margarita. Una vez completada la toma de huellas, el pasaporte tarda aproximadamente <strong>2 meses</strong> en llegar.
+      </div></div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        ¿Hacen visados aquí?
+        <span class="faq-arrow">▼</span>
+      </div>
+      <div class="faq-a"><div class="faq-a-inner">
+        <strong>No.</strong> Los visados (turista, estudiante, trabajo, reagrupación familiar, etc.) son competencia exclusiva del <strong>Consulado General en Caracas</strong>. Tampoco realizamos compulsas, apostillas ni legalizaciones.
+      </div></div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        ¿Pueden atenderme sin cita?
+        <span class="faq-arrow">▼</span>
+      </div>
+      <div class="faq-a"><div class="faq-a-inner">
+        <strong>No.</strong> Todos los trámites requieren cita previa. No se atiende sin cita bajo ninguna circunstancia. Para urgencias o emergencias consulares fuera de horario, contacte el número de emergencias del Consulado General: <strong>+58 424 209 0264</strong>.
+      </div></div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        ¿Cuánto tiempo tardan los trámites de Registro Civil?
+        <span class="faq-arrow">▼</span>
+      </div>
+      <div class="faq-a"><div class="faq-a-inner">
+        Los trámites de Registro Civil (nacimiento, matrimonio, defunción) se gestionan a través del <strong>Consulado General en Caracas</strong> tras la presentación de documentos aquí. Los plazos dependen de la carga del Consulado, generalmente entre <strong>2 y 6 meses</strong>. Puede verificar el estado en <a href="https://sutramiteconsular.maec.es" target="_blank" style="color:var(--rojo)">sutramiteconsular.maec.es</a>.
+      </div></div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        ¿Cómo verifico el estado de mi trámite?
+        <span class="faq-arrow">▼</span>
+      </div>
+      <div class="faq-a"><div class="faq-a-inner">
+        Puede consultar en línea en <a href="https://sutramiteconsular.maec.es" target="_blank" style="color:var(--rojo)">sutramiteconsular.maec.es</a> usando su número de expediente. También puede escribirnos por correo o WhatsApp con su nombre completo y trámite para que le informemos.
+      </div></div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        ¿Cuál es la diferencia entre el Viceconsulado y el Consulado General en Caracas?
+        <span class="faq-arrow">▼</span>
+      </div>
+      <div class="faq-a"><div class="faq-a-inner">
+        El <strong>Viceconsulado Honorario de Nueva Esparta</strong> es una representación auxiliar del Consulado General, con jurisdicción en el Estado Nueva Esparta (Margarita, Coche, Cubagua). Atendemos los trámites más comunes para residentes en estas islas. El <strong>Consulado General en Caracas</strong> tiene competencia sobre toda Venezuela y ofrece todos los servicios, incluidos visados, apostillas y trámites que no podemos gestionar aquí.
+      </div></div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        ¿Puedo enviar documentos por correo o WhatsApp en lugar de ir personalmente?
+        <span class="faq-arrow">▼</span>
+      </div>
+      <div class="faq-a"><div class="faq-a-inner">
+        <strong>No para los trámites.</strong> Todos los trámites consulares requieren <strong>presencia personal del interesado</strong> con los documentos originales. Sí puede contactarnos por correo o WhatsApp para consultas, aclaraciones sobre requisitos o para saber si su documentación está completa antes de venir.
+      </div></div>
+    </div>
+
+  </div>
+
+  <div style="margin-top:32px;background:#f8f7f4;border-radius:10px;padding:24px;text-align:center">
+    <p style="font-family:'DM Sans';font-size:15px;color:#555;margin-bottom:16px">¿Su pregunta no está aquí? Contáctenos directamente.</p>
+    <a class="btn btn-green" href="https://wa.me/584248429665?text=Hola%2C%20tengo%20una%20consulta%20sobre%20trámites%20consulares" target="_blank">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="white" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+      Preguntar por WhatsApp
+    </a>
+  </div>
+</div>
+
+<!-- STICKY FABs — aparecen al hacer scroll -->
+<div class="sticky-wa" id="stickyWa">
+  <a class="sticky-wa-btn" href="https://wa.me/584248429665?text=Hola%2C%20deseo%20solicitar%20una%20cita" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+  </a>
+</div>
+
+<div class="sticky-cta" id="stickyCta">
+  <button class="sticky-cta-btn" onclick="showSection('citas')">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+    </svg>
+    Solicitar Cita
+  </button>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <!-- Información de contacto rápido -->
+  <div class="footer-info">
+    <div class="footer-info-inner">
+      <div class="footer-col">
+        <div class="footer-col-title">Horario de Atención</div>
+        <div style="color:#ccc;font-family:'DM Sans';font-size:14px;line-height:1.9">
+          <div id="cfg-footer-dias">Lunes a Viernes</div>
+          <div id="cfg-footer-horario" style="color:white;font-weight:700;font-size:16px">8:00 AM — 12:00 PM</div>
+          <div id="cfg-footer-nota" style="color:#888;margin-top:4px">Atención presencial e información general</div>
+          <div style="color:#666;margin-top:2px">Sábado y Domingo: Cerrado</div>
+        </div>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Ubicación</div>
+        <div>Av. José Asunción Rodríguez</div>
+        <div>Porlamar 6301, Nueva Esparta</div>
+        <div style="margin-top:8px"><strong style="color:#ccc">Vicecónsul Honorario:</strong></div>
+        <div id="cfg-viceconsul">D. Manuel Leiros</div>
+        <div style="margin-top:8px"><strong style="color:#ccc">Circunscripción:</strong></div>
+        <div>Estado Nueva Esparta</div>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Contacto</div>
+        <div class="desc"><span id="cfg-email-oficial">ch.porlamar@maec.es</span><br>WhatsApp: <span id="cfg-whatsapp-contacto">+58 424-8429665</span></div>
+        <div style="margin-top:12px">
+          <a class="btn btn-green btn-sm" href="https://wa.me/584248429665" target="_blank" style="display:inline-flex;color:white">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="white" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+            Contactar por WhatsApp
+          </a>
+        </div>
+        <div id="emergencia-anchor" style="margin-top:8px">
+          <a class="btn btn-red btn-sm" href="tel:+584242090264" style="display:inline-flex;align-items:center;gap:8px;color:white;text-decoration:none">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.02 1.18 2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg>
+            Contacto de emergencia
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Legal -->
+  <div class="footer-legal">
+    <div class="footer-logo-row">
+      <img class="footer-shield" src="images/Logo.jpeg" alt="Logo Viceconsulado">
+      <span class="footer-name">Viceconsulado Honorario de España en Nueva Esparta</span>
+    </div>
+    <p class="footer-text">
+      Ministerio de Asuntos Exteriores, Unión Europea y Cooperación<br>
+      Los datos facilitados serán tratados conforme a la normativa de protección de datos vigente.
+    </p>
+    <div class="foot-links">
+      <a href="politica-privacidad.html">Política de Privacidad</a>
+      <a href="aviso-legal.html">Aviso Legal</a>
+      <a href="https://www.exteriores.gob.es/Consulados/caracas/es/Paginas/index.aspx" target="_blank">Consulado General en Caracas</a>
+    </div>
+  </div>
+</footer>
+
+<!-- BOTÓN FLOTANTE WHATSAPP -->
+<a class="wa-float" id="waFloat" href="https://wa.me/584248429665?text=Hola%2C%20necesito%20información%20sobre%20trámites%20consulares" target="_blank" title="Contactar por WhatsApp" aria-label="Contactar por WhatsApp">
+  <svg width="30" height="30" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+  </svg>
+</a>
+
+<!-- TOAST -->
+<div class="toast" id="toast">Solicitud enviada. Le contactaremos para confirmar su cita.</div>
+
+<script>
+// ============================================
+// NAVEGACIÓN
+// ============================================
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
+  document.getElementById('sec-' + id).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(function(b) {
+    b.classList.toggle('active', b.dataset.section === id);
+  });
+  var heroWrapper = document.getElementById('hero-wrapper');
+  heroWrapper.style.display = id === 'inicio' ? 'block' : 'none';
+  // waFloat manejado por updateFabs()
+  closeMenu();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (window._updateNav) window._updateNav();
+}
+
+document.querySelectorAll('.nav-btn').forEach(function(btn) {
+  if (!btn.dataset.section) return;
+  btn.addEventListener('click', function() { showSection(this.dataset.section); closeMenu(); });
+});
+
+// ============================================
+// MENÚ HAMBURGER
+// ============================================
+function toggleMenu() {
+  var links = document.getElementById('navLinks');
+  var ham = document.getElementById('hamburger');
+  var open = links.classList.toggle('open');
+  ham.classList.toggle('open', open);
+  ham.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
+}
+function closeMenu() {
+  document.getElementById('navLinks').classList.remove('open');
+  document.getElementById('hamburger').classList.remove('open');
+}
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.nav-inner')) closeMenu();
+});
+
+// STICKY HEADER — scroll listener
+(function() {
+  var nav = document.querySelector('.nav');
+  function updateNav() {
+    var activeSection = document.querySelector('.section.active');
+    var isInicio = !activeSection || activeSection.id === 'sec-inicio';
+    nav.classList.toggle('nav--scrolled', !isInicio || window.scrollY > 60);
+  }
+  window.addEventListener('scroll', updateNav, { passive: true });
+  // Llamar updateNav cada vez que cambie de sección
+  window._updateNav = updateNav;
+  updateNav();
+})();
+
+// ============================================
+// ACORDEONES DE TRÁMITES
+// ============================================
+function toggleTramite(id) {
+  var item = document.getElementById('tramite-' + id);
+  var wasOpen = item.classList.contains('open');
+  document.querySelectorAll('.tramite-item').forEach(function(i) { i.classList.remove('open'); });
+  if (!wasOpen) item.classList.add('open');
+}
+function openTramite(id) {
+  setTimeout(function() { toggleTramite(id); }, 100);
+}
+
+// ============================================
+// CARRUSEL DE AVISOS — carga dinámica
+// ============================================
+var carouselCurrent = 0;
+var carouselTotal = 0;
+var carouselTimer = null;
+
+function goToSlide(n) {
+  carouselCurrent = n;
+  document.getElementById('carouselTrack').style.transform = 'translateX(-' + (n * 100) + '%)';
+  document.querySelectorAll('.carousel-dot').forEach(function(d, i) {
+    d.classList.toggle('active', i === n);
+  });
+}
+
+function nextSlide() {
+  if (carouselTotal < 2) return;
+  goToSlide((carouselCurrent + 1) % carouselTotal);
+}
+
+function startCarousel() {
+  if (carouselTimer) clearInterval(carouselTimer);
+  if (carouselTotal > 1) carouselTimer = setInterval(nextSlide, 6000);
+}
+
+function stopCarousel() {
+  clearInterval(carouselTimer);
+}
+
+function initCarouselEvents() {
+  var carouselEl = document.getElementById('carousel');
+  if (!carouselEl) return;
+  var cTouchX = 0;
+  carouselEl.addEventListener('mouseenter', stopCarousel);
+  carouselEl.addEventListener('mouseleave', startCarousel);
+  carouselEl.addEventListener('touchstart', function(e) {
+    cTouchX = e.touches[0].clientX;
+    stopCarousel();
+  }, { passive: true });
+  carouselEl.addEventListener('touchend', function(e) {
+    var dx = e.changedTouches[0].clientX - cTouchX;
+    if (Math.abs(dx) > 40) {
+      dx < 0 ? nextSlide() : goToSlide((carouselCurrent - 1 + carouselTotal) % carouselTotal);
+    }
+    startCarousel();
+  }, { passive: true });
+}
+
+// URL de la API: Railway en producción, localhost en desarrollo
+var API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  ? 'http://localhost:3000'
+  : 'https://viceconsulado-admin-production.up.railway.app';
+
+// Clases de estilo por índice (rota entre los 3 estilos disponibles)
+var SLIDE_CLASSES = ['slide-jornada', 'slide-aviso', 'slide-info'];
+
+// Banners de respaldo si la API no responde (sincronizados con la BD)
+var BANNERS_FALLBACK = [
+  { titulo: 'Próxima Jornada de Pasaportes', cuerpo: 'El 18 de junio de 2026 se realizará una Jornada Especial de Pasaportes en el Viceconsulado Honorario de España. Reserve su cita con anticipación.' },
+  { titulo: 'Aviso — Información General y Cita Previa', cuerpo: 'La oficina está abierta de 8:00 a 12:00, lunes a viernes, para consultas e información general. Los servicios consulares requieren cita previa obligatoria.' },
+  { titulo: 'Cierre por Festividad Nacional — 19 de Abril', cuerpo: 'El Viceconsulado permanecerá cerrado el 19 de abril por festividad nacional (Día de la Declaración de Independencia). Las citas de esa fecha serán reagendadas.' },
+];
+
+function renderCarousel(banners) {
+  var track = document.getElementById('carouselTrack');
+  var dots  = document.getElementById('carouselDots');
+  track.innerHTML = '';
+  dots.innerHTML  = '';
+  banners.forEach(function(b, i) {
+    var cls   = SLIDE_CLASSES[i % SLIDE_CLASSES.length];
+    var slide = document.createElement('div');
+    slide.className = 'carousel-slide ' + cls;
+    slide.innerHTML = (b.categoria ? '<div class="slide-label">' + b.categoria + '</div>' : '')
+      + '<div class="slide-title">' + b.titulo + '</div>'
+      + '<div class="slide-body">' + b.cuerpo + '</div>';
+    track.appendChild(slide);
+    var dot = document.createElement('button');
+    dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+    dot.setAttribute('aria-label', 'Aviso ' + (i + 1));
+    dot.onclick = (function(idx) { return function() { goToSlide(idx); }; })(i);
+    dots.appendChild(dot);
+  });
+  carouselTotal = banners.length;
+  document.getElementById('carousel-section').style.display = '';
+  initCarouselEvents();
+  startCarousel();
+}
+
+fetch(API_URL + '/api/banners')
+  .then(function(r) { return r.json(); })
+  .then(function(banners) {
+    renderCarousel((banners && banners.length) ? banners : BANNERS_FALLBACK);
+  })
+  .catch(function() {
+    renderCarousel(BANNERS_FALLBACK);
+  });
+
+// ============================================
+// CARRUSEL DE FOTOS (SECCIÓN BIO)
+// ============================================
+var bioPhotoCurrent = 0;
+var bioPhotoTotal = document.querySelectorAll('.bio-photo-slide').length;
+var bioPhotoTimer = null;
+
+function bioPhotoGoTo(n) {
+  bioPhotoCurrent = n;
+  document.getElementById('bioPhotoTrack').style.transform = 'translateX(-' + (n * 100) + '%)';
+  document.querySelectorAll('.bio-photo-dot').forEach(function(d, i) {
+    d.classList.toggle('active', i === n);
+  });
+}
+function bioPhotoNext() { bioPhotoGoTo((bioPhotoCurrent + 1) % bioPhotoTotal); }
+function bioPhotoPrev() { bioPhotoGoTo((bioPhotoCurrent - 1 + bioPhotoTotal) % bioPhotoTotal); }
+
+var bioCarouselEl = document.getElementById('bioCarousel');
+if (bioCarouselEl) {
+  bioPhotoTimer = setInterval(bioPhotoNext, 5000);
+  bioCarouselEl.addEventListener('mouseenter', function() { clearInterval(bioPhotoTimer); });
+  bioCarouselEl.addEventListener('mouseleave', function() { bioPhotoTimer = setInterval(bioPhotoNext, 5000); });
+  bioCarouselEl.addEventListener('touchstart', function() { clearInterval(bioPhotoTimer); }, { passive: true });
+  bioCarouselEl.addEventListener('touchend', function() { bioPhotoTimer = setInterval(bioPhotoNext, 5000); }, { passive: true });
+}
+
+// ============================================
+// FORMULARIO DE CITAS
+// ============================================
+// Tipos de documento — límites de caracteres y validación
+var DOC_CONFIG = {
+  'CI Venezuela': { min: 6, max: 9, hint: 'Solo números, sin letras. Ej: 27768642', numeric: true },
+  'Pasaporte':    { min: 6, max: 12, hint: 'Letras y números. Ej: AB1234567', numeric: false },
+  'DNI España':   { min: 8, max: 9, hint: '8 dígitos + letra. Ej: 12345678Z', numeric: false },
+  'NIE':          { min: 9, max: 10, hint: 'Letra + 7 dígitos + letra. Ej: X1234567Z', numeric: false },
+  'NIF':          { min: 8, max: 9, hint: '8 dígitos + letra o K/L/M', numeric: false },
+  'CI Colombia':  { min: 6, max: 10, hint: 'Solo números', numeric: true },
+  'Otro':         { min: 4, max: 20, hint: 'Ingrese el número de documento', numeric: false },
+};
+
+function onTipoDocChange(tipo) {
+  var input = document.getElementById('cedulaInput');
+  var hint = document.getElementById('cedulaHint');
+  var cfg = DOC_CONFIG[tipo];
+  if (cfg) {
+    input.maxLength = cfg.max;
+    input.placeholder = cfg.hint;
+    hint.textContent = cfg.hint;
+    hint.style.display = 'block';
+    if (cfg.numeric) { input.setAttribute('inputmode', 'numeric'); }
+    else { input.removeAttribute('inputmode'); }
+  } else {
+    input.maxLength = 20;
+    hint.style.display = 'none';
+  }
+  input.value = '';
+}
+
+function validarCedula(input) {
+  var tipo = document.getElementById('tipoDocSelect').value;
+  var cfg = DOC_CONFIG[tipo];
+  if (cfg && cfg.numeric) {
+    input.value = input.value.replace(/\D/g, '');
+  }
+}
+
+function submitForm(e) {
+  e.preventDefault();
+  var form = document.getElementById('citaForm');
+  var fechaVal = form.querySelector('[name="fecha"]').value;
+  var horaVal  = form.querySelector('[name="hora"]').value;
+  if (fechaVal && !horaVal) {
+    alert('Por favor seleccione una hora preferida.');
+    return false;
+  }
+
+  var tipoDoc = form.querySelector('[name="tipoDocumento"]').value;
+  if (!tipoDoc) { alert('Seleccione el tipo de documento.'); return false; }
+
+  var payload = {
+    nombres:       form.querySelector('[name="nombres"]').value.trim(),
+    apellidos:     form.querySelector('[name="apellidos"]').value.trim(),
+    tipoDocumento: tipoDoc,
+    cedula:        form.querySelector('[name="cedula"]').value.trim(),
+    codigoPais:    form.querySelector('[name="codigoPais"]').value,
+    telefono:      form.querySelector('[name="telefono"]').value.trim(),
+    email:         form.querySelector('[name="email"]').value.trim(),
+    tramite:       form.querySelector('[name="tramite"]').value,
+    fecha:         fechaVal || null,
+    hora:          horaVal  || null,
+    observaciones: form.querySelector('[name="observaciones"]').value.trim(),
+  };
+
+  fetch(API_URL + '/api/public/cita', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  }).then(function(res) {
+    return res.json().then(function(data) { return { ok: res.ok, data: data }; });
+  }).then(function(result) {
+    if (!result.ok) {
+      alert('Error: ' + (result.data.error || 'No se pudo registrar la cita.'));
+      return;
+    }
+    showToast();
+    form.reset();
+    document.getElementById('horaGroup').style.display = 'none';
+    resetSlots();
+    document.getElementById('cedulaHint').style.display = 'none';
+  }).catch(function() {
+    alert('No se pudo conectar con el servidor. Verifica que el sistema esté activo.');
+  });
+
+  return false;
+}
+
+function showToast() {
+  var toast = document.getElementById('toast');
+  toast.classList.add('show');
+  setTimeout(function() { toast.classList.remove('show'); }, 4000);
+}
+
+// ============================================
+// SELECTOR DE FECHA Y HORARIOS
+// ============================================
+// Obtener el próximo día hábil (lunes-viernes) desde mañana
+function proximoDiaHabil() {
+  var d = new Date();
+  d.setDate(d.getDate() + 1);
+  while (d.getDay() === 0 || d.getDay() === 6) { d.setDate(d.getDate() + 1); }
+  return d.toISOString().split('T')[0];
+}
+
+var fechaInput = document.getElementById('fechaInput');
+if (fechaInput) {
+  fechaInput.min = proximoDiaHabil();
+
+  // Función para verificar si una fecha es fin de semana
+  function esFindeSemana(dateStr) {
+    var d = new Date(dateStr + 'T12:00:00');
+    return d.getDay() === 0 || d.getDay() === 6;
+  }
+
+  fechaInput.addEventListener('input', function() {
+    var horaGroup = document.getElementById('horaGroup');
+    var horaInput = document.getElementById('horaInput');
+    if (!this.value) {
+      horaGroup.style.display = 'none';
+      horaInput.value = '';
+      resetSlots();
+      return;
+    }
+    if (esFindeSemana(this.value)) {
+      // Buscar el próximo lunes
+      var d = new Date(this.value + 'T12:00:00');
+      while (d.getDay() === 0 || d.getDay() === 6) { d.setDate(d.getDate() + 1); }
+      this.value = d.toISOString().split('T')[0];
+    }
+    horaGroup.style.display = 'block';
+    horaInput.value = '';
+    resetSlots();
+  });
+
+  // Bloquear escritura directa de fin de semana
+  fechaInput.addEventListener('blur', function() {
+    if (this.value && esFindeSemana(this.value)) {
+      var d = new Date(this.value + 'T12:00:00');
+      while (d.getDay() === 0 || d.getDay() === 6) { d.setDate(d.getDate() + 1); }
+      this.value = d.toISOString().split('T')[0];
+    }
+  });
+}
+
+function selectSlot(btn) {
+  document.querySelectorAll('.slot-btn').forEach(function(b) { b.classList.remove('selected'); });
+  btn.classList.add('selected');
+  document.getElementById('horaInput').value = btn.dataset.hora;
+}
+
+function resetSlots() {
+  document.querySelectorAll('.slot-btn').forEach(function(b) { b.classList.remove('selected'); });
+}
+
+// ============================================
+// TRAMITE REQUIREMENTS — caja dinámica en form citas
+// ============================================
+var _tramiteReq = {
+  'Pasaporte — Solicitud inicial': {
+    docs: ['Certificación literal de nacimiento del Registro Civil español (original)', '3 fotografías 32×26 mm, fondo blanco, de frente', 'Cédula venezolana del interesado (original y fotocopia)', 'Pasaporte del progenitor español (original y fotocopia)'],
+    nota: 'Mayores de 12 años: toma de huellas en Caracas o durante operativo especial en Margarita.', tasa: true, caracas: false
+  },
+  'Pasaporte — Renovación': {
+    docs: ['Pasaporte anterior (o denuncia policial si fue robado/extraviado)', '3 fotografías 32×26 mm, fondo blanco, de frente', 'Cédula venezolana del titular, padre y madre (original y fotocopia de cada uno)', 'Partida literal de nacimiento'],
+    nota: 'Renovable cuando quede menos de 1 año de vigencia. Trámite personal obligatorio.', tasa: true, caracas: false
+  },
+  'Pasaporte — Menores de 12 años': {
+    docs: ['Pasaporte anterior o certificado de nacimiento español', '3 fotografías 32×26 mm, fondo blanco, de frente', 'Cédula venezolana del menor y fotocopia de ambos progenitores', 'Deben comparecer padre y madre (o autorización notariada del ausente)'],
+    nota: 'Sin toma de huellas para menores de 12 años.', tasa: true, caracas: false
+  },
+  'Inscripción de Nacimiento': {
+    docs: ['Acta de nacimiento venezolana apostillada (La Haya)', 'Hoja declaratoria de inscripción de nacimiento (firmada)', 'Cédula del interesado (original y fotocopia)', '2 fotografías 3×4 cm, fondo blanco'],
+    nota: 'Trámite GRATUITO. Debe acudir el interesado personalmente.', tasa: false, caracas: false
+  },
+  'Inscripción de Matrimonio': {
+    docs: ['Acta de matrimonio venezolana apostillada', 'Hoja declaratoria para matrimonio', 'Cédula y pasaporte del cónyuge español (original y fotocopia)', 'Documento de identidad del cónyuge extranjero (original y fotocopia)'],
+    nota: 'GRATUITO. Deben acudir ambos contrayentes.', tasa: false, caracas: false
+  },
+  'Inscripción de Defunción': {
+    docs: ['Acta de defunción venezolana (original)', 'Hoja declaratoria de defunción', 'Literal de nacimiento española del difunto', 'Pasaporte español del difunto'],
+    nota: 'Debe ser gestionado por un familiar directo.', tasa: false, caracas: false
+  },
+  'Fe de Vida': {
+    docs: ['Certificado médico no mayor a 3 meses', 'Pasaporte español (original y fotocopia, páginas 2, 3, 6 y 7)', 'Cédula de identidad (original y fotocopia)'],
+    nota: '', tasa: false, caracas: false
+  },
+  'Alta Consular': {
+    docs: ['Pasaporte español vigente (original y fotocopia)', 'Cédula venezolana (original y fotocopia)', 'Formulario de solicitud de inscripción como residente (descargable en la web)'],
+    nota: 'GRATUITO. Permite inscribirse en el Registro de Matrícula Consular del Estado Nueva Esparta.', tasa: false, caracas: false
+  },
+  'Baja Consular': {
+    docs: ['Pasaporte español', 'Cédula venezolana'],
+    nota: 'GRATUITO. Solicitar con al menos 1 mes de anticipación al traslado.', tasa: false, caracas: false
+  },
+  'Certificado de Residencia': {
+    docs: ['Fotocopia del pasaporte español (páginas 2 y 7)', 'Fotocopia de la cédula venezolana'],
+    nota: '', tasa: false, caracas: false
+  },
+  'Certificado de No Residente': {
+    docs: ['Pasaporte vigente (original y fotocopia completa)', 'Carta de solicitud dirigida al Viceconsulado', 'Formulario EX-15 (disponible en la oficina)', 'Pago de tasas — Modelo 790 Código 012'],
+    nota: 'La solicitud se gestiona en este Viceconsulado. Consulte disponibilidad y tasas vigentes.', tasa: true, caracas: false
+  },
+  'Certificado de Antecedentes Penales': {
+    docs: [],
+    nota: 'La solicitud se tramita en este Viceconsulado. El retiro del certificado es en el Ministerio de Justicia en España. Consúltenos por WhatsApp para los requisitos exactos.', tasa: false, caracas: false
+  },
+  'Poder Notarial': {
+    docs: ['Identificación del otorgante (pasaporte o cédula)', 'Datos completos del apoderado', 'Descripción detallada de las facultades del poder'],
+    nota: 'La firma del poder debe realizarse OBLIGATORIAMENTE en persona en el Consulado General en Caracas. El Viceconsulado gestiona la documentación previa.', tasa: false, caracas: true
+  },
+  'NIF': {
+    docs: ['Certificado de nacimiento español', 'Pasaporte o DNI español', 'Formulario Modelo 030 (disponible en la Agencia Tributaria)'],
+    nota: 'GRATUITO.', tasa: false, caracas: false
+  },
+  'NIE': {
+    docs: ['Formulario EX-15', 'Pasaporte venezolano vigente', 'Justificación del motivo (trabajo, estudios, interés económico, etc.)'],
+    nota: 'Para ciudadanos no españoles con interés legítimo en España.', tasa: false, caracas: false
+  },
+  'Conservación de Nacionalidad': {
+    docs: ['Copia de la literal de nacimiento española', 'Original y fotocopia del pasaporte español (páginas 2 y 7)', 'Original y fotocopia de la cédula venezolana (recortada)', '1 fotografía reciente 3×4 cm, fondo blanco'],
+    nota: 'GRATUITO. Consúltenos por WhatsApp para más información.', tasa: false, caracas: false
+  },
+  'Recuperación de Nacionalidad': {
+    docs: ['Literal de nacimiento española', 'Cédula venezolana', 'Documentación que acredite la pérdida y su causa'],
+    nota: 'Consulte requisitos específicos en la cita.', tasa: false, caracas: false
+  },
+  'Otro (especificar en observaciones)': {
+    docs: [],
+    nota: 'Por favor detalle el trámite en las observaciones. Le contactaremos para informarle sobre los requisitos.', tasa: false, caracas: false
+  }
+};
+
+function onTramiteChange(val) {
+  var box = document.getElementById('reqBox');
+  if (!val || !_tramiteReq[val]) { box.style.display = 'none'; return; }
+  var info = _tramiteReq[val];
+  var html = '';
+  if (info.caracas) {
+    box.className = 'req-box warning';
+    html += '<div class="req-box-title">Atención — Gestión en Caracas requerida</div>';
+  } else {
+    box.className = 'req-box';
+    html += '<div class="req-box-title">Documentos principales a traer</div>';
+  }
+  if (info.docs.length) {
+    html += '<ul>';
+    info.docs.forEach(function(d){ html += '<li>' + d + '</li>'; });
+    html += '</ul>';
+  }
+  if (info.nota) html += '<div class="req-nota">' + info.nota + '</div>';
+  if (info.tasa) html += '<div class="req-nota" style="color:#b35c00;font-weight:600">Tasa consular aplicable — consulte el monto vigente.</div>';
+  box.innerHTML = html;
+  box.style.display = 'block';
+}
+
+// ============================================
+// FAQ ACCORDION
+// ============================================
+function toggleFaq(btn) {
+  var item = btn.parentElement;
+  var wasOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(function(i){ i.classList.remove('open'); });
+  if (!wasOpen) item.classList.add('open');
+}
+
+// ============================================
+// FABS — Sticky CTA + WhatsApp float: transición suave por scroll (solo inicio)
+// ============================================
+(function() {
+  var _origShowSection = showSection;
+  var _sec = 'inicio';
+
+  function updateFabs() {
+    var cta = document.getElementById('stickyCta');
+    var wa  = document.getElementById('stickyWa');
+
+    if (_sec === 'citas') {
+      if (cta) cta.classList.remove('visible');
+      if (wa)  wa.classList.remove('visible');
+      return;
+    }
+
+    if (_sec === 'inicio') {
+      // En inicio: aparecen al pasar el hero
+      var past = window.scrollY > 280;
+      if (cta) cta.classList.toggle('visible', past);
+      if (wa)  wa.classList.toggle('visible', past);
+    } else {
+      // En cualquier otra sección: animar entrada
+      if (cta && !cta.classList.contains('visible')) {
+        cta.classList.remove('visible');
+        setTimeout(function() { cta.classList.add('visible'); }, 120);
+      }
+      if (wa && !wa.classList.contains('visible')) {
+        wa.classList.remove('visible');
+        setTimeout(function() { wa.classList.add('visible'); }, 180);
+      }
+    }
+  }
+
+  showSection = function(id) {
+    _origShowSection(id);
+    _sec = id;
+    updateFabs();
+  };
+
+  window.addEventListener('scroll', updateFabs, { passive: true });
+  updateFabs(); // estado inicial (inicio, arriba → ocultos)
+})();
+
+// ============================================
+// CONFIGURACIÓN CENTRAL — carga desde /api/config
+// ============================================
+(function() {
+  function set(id, text) {
+    var el = document.getElementById(id);
+    if (el && text) el.textContent = text;
+  }
+
+  fetch(API_URL + '/api/config')
+    .then(function(r) { return r.json(); })
+    .then(function(cfg) {
+      if (!cfg) return;
+      // Actualizar placeholders dinámicos
+      set('cfg-horario-atencion',   cfg.horario_atencion);
+      set('cfg-viceconsul-nombre',  cfg.viceconsul_nombre);
+      set('cfg-email-oficial',      cfg.email_oficial);
+      set('cfg-whatsapp-contacto',  cfg.whatsapp_contacto);
+      set('cfg-ubicacion-completa', cfg.ubicacion_ciudad + ', ' + cfg.ubicacion_estado);
+      
+      var hint = document.getElementById('cfg-citas-hint');
+      if (hint && cfg.horario_citas) {
+        hint.innerHTML = 'Horario de citas: ' + cfg.horario_citas;
+      }
+
+      // Actualizar número de WhatsApp global si es necesario
+      if (cfg.whatsapp_contacto) {
+        var cleanWa = cfg.whatsapp_contacto.replace(/[^0-9]/g, '');
+        document.documentElement.style.setProperty('--whatsapp-numero', '"' + cleanWa + '"');
+      }
+    })
+    .catch(function(err) { console.error('Error config:', err); });
+})();
+</script>
+
+</body>
+</html>
