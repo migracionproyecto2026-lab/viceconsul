@@ -1,0 +1,93 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Citizen {
+  id           Int       @id @default(autoincrement())
+  nombre       String
+  apellido     String
+  email        String    @unique
+  password     String?
+  telefono     String?
+  cedula       String?
+  tipoDocumento String?
+  esInvitado   Boolean   @default(false)
+  verified     Boolean   @default(false)
+  verifyCode   String?
+  verifyExpiry DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  citas        Appointment[]
+}
+
+model AdminUser {
+  id             Int       @id @default(autoincrement())
+  nombre         String
+  email          String    @unique
+  password       String
+  role           String    @default("asistente")
+  buzonLastRead  DateTime?
+  createdAt      DateTime  @default(now())
+}
+
+model Appointment {
+  id                  Int      @id @default(autoincrement())
+  citizenId           Int?
+  citizen             Citizen? @relation(fields: [citizenId], references: [id])
+  nombreExterno       String?
+  emailExterno        String?
+  telefonoExterno     String?
+  tipoDocumento       String?
+  cedulaExterno       String?
+  fecha               String?
+  hora                String
+  tramite             String
+  status              String   @default("pendiente")
+  notas               String?
+  documentosPendientes String?
+  recordatorioEnviado Boolean  @default(false)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  logs                ActivityLog[]
+}
+
+model ActivityLog {
+  id               Int      @id @default(autoincrement())
+  tipo             String
+  citaId           Int?
+  cita             Appointment? @relation(fields: [citaId], references: [id])
+  ciudadanoEmail   String?
+  mensajeCiudadano String?
+  notaInterna      String?
+  datos            String?
+  realizadoPor     String
+  createdAt        DateTime @default(now())
+}
+
+model Banner {
+  id        Int      @id @default(autoincrement())
+  categoria String?
+  titulo    String
+  cuerpo    String
+  activo    Boolean  @default(true)
+  orden     Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
+model BlockedDate {
+  id     Int     @id @default(autoincrement())
+  fecha  String  @unique
+  motivo String?
+}
+
+model Setting {
+  id    Int    @id @default(autoincrement())
+  clave String @unique
+  valor String
+}
+

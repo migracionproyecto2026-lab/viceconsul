@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+:root {
+  --rojo: #AA151B;
+  --rojo-dark: #8a1015;
+  --oro: #F1BF00;
+  --background: #f3f4f6;
+  --foreground: #111827;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--background);
+  color: var(--foreground);
+  font-size: 16px;
+}
+
+input, select, textarea { font-size: 16px !important; }
+
+:focus-visible {
+  outline: 3px solid var(--rojo);
+  outline-offset: 2px;
+}
+
+.btn-primary {
+  background: var(--rojo);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  width: 100%;
+  display: block;
+  text-align: center;
+}
+.btn-primary:hover { background: var(--rojo-dark); }
+.btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.btn-secondary {
+  background: white;
+  color: var(--rojo);
+  border: 2px solid var(--rojo);
+  border-radius: 8px;
+  padding: 10px 22px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-secondary:hover { background: #fff0f0; }
+
+.input-field {
+  width: 100%;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 16px;
+  transition: border-color 0.2s;
+  background: white;
+}
+.input-field:focus {
+  border-color: var(--rojo);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(170,21,27,0.1);
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  padding: 24px;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.badge-pendiente  { background: #fef9c3; color: #854d0e; }
+.badge-confirmada { background: #dcfce7; color: #166534; }
+.badge-cancelada  { background: #fee2e2; color: #991b1b; }
+.badge-completada { background: #e0e7ff; color: #3730a3; }

@@ -1,0 +1,12 @@
+import { redirect } from 'next/navigation'
+import { getSession } from '@/lib/auth'
+
+export default async function Home() {
+  const session = await getSession()
+
+  if (!session) redirect('/login')
+  if (session.role === 'citizen') redirect('/dashboard')
+  if (session.role === 'asistente' || session.role === 'consul') redirect('/admin')
+
+  redirect('/login')
+}

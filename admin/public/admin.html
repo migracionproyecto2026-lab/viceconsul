@@ -1,0 +1,2479 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Viceconsulado Honorario de España</title>
+  <link rel="icon" type="image/png" href="/images/LogoPng.png">
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Libre+Baskerville:wght@400;700&display=swap"
+    rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --rojo: #AA151B;
+      --rojo-oscuro: #8B1016;
+      --dorado: #F8CE46;
+      --dorado-oscuro: #C9A227;
+      --fondo: #FAFAF7;
+      --borde: #e8e5df;
+      --texto: #1a1a1a;
+      --gris: #555;
+      --gris-claro: #888;
+      --sidebar-w: 256px;
+      --sidebar-bg: #1a1a1a;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--fondo);
+      color: var(--texto);
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: var(--sidebar-w);
+      height: 100vh;
+      background: var(--sidebar-bg);
+      display: flex;
+      flex-direction: column;
+      z-index: 200;
+      transition: transform .3s ease;
+    }
+
+    .sidebar-brand {
+      background: var(--rojo);
+      padding: 16px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 2px solid var(--dorado);
+      flex-shrink: 0;
+    }
+
+    .sidebar-brand img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--dorado);
+      flex-shrink: 0;
+    }
+
+    .sidebar-brand h2 {
+      font-family: 'Libre Baskerville', serif;
+      font-size: .72rem;
+      color: #fff;
+      line-height: 1.35;
+      font-weight: 700;
+    }
+
+    .sidebar-brand p {
+      font-size: .65rem;
+      color: rgba(255, 255, 255, .7);
+      margin-top: 2px;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 8px 0;
+      overflow-y: auto;
+    }
+
+    .nav-sec {
+      font-size: .65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: rgba(255, 255, 255, .3);
+      padding: 14px 16px 4px;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 10px 16px;
+      color: rgba(255, 255, 255, .65);
+      font-size: .88rem;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      position: relative;
+      transition: color .15s, background .15s;
+    }
+
+    .nav-link i {
+      font-size: 1rem;
+      width: 18px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .nav-link:hover {
+      background: rgba(255, 255, 255, .07);
+      color: #fff;
+    }
+
+    .nav-link.active {
+      background: rgba(170, 21, 27, .4);
+      color: #fff;
+      border-right: 3px solid var(--dorado);
+    }
+
+    .nav-badge {
+      margin-left: auto;
+      background: var(--rojo);
+      color: #fff;
+      font-size: .68rem;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 20px;
+      display: none;
+    }
+
+    .sidebar-footer {
+      padding: 12px 14px;
+      border-top: 1px solid rgba(255, 255, 255, .08);
+    }
+
+    .user-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, .07);
+      border-radius: 8px;
+      padding: 8px 10px;
+      margin-bottom: 8px;
+    }
+
+    .user-av {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--rojo);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: .75rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .user-name {
+      font-size: .8rem;
+      color: rgba(255, 255, 255, .85);
+      font-weight: 500;
+    }
+
+    .user-role {
+      font-size: .68rem;
+      color: rgba(255, 255, 255, .4);
+    }
+
+    .btn-logout {
+      width: 100%;
+      padding: 8px;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, .15);
+      border-radius: 8px;
+      color: rgba(255, 255, 255, .55);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .82rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: background .15s, color .15s;
+    }
+
+    .btn-logout:hover {
+      background: rgba(255, 255, 255, .08);
+      color: #fff;
+    }
+
+    /* OVERLAY */
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .5);
+      z-index: 190;
+    }
+
+    .overlay.open {
+      display: block;
+    }
+
+    /* TOPBAR */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: #fff;
+      border-bottom: 1px solid var(--borde);
+      padding: 0 22px;
+      height: 58px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 1px 6px rgba(0, 0, 0, .05);
+    }
+
+    .btn-menu {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 1.35rem;
+      cursor: pointer;
+      color: var(--gris);
+      padding: 4px;
+    }
+
+    .topbar-title {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+
+    .topbar-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .fecha-hoy {
+      font-size: .78rem;
+      color: var(--gris-claro);
+    }
+
+    .btn-web {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      border: 1.5px solid var(--borde);
+      background: #fff;
+      color: var(--gris);
+      font-size: .8rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: border-color .15s, color .15s;
+    }
+
+    .btn-web:hover {
+      border-color: var(--rojo);
+      color: var(--rojo);
+    }
+
+    /* MAIN */
+    .main {
+      margin-left: var(--sidebar-w);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .page {
+      padding: 22px;
+      flex: 1;
+    }
+
+    .tab-pane {
+      display: none;
+    }
+
+    .tab-pane.active {
+      display: block;
+    }
+
+    /* CARDS */
+    .card {
+      background: #fff;
+      border: 1px solid var(--borde);
+      border-radius: 12px;
+      padding: 18px 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, .04);
+    }
+
+    .card-title {
+      font-family: 'Libre Baskerville', serif;
+      font-size: .92rem;
+      font-weight: 700;
+      color: var(--texto);
+      margin-bottom: 14px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--borde);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .card-title i {
+      color: var(--rojo);
+    }
+
+    /* STATS */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .stat-card {
+      background: #fff;
+      border: 1px solid var(--borde);
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, .04);
+      border-left: 4px solid var(--rojo);
+    }
+
+    .stat-val {
+      font-size: 1.9rem;
+      font-weight: 700;
+      color: var(--rojo);
+      line-height: 1;
+    }
+
+    .stat-lbl {
+      font-size: .75rem;
+      color: var(--gris);
+      margin-top: 4px;
+      font-weight: 500;
+    }
+
+    /* BUTTONS */
+    .btn-p {
+      background: var(--rojo);
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: background .15s;
+    }
+
+    .btn-p:hover {
+      background: var(--rojo-oscuro);
+    }
+
+    .btn-o {
+      background: transparent;
+      color: var(--gris);
+      border: 1.5px solid var(--borde);
+      padding: 7px 13px;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .82rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: border-color .15s, color .15s;
+    }
+
+    .btn-o:hover {
+      border-color: var(--rojo);
+      color: var(--rojo);
+    }
+
+    .btn-ic {
+      background: var(--fondo);
+      border: 1px solid var(--borde);
+      color: var(--gris);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: .82rem;
+      cursor: pointer;
+      transition: background .15s;
+    }
+
+    .btn-ic:hover {
+      background: var(--borde);
+    }
+
+    .btn-del {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #991b1b;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: .82rem;
+      cursor: pointer;
+    }
+
+    .btn-del:hover {
+      background: #fee2e2;
+    }
+
+    /* TABLA */
+    .tw {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .86rem;
+    }
+
+    th {
+      background: var(--fondo);
+      color: var(--gris-claro);
+      font-size: .7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      padding: 9px 11px;
+      border-bottom: 1px solid var(--borde);
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 10px 11px;
+      border-bottom: 1px solid var(--borde);
+      vertical-align: middle;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: #faf5f5;
+    }
+
+    /* BADGES */
+    .badge {
+      display: inline-block;
+      padding: 3px 9px;
+      border-radius: 20px;
+      font-size: .72rem;
+      font-weight: 600;
+    }
+
+    .b-pendiente {
+      background: #fef9c3;
+      color: #854d0e;
+    }
+
+    .b-confirmada {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .b-completada {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+
+    .b-cancelada {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .b-inasistencia {
+      background: #f3e8ff;
+      color: #7e22ce;
+    }
+
+    .b-en_proceso {
+      background: #ffedd5;
+      color: #9a3412;
+    }
+
+    .b-asistencia_tarde {
+      background: #e0f2fe;
+      color: #0369a1;
+    }
+
+    /* FORMS */
+    .fg {
+      margin-bottom: 14px;
+    }
+
+    .fl {
+      display: block;
+      font-size: .75rem;
+      font-weight: 600;
+      color: var(--gris);
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      margin-bottom: 5px;
+    }
+
+    .fc {
+      width: 100%;
+      padding: 9px 11px;
+      border: 1.5px solid var(--borde);
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .9rem;
+      color: var(--texto);
+      background: var(--fondo);
+      outline: none;
+      transition: border-color .2s;
+    }
+
+    .fc:focus {
+      border-color: var(--rojo);
+      background: #fff;
+    }
+
+    textarea.fc {
+      resize: vertical;
+      min-height: 72px;
+    }
+
+    select.fc {
+      cursor: pointer;
+    }
+
+    .fr {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .filtros {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .filtros .fc {
+      width: auto;
+    }
+
+    /* MODAL */
+    .mo {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .45);
+      z-index: 300;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+    }
+
+    .mo.open {
+      display: flex;
+    }
+
+    .modal {
+      background: #fff;
+      border-radius: 14px;
+      width: 100%;
+      max-width: 480px;
+      max-height: 92vh;
+      overflow-y: auto;
+      box-shadow: 0 16px 48px rgba(0, 0, 0, .2);
+      animation: su .22s ease;
+    }
+
+    @keyframes su {
+      from {
+        opacity: 0;
+        transform: translateY(18px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    .mh {
+      padding: 18px 22px 14px;
+      border-bottom: 1px solid var(--borde);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .mt {
+      font-family: 'Libre Baskerville', serif;
+      font-size: .98rem;
+      font-weight: 700;
+    }
+
+    .mc-btn {
+      background: none;
+      border: none;
+      font-size: 1.25rem;
+      cursor: pointer;
+      color: var(--gris-claro);
+      line-height: 1;
+      padding: 3px;
+    }
+
+    .mc-btn:hover {
+      color: var(--rojo);
+    }
+
+    .mb {
+      padding: 18px 22px;
+    }
+
+    .mf {
+      padding: 12px 22px;
+      border-top: 1px solid var(--borde);
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    /* BUZÓN */
+    .log-item {
+      display: flex;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--borde);
+    }
+
+    .log-item:last-child {
+      border-bottom: none;
+    }
+
+    .log-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 5px;
+    }
+
+    .log-body {
+      flex: 1;
+    }
+
+    .log-tipo {
+      font-size: .75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      margin-bottom: 2px;
+    }
+
+    .log-desc {
+      font-size: .85rem;
+      color: var(--gris);
+    }
+
+    .log-meta {
+      font-size: .72rem;
+      color: var(--gris-claro);
+      margin-top: 3px;
+    }
+
+    .dot-creacion {
+      background: #22c55e;
+    }
+
+    .dot-cancelacion {
+      background: #ef4444;
+    }
+
+    .dot-reagendamiento {
+      background: #f59e0b;
+    }
+
+    .dot-inasistencia {
+      background: #8b5cf6;
+    }
+
+    .dot-confirmacion {
+      background: #3b82f6;
+    }
+
+    /* ALERTA */
+    .alerta {
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: .85rem;
+      margin-bottom: 12px;
+      display: none;
+    }
+
+    .alerta-ok {
+      background: #dcfce7;
+      border: 1px solid #bbf7d0;
+      color: #166534;
+    }
+
+    .alerta-err {
+      background: #fee2e2;
+      border: 1px solid #fecaca;
+      color: #991b1b;
+    }
+
+    /* RESPONSIVE */
+    @media(max-width:900px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+      }
+
+      .main {
+        margin-left: 0;
+      }
+
+      .btn-menu {
+        display: flex;
+      }
+
+      .fr {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media(max-width:600px) {
+      .page {
+        padding: 14px;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .filtros {
+        flex-direction: column;
+      }
+
+      .filtros .fc {
+        width: 100%;
+      }
+
+      .topbar {
+        padding: 0 12px;
+      }
+
+      .fecha-hoy {
+        display: none;
+      }
+    }
+
+    @media(min-width:1600px) {
+      :root {
+        --sidebar-w: 272px;
+      }
+    }
+
+    /* FECHAS GRID */
+    .fechas-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      max-width: 760px;
+    }
+
+    @media(max-width:700px) {
+      .fechas-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* CHECKBOX */
+    .fcheck {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .fcheck input {
+      width: 15px;
+      height: 15px;
+      accent-color: var(--rojo);
+      cursor: pointer;
+    }
+
+    .fcheck label {
+      font-size: .88rem;
+      color: var(--gris);
+      cursor: pointer;
+      margin: 0;
+    }
+
+    .divider {
+      border: none;
+      border-top: 1px solid var(--borde);
+      margin: 14px 0;
+    }
+
+    /* CRM — Registro incompleto */
+    .crm-card {
+      border: 1px solid var(--borde);
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 14px;
+      background: #fff;
+    }
+    .crm-card-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+      font-size: .88rem;
+    }
+    .crm-doc-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: .82rem;
+      color: var(--rojo);
+      margin-bottom: 6px;
+      cursor: pointer;
+    }
+    .crm-doc-item input[type="checkbox"] { cursor: pointer; accent-color: var(--rojo); }
+
+    .nota-box {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: .82rem;
+      color: #92400e;
+      margin-bottom: 12px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <img src="/images/LogoPng.png" alt="Logo" onerror="this.src='/images/Logo.jpeg'">
+      <div>
+        <h2>Viceconsulado<br>Honorario de España</h2>
+        <p>Porlamar · Nueva Esparta</p>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-sec">Principal</div>
+      <button class="nav-link active" onclick="showTab('dashboard')"><i class="bi bi-grid"></i>Dashboard</button>
+      <button class="nav-link nav-rol-citas" onclick="showTab('citas')"><i class="bi bi-calendar-check"></i>Citas<span
+          class="nav-badge" id="nb-citas"></span></button>
+      <button class="nav-link nav-rol-buzon" onclick="showTab('buzon')"><i class="bi bi-inbox"></i>Buzón<span class="nav-badge"
+          id="nb-buzon"></span></button>
+      <div class="nav-sec">Registro</div>
+      <button class="nav-link" onclick="showTab('ciudadanos')"><i class="bi bi-people"></i>Ciudadanos</button>
+      <button class="nav-link nav-rol-crm" onclick="showTab('crm')"><i class="bi bi-person-exclamation"></i>Registro incompleto<span
+          class="nav-badge" id="nb-crm"></span></button>
+      <div class="nav-sec">Configuración</div>
+      <button class="nav-link" onclick="showTab('banners')"><i class="bi bi-megaphone"></i>Avisos web</button>
+      <button class="nav-link" onclick="showTab('fechas')"><i class="bi bi-calendar-x"></i>Fechas bloqueadas</button>
+      <button class="nav-link nav-rol-superadmin" style="display:none;" onclick="showTab('usuarios')"><i class="bi bi-shield-lock"></i>Usuarios</button>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-chip">
+        <div class="user-av" id="u-av">—</div>
+        <div>
+          <div class="user-name" id="u-name">...</div>
+          <div class="user-role" id="u-role"></div>
+        </div>
+      </div>
+      <button class="btn-logout" onclick="logout()"><i class="bi bi-box-arrow-left"></i>Cerrar sesión</button>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="btn-menu" onclick="openSidebar()"><i class="bi bi-list"></i></button>
+      <span class="topbar-title" id="page-title">Dashboard</span>
+      <div class="topbar-right">
+        <span class="fecha-hoy" id="fecha-hoy"></span>
+        <a href="https://espaciosigo-ai.github.io/viceconsulado-porlamar/" target="_blank" class="btn-web"><i
+            class="bi bi-globe2"></i>Ver página pública</a>
+      </div>
+    </header>
+
+    <div class="page">
+
+      <!-- DASHBOARD -->
+      <div id="tab-dashboard" class="tab-pane active">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-val" id="s-c">—</div>
+            <div class="stat-lbl">Ciudadanos</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-val" id="s-v">—</div>
+            <div class="stat-lbl">Verificados</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-val" id="s-p">—</div>
+            <div class="stat-lbl">Citas pendientes</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-val" id="s-h">—</div>
+            <div class="stat-lbl">Citas hoy</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-val" id="s-s">—</div>
+            <div class="stat-lbl">Citas semana</div>
+          </div>
+          <div class="stat-card" style="border-left-color:#7e22ce;cursor:pointer;" onclick="showTab('crm')">
+            <div class="stat-val" id="s-f" style="color:#7e22ce;">—</div>
+            <div class="stat-lbl">Doc. pendientes</div>
+          </div>
+          <div class="stat-card" style="border-left-color:#f59e0b;cursor:pointer;" onclick="showTab('ciudadanos')">
+            <div class="stat-val" id="s-sc" style="color:#f59e0b;">—</div>
+            <div class="stat-lbl">Sin cuenta</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title"><i class="bi bi-calendar-day"></i>Citas de hoy</div>
+          <div id="citas-hoy"></div>
+        </div>
+        <div class="card" style="margin-top:16px;">
+          <div class="card-title"><i class="bi bi-pie-chart"></i>Citas por estado (hoy)</div>
+          <div id="chart-estados" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:8px 0;"></div>
+        </div>
+      </div>
+
+      <!-- CITAS -->
+      <div id="tab-citas" class="tab-pane">
+        <div style="display:flex;justify-content:flex-end;margin-bottom:16px;">
+          <button class="btn-p" onclick="openModalCita()"><i class="bi bi-plus-lg"></i>Nueva cita</button>
+        </div>
+        <div class="card">
+          <div class="filtros">
+            <input type="date" id="f-desde" class="fc" onchange="loadCitas()" style="width:auto;" title="Desde">
+            <span
+              style="display:flex;align-items:center;color:var(--gris-claro);font-size:.82rem;padding:0 2px;">→</span>
+            <input type="date" id="f-hasta" class="fc" onchange="loadCitas()" style="width:auto;" title="Hasta">
+            <select id="f-status" class="fc" onchange="loadCitas()" style="width:auto;">
+              <option value="">Todos los estados</option>
+              <option value="pendiente">Pendiente</option>
+              <option value="confirmada">Confirmada</option>
+              <option value="en_proceso">En proceso</option>
+              <option value="asistencia_tarde">Asistencia tarde</option>
+              <option value="completada">Completada</option>
+              <option value="cancelada">Cancelada</option>
+              <option value="inasistencia">Inasistencia</option>
+            </select>
+            <button class="btn-o" onclick="clearFiltros()"><i class="bi bi-x-circle"></i>Limpiar</button>
+          </div>
+          <div class="tw" id="citas-table"></div>
+        </div>
+      </div>
+
+      <!-- BUZÓN -->
+      <div id="tab-buzon" class="tab-pane">
+        <div class="card">
+          <div class="card-title"><i class="bi bi-inbox"></i>Registro de actividad</div>
+          <div class="filtros" style="margin-bottom:12px;">
+            <select id="f-log-tipo" class="fc" onchange="loadBuzon()" style="width:auto;">
+              <option value="">Toda la actividad</option>
+              <option value="cancelacion">Cancelaciones</option>
+              <option value="reagendamiento">Reagendamientos</option>
+              <option value="creacion">Nuevas citas</option>
+              <option value="inasistencia">Inasistencias</option>
+            </select>
+          </div>
+          <div id="buzon-list"></div>
+        </div>
+      </div>
+
+      <!-- CIUDADANOS -->
+      <div id="tab-ciudadanos" class="tab-pane">
+        <div class="card">
+          <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
+            <input type="text" id="sq" class="fc" placeholder="Nombre, correo o cédula..." style="max-width:280px;">
+            <button class="btn-p" onclick="loadCiudadanos(1)"><i class="bi bi-search"></i></button>
+          </div>
+          <div class="tw" id="ciu-table"></div>
+          <div id="ciu-pag" style="display:flex;gap:6px;margin-top:14px;flex-wrap:wrap;"></div>
+        </div>
+      </div>
+
+      <!-- BANNERS -->
+      <div id="tab-banners" class="tab-pane">
+        <div style="display:flex;justify-content:flex-end;margin-bottom:14px;">
+          <button class="btn-p" onclick="openModalBanner()"><i class="bi bi-plus-lg"></i>Nuevo aviso</button>
+        </div>
+        <div id="banners-list"></div>
+      </div>
+
+      <!-- FECHAS -->
+      <div id="tab-fechas" class="tab-pane">
+        <div class="fechas-grid">
+          <div class="card">
+            <div class="card-title"><i class="bi bi-calendar-x"></i>Bloquear fecha</div>
+            <p style="font-size:.8rem;color:var(--gris);margin-bottom:12px;">Bloquea días completos que aparecerán como
+              no disponibles para los ciudadanos al solicitar cita.</p>
+            <div class="fg"><label class="fl">Fecha</label><input type="date" id="nf" class="fc"></div>
+            <div class="fg"><label class="fl">Motivo</label><input type="text" id="nfm" class="fc"
+                placeholder="Ej: Día festivo..."></div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <button class="btn-p" onclick="bloquearFecha()"><i class="bi bi-lock"></i>Bloquear</button>
+              <button class="btn-o" onclick="openModalEfemeride()"><i class="bi bi-stars"></i>Añadir efeméride</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title"><i class="bi bi-list-check"></i>Fechas bloqueadas</div>
+            <div id="fechas-list"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- REGISTRO INCOMPLETO: Citas con documentos pendientes -->
+      <div id="tab-crm" class="tab-pane">
+        <div class="card">
+          <div class="card-title"><i class="bi bi-person-exclamation"></i>Registro incompleto — Documentos pendientes</div>
+          <p style="font-size:.82rem;color:var(--gris);margin-bottom:14px;">Citas activas donde el ciudadano tiene documentos pendientes de presentar. Para marcar una cita como pendiente, edítala desde <strong>Gestión de Citas</strong> y activa el tilde "Documento pendiente".</p>
+          <div class="tw" id="crm-table"></div>
+        </div>
+      </div>
+
+      <!-- USUARIOS (solo superadmin) -->
+      <div id="tab-usuarios" class="tab-pane">
+        <div style="display:flex;justify-content:flex-end;margin-bottom:16px;">
+          <button class="btn-p" onclick="openModalUsuario()"><i class="bi bi-plus-lg"></i>Nuevo usuario</button>
+        </div>
+        <div class="card">
+          <div class="card-title"><i class="bi bi-shield-lock"></i>Gestión de accesos</div>
+          <p style="font-size:.82rem;color:var(--gris);margin-bottom:14px;">
+            <strong>Gestor (asistente)</strong> — acceso completo a todos los módulos.<br>
+            <strong>Cónsul</strong> — solo Dashboard, Ciudadanos, Avisos web y Fechas bloqueadas.<br>
+            <strong>Superadmin</strong> — acceso completo más gestión de usuarios.
+          </p>
+          <div class="tw" id="usuarios-table"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL: Nueva/editar cita -->
+  <div class="mo" id="mo-cita">
+    <div class="modal">
+      <div class="mh"><span class="mt" id="mo-cita-t">Nueva cita</span><button class="mc-btn"
+          onclick="closeModal('mo-cita')">×</button></div>
+      <div class="mb">
+        <input type="hidden" id="c-id">
+        <div class="alerta alerta-err" id="c-err"></div>
+
+        <!-- Bloque sólo lectura: ciudadano registrado (sólo en edición) -->
+        <div id="c-citizen-block" style="display:none;margin-bottom:12px;">
+          <div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;padding:10px 14px;">
+            <div class="fl" style="margin-bottom:4px;color:#0369a1;">Ciudadano registrado</div>
+            <strong id="c-citizen-name" style="font-size:.95rem;"></strong>
+            <div id="c-citizen-meta" style="font-size:.82rem;color:var(--gris);margin-top:2px;"></div>
+          </div>
+        </div>
+
+        <!-- Sección de búsqueda (sólo en nueva cita) -->
+        <div id="c-search-section">
+          <p style="font-size:.8rem;color:var(--gris);margin-bottom:12px;">Si la persona tiene cuenta, búscala por correo, cédula o nombre.</p>
+          <div class="fg">
+            <label class="fl">Buscar ciudadano registrado</label>
+            <div style="display:flex;gap:6px;">
+              <input type="text" id="c-cid" class="fc" placeholder="correo@ejemplo.com · cédula · nombre"
+                oninput="document.getElementById('c-cid-confirmed').value=''">
+              <button type="button" class="btn-o" onclick="buscarCiudadano()" style="flex-shrink:0;white-space:nowrap;"
+                title="Buscar ciudadano"><i class="bi bi-search"></i></button>
+            </div>
+            <input type="hidden" id="c-cid-confirmed" value="">
+            <div id="c-cid-info" style="font-size:.78rem;margin-top:5px;padding:6px 10px;border-radius:6px;display:none;"></div>
+          </div>
+          <hr class="divider">
+          <p style="font-size:.78rem;color:var(--gris-claro);margin-bottom:10px;">— O ciudadano externo (sin cuenta) —</p>
+        </div>
+        <div id="c-external-section">
+        <div class="fr">
+          <div class="fg"><label class="fl">Nombre</label><input type="text" id="c-nombre" class="fc"
+              placeholder="Nombre"></div>
+          <div class="fg"><label class="fl">Apellido</label><input type="text" id="c-apellido" class="fc"
+              placeholder="Apellido"></div>
+        </div>
+        <div class="fg"><label class="fl">Correo electrónico</label><input type="email" id="c-email" class="fc"
+            placeholder="correo@ejemplo.com"></div>
+        <div class="fg">
+          <label class="fl">Teléfono</label>
+          <div style="display:flex;gap:6px;">
+            <select id="c-tel-pais" class="fc" style="width:130px;flex-shrink:0;">
+              <optgroup label="América del Sur">
+                <option value="+58">🇻🇪 +58 Venezuela</option>
+                <option value="+57">🇨🇴 +57 Colombia</option>
+                <option value="+54">🇦🇷 +54 Argentina</option>
+                <option value="+51">🇵🇪 +51 Perú</option>
+                <option value="+56">🇨🇱 +56 Chile</option>
+                <option value="+55">🇧🇷 +55 Brasil</option>
+                <option value="+593">🇪🇨 +593 Ecuador</option>
+                <option value="+591">🇧🇴 +591 Bolivia</option>
+                <option value="+595">🇵🇾 +595 Paraguay</option>
+                <option value="+598">🇺🇾 +598 Uruguay</option>
+                <option value="+592">🇬🇾 +592 Guyana</option>
+                <option value="+597">🇸🇷 +597 Surinam</option>
+              </optgroup>
+              <optgroup label="América Central y Caribe">
+                <option value="+507">🇵🇦 +507 Panamá</option>
+                <option value="+506">🇨🇷 +506 Costa Rica</option>
+                <option value="+502">🇬🇹 +502 Guatemala</option>
+                <option value="+504">🇭🇳 +504 Honduras</option>
+                <option value="+503">🇸🇻 +503 El Salvador</option>
+                <option value="+505">🇳🇮 +505 Nicaragua</option>
+                <option value="+52">🇲🇽 +52 México</option>
+                <option value="+53">🇨🇺 +53 Cuba</option>
+                <option value="+1">🇩🇴 +1 Rep. Dominicana</option>
+                <option value="+1">🇵🇷 +1 Puerto Rico</option>
+                <option value="+509">🇭🇹 +509 Haití</option>
+                <option value="+1">🇯🇲 +1 Jamaica</option>
+                <option value="+1">🇹🇹 +1 Trinidad y Tobago</option>
+              </optgroup>
+              <optgroup label="América del Norte">
+                <option value="+1">🇺🇸 +1 EE.UU.</option>
+                <option value="+1">🇨🇦 +1 Canadá</option>
+              </optgroup>
+              <optgroup label="Europa">
+                <option value="+34">🇪🇸 +34 España</option>
+                <option value="+44">🇬🇧 +44 Reino Unido</option>
+                <option value="+33">🇫🇷 +33 Francia</option>
+                <option value="+49">🇩🇪 +49 Alemania</option>
+                <option value="+39">🇮🇹 +39 Italia</option>
+                <option value="+351">🇵🇹 +351 Portugal</option>
+                <option value="+31">🇳🇱 +31 Países Bajos</option>
+                <option value="+32">🇧🇪 +32 Bélgica</option>
+                <option value="+41">🇨🇭 +41 Suiza</option>
+                <option value="+43">🇦🇹 +43 Austria</option>
+                <option value="+46">🇸🇪 +46 Suecia</option>
+                <option value="+47">🇳🇴 +47 Noruega</option>
+                <option value="+45">🇩🇰 +45 Dinamarca</option>
+                <option value="+358">🇫🇮 +358 Finlandia</option>
+                <option value="+48">🇵🇱 +48 Polonia</option>
+                <option value="+40">🇷🇴 +40 Rumanía</option>
+                <option value="+30">🇬🇷 +30 Grecia</option>
+                <option value="+7">🇷🇺 +7 Rusia</option>
+                <option value="+380">🇺🇦 +380 Ucrania</option>
+                <option value="+420">🇨🇿 +420 Rep. Checa</option>
+                <option value="+36">🇭🇺 +36 Hungría</option>
+                <option value="+385">🇭🇷 +385 Croacia</option>
+              </optgroup>
+              <optgroup label="Otros">
+                <option value="+90">🇹🇷 +90 Turquía</option>
+                <option value="+972">🇮🇱 +972 Israel</option>
+                <option value="+966">🇸🇦 +966 Arabia Saudita</option>
+                <option value="+971">🇦🇪 +971 EAU</option>
+                <option value="+91">🇮🇳 +91 India</option>
+                <option value="+86">🇨🇳 +86 China</option>
+                <option value="+81">🇯🇵 +81 Japón</option>
+                <option value="+82">🇰🇷 +82 Corea del Sur</option>
+                <option value="+61">🇦🇺 +61 Australia</option>
+                <option value="+64">🇳🇿 +64 Nueva Zelanda</option>
+                <option value="+27">🇿🇦 +27 Sudáfrica</option>
+                <option value="+212">🇲🇦 +212 Marruecos</option>
+              </optgroup>
+            </select>
+            <input type="tel" id="c-tel-num" class="fc" placeholder="4241234567" inputmode="numeric"
+              oninput="this.value=this.value.replace(/\D/g,'')">
+          </div>
+        </div>
+        </div><!-- /c-external-section -->
+        <hr class="divider">
+        <div class="fr">
+          <div class="fg"><label class="fl">Fecha</label><input type="date" id="c-fecha" class="fc" required
+              onchange="validarFechaCita(this.value)">
+            <div id="c-fecha-warn" style="font-size:.76rem;color:#991b1b;margin-top:4px;display:none;"><i
+                class="bi bi-exclamation-triangle"></i> Esta fecha está bloqueada.</div>
+          </div>
+          <div class="fg">
+            <label class="fl">Plaza horaria</label>
+            <select id="c-hora" class="fc" required>
+              <option value="">Seleccionar hora...</option>
+              <option value="08:30">8:30 AM</option>
+              <option value="09:00">9:00 AM</option>
+              <option value="09:30">9:30 AM</option>
+              <option value="10:00">10:00 AM</option>
+              <option value="10:30">10:30 AM</option>
+              <option value="11:00">11:00 AM</option>
+              <option value="11:30">11:30 AM</option>
+            </select>
+          </div>
+        </div>
+        <div class="fg">
+          <label class="fl">Trámite</label>
+          <select id="c-tramite" class="fc" required>
+            <option value="">Seleccionar trámite...</option>
+            <optgroup label="Pasaportes">
+              <option>Pasaporte — Primera expedición</option>
+              <option>Pasaporte — Renovación</option>
+              <option>Pasaporte — Menores de 12 años</option>
+            </optgroup>
+            <optgroup label="Registro Civil">
+              <option>Inscripción de nacimiento</option>
+              <option>Inscripción de matrimonio</option>
+              <option>Inscripción de defunción</option>
+            </optgroup>
+            <optgroup label="Documentos de identidad">
+              <option>NIF — Identificación fiscal</option>
+              <option>NIE — Identidad de extranjero</option>
+            </optgroup>
+            <optgroup label="Nacionalidad">
+              <option>Conservación de nacionalidad</option>
+              <option>Recuperación de nacionalidad</option>
+              <option>Ley de Memoria Democrática (LMD)</option>
+            </optgroup>
+            <optgroup label="Registro consular">
+              <option>Alta consular</option>
+              <option>Baja consular</option>
+              <option>Certificado de residencia</option>
+              <option>Certificado de no residente</option>
+              <option>Cambio de censo electoral</option>
+            </optgroup>
+            <optgroup label="Otros">
+              <option>Fe de vida</option>
+              <option>Poder notarial</option>
+              <option>Otro trámite</option>
+            </optgroup>
+          </select>
+        </div>
+        <div class="fg" id="c-status-wrap" style="display:none;">
+          <div class="nota-box" style="background:#fff7ed;border-color:#fed7aa;color:#9a3412;">
+            <i class="bi bi-lightning-charge"></i> Atención inmediata — la cita pasará directamente a <strong>En
+              proceso</strong>
+          </div>
+          <div class="fcheck">
+            <input type="checkbox" id="c-enproceso">
+            <label for="c-enproceso">Marcar como "En proceso" ahora</label>
+          </div>
+        </div>
+        <input type="hidden" id="c-status" value="pendiente">
+        <div class="fg"><label class="fl">Notas internas</label><textarea id="c-notas" class="fc" rows="2"></textarea>
+        </div>
+        <hr class="divider">
+        <div class="fg">
+          <div class="fcheck" style="margin-bottom:10px;">
+            <input type="checkbox" id="c-doc-pendiente" onchange="toggleDocPendiente()">
+            <label for="c-doc-pendiente" style="font-weight:600;color:var(--rojo);">Documento pendiente</label>
+          </div>
+          <div id="c-doc-wrap" style="display:none;">
+            <div id="c-doc-lista" style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px;"></div>
+            <div style="display:flex;gap:6px;margin-top:6px;">
+              <input type="text" id="c-doc-otro" class="fc" placeholder="Otro requisito pendiente...">
+              <button type="button" class="btn-o" onclick="agregarDocOtro()" style="flex-shrink:0;white-space:nowrap;"><i class="bi bi-plus-lg"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="mf">
+        <button class="btn-o" onclick="closeModal('mo-cita')">Cancelar</button>
+        <button class="btn-p" onclick="saveCita()"><i class="bi bi-check-lg"></i>Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Cancelar cita -->
+  <div class="mo" id="mo-cancelar">
+    <div class="modal">
+      <div class="mh"><span class="mt">Cancelar cita</span><button class="mc-btn"
+          onclick="closeModal('mo-cancelar')">×</button></div>
+      <div class="mb">
+        <input type="hidden" id="can-id">
+        <div class="nota-box"><i class="bi bi-info-circle"></i> Se enviará un correo al ciudadano con el mensaje que
+          escribas abajo.</div>
+        <div class="fg">
+          <label class="fl">Mensaje para el ciudadano</label>
+          <textarea id="can-msg" class="fc" rows="3"
+            placeholder="Ej: Su cita ha sido cancelada debido a una jornada especial. Por favor comuníquese con nosotros para reagendar..."></textarea>
+        </div>
+        <div class="fg">
+          <label class="fl">Nota interna (no se envía)</label>
+          <textarea id="can-nota" class="fc" rows="2"
+            placeholder="Justificación interna del motivo de cancelación..."></textarea>
+        </div>
+      </div>
+      <div class="mf">
+        <button class="btn-o" onclick="closeModal('mo-cancelar')">Volver</button>
+        <button class="btn-del" onclick="confirmarCancelacion()"><i class="bi bi-x-circle"></i>Confirmar
+          cancelación</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Reagendar cita -->
+  <div class="mo" id="mo-reagendar">
+    <div class="modal">
+      <div class="mh"><span class="mt">Reagendar cita</span><button class="mc-btn"
+          onclick="closeModal('mo-reagendar')">×</button></div>
+      <div class="mb">
+        <input type="hidden" id="re-id">
+        <div id="re-info" class="nota-box" style="margin-bottom:14px;"></div>
+        <div class="fr">
+          <div class="fg"><label class="fl">Nueva fecha</label><input type="date" id="re-fecha" class="fc" required onchange="validarFechaReagendar(this.value)">
+            <div id="re-fecha-warn" style="font-size:.76rem;color:#991b1b;margin-top:4px;display:none;"><i class="bi bi-exclamation-triangle"></i> Solo se pueden agendar citas de lunes a viernes.</div>
+          </div>
+          <div class="fg">
+            <label class="fl">Nueva hora</label>
+            <select id="re-hora" class="fc" required>
+              <option value="">Seleccionar...</option>
+              <option value="08:30">8:30 AM</option>
+              <option value="09:00">9:00 AM</option>
+              <option value="09:30">9:30 AM</option>
+              <option value="10:00">10:00 AM</option>
+              <option value="10:30">10:30 AM</option>
+              <option value="11:00">11:00 AM</option>
+              <option value="11:30">11:30 AM</option>
+            </select>
+          </div>
+        </div>
+        <hr class="divider">
+        <p style="font-size:.82rem;font-weight:600;margin-bottom:10px;color:var(--texto);">Plaza liberada (horario
+          anterior)</p>
+        <div class="fg">
+          <div class="fcheck" style="margin-bottom:10px;">
+            <input type="checkbox" id="re-liberar" checked onchange="toggleMotivoNoLiberar()">
+            <label for="re-liberar">Habilitar la plaza anterior en el calendario</label>
+          </div>
+          <div id="re-motivo-wrap" style="display:none;">
+            <label class="fl">Motivo por el que NO se libera</label>
+            <select id="re-motivo" class="fc">
+              <option value="mantenimiento">Mantenimiento / cierre interno</option>
+              <option value="reserva_especial">Reservada para caso especial</option>
+              <option value="festivo">Día festivo o no laborable</option>
+              <option value="otro">Otro motivo</option>
+            </select>
+          </div>
+        </div>
+        <div class="fg"><label class="fl">Nota interna del reagendamiento</label><textarea id="re-nota" class="fc"
+            rows="2" placeholder="Motivo del cambio de fecha..."></textarea></div>
+      </div>
+      <div class="mf">
+        <button class="btn-o" onclick="closeModal('mo-reagendar')">Cancelar</button>
+        <button class="btn-p" onclick="confirmarReagendar()"><i class="bi bi-calendar-event"></i>Confirmar
+          reagendamiento</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Banner -->
+  <div class="mo" id="mo-banner">
+    <div class="modal">
+      <div class="mh"><span class="mt" id="mo-banner-t">Nuevo aviso</span><button class="mc-btn"
+          onclick="closeModal('mo-banner')">×</button></div>
+      <div class="mb">
+        <input type="hidden" id="b-id">
+        <div class="fg"><label class="fl">Categoría <span style="color:var(--gris-claro);font-weight:400;">(opcional — ej: Aviso Importante)</span></label><input type="text" id="b-categoria" class="fc" placeholder="Ej: Jornada Especial"></div>
+        <div class="fg"><label class="fl">Título</label><input type="text" id="b-titulo" class="fc" required></div>
+        <div class="fg"><label class="fl">Mensaje</label><textarea id="b-cuerpo" class="fc" rows="4"
+            required></textarea></div>
+        <div class="fr">
+          <div class="fg"><label class="fl">Orden</label><input type="number" id="b-orden" class="fc" value="0"></div>
+          <div class="fg" style="display:flex;align-items:flex-end;padding-bottom:14px;">
+            <div class="fcheck"><input type="checkbox" id="b-activo" checked><label for="b-activo">Visible en la
+                web</label></div>
+          </div>
+        </div>
+      </div>
+      <div class="mf">
+        <button class="btn-o" onclick="closeModal('mo-banner')">Cancelar</button>
+        <button class="btn-p" onclick="saveBanner()"><i class="bi bi-check-lg"></i>Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Efeméride -->
+  <div class="mo" id="mo-efemeride">
+    <div class="modal" style="max-width:520px;">
+      <div class="mh"><span class="mt">Añadir efeméride española</span><button class="mc-btn"
+          onclick="closeModal('mo-efemeride')">×</button></div>
+      <div class="mb">
+        <div class="fg">
+          <label class="fl">Seleccionar efeméride</label>
+          <select id="ef-select" class="fc" onchange="onSelectEfemeride()">
+            <option value="">Elegir de la lista...</option>
+            <optgroup label="Fiestas Nacionales de España">
+              <option data-mes="01" data-dia="01" data-nombre="Año Nuevo">1 Enero — Año Nuevo</option>
+              <option data-mes="01" data-dia="06" data-nombre="Epifanía del Señor (Reyes Magos)">6 Enero — Epifanía del
+                Señor (Reyes Magos)</option>
+              <option data-mes="05" data-dia="01" data-nombre="Día del Trabajo">1 Mayo — Día del Trabajo</option>
+              <option data-mes="08" data-dia="15" data-nombre="Asunción de la Virgen">15 Agosto — Asunción de la Virgen
+              </option>
+              <option data-mes="10" data-dia="12" data-nombre="Fiesta Nacional de España (Día de la Hispanidad)">12
+                Octubre — Fiesta Nacional de España</option>
+              <option data-mes="11" data-dia="01" data-nombre="Día de Todos los Santos">1 Noviembre — Día de Todos los
+                Santos</option>
+              <option data-mes="12" data-dia="06" data-nombre="Día de la Constitución Española">6 Diciembre — Día de la
+                Constitución Española</option>
+              <option data-mes="12" data-dia="08" data-nombre="Inmaculada Concepción">8 Diciembre — Inmaculada
+                Concepción</option>
+              <option data-mes="12" data-dia="25" data-nombre="Navidad">25 Diciembre — Navidad</option>
+            </optgroup>
+            <optgroup label="Semana Santa (introducir año)">
+              <option data-nombre="Jueves Santo">Jueves Santo (fecha variable)</option>
+              <option data-nombre="Viernes Santo">Viernes Santo (fecha variable)</option>
+            </optgroup>
+            <optgroup label="Fiestas venezolanas (consulados en Venezuela)">
+              <option data-mes="04" data-dia="19" data-nombre="Declaración de Independencia de Venezuela">19 Abril —
+                Declaración de Independencia</option>
+              <option data-mes="06" data-dia="24" data-nombre="Batalla de Carabobo">24 Junio — Batalla de Carabobo
+              </option>
+              <option data-mes="07" data-dia="05" data-nombre="Día de la Independencia de Venezuela">5 Julio — Día de la
+                Independencia</option>
+              <option data-mes="07" data-dia="24" data-nombre="Natalicio de Simón Bolívar">24 Julio — Natalicio de Simón
+                Bolívar</option>
+              <option data-mes="10" data-dia="12" data-nombre="Día de la Resistencia Indígena">12 Octubre — Día de la
+                Resistencia Indígena</option>
+              <option data-mes="12" data-dia="24" data-nombre="Nochebuena">24 Diciembre — Nochebuena</option>
+              <option data-mes="12" data-dia="31" data-nombre="Nochevieja">31 Diciembre — Nochevieja</option>
+            </optgroup>
+          </select>
+        </div>
+        <div class="fg">
+          <label class="fl">Año</label>
+          <input type="number" id="ef-anio" class="fc" placeholder="2026" value="2026" min="2024" max="2030">
+        </div>
+        <div class="fg" id="ef-fecha-wrap">
+          <label class="fl">Fecha resultante</label>
+          <input type="text" id="ef-fecha-result" class="fc" readonly style="background:#f5f5f5;color:var(--gris);">
+        </div>
+      </div>
+      <div class="mf">
+        <button class="btn-o" onclick="closeModal('mo-efemeride')">Cancelar</button>
+        <button class="btn-p" onclick="guardarEfemeride()"><i class="bi bi-lock"></i>Bloquear y generar imagen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Imagen efeméride -->
+  <div class="mo" id="mo-imagen-ef">
+    <div class="modal" style="max-width:460px;">
+      <div class="mh"><span class="mt">Imagen generada</span><button class="mc-btn"
+          onclick="closeModal('mo-imagen-ef')">×</button></div>
+      <div class="mb" style="text-align:center;">
+        <canvas id="ef-canvas" width="600" height="340"
+          style="width:100%;border-radius:8px;border:1px solid var(--borde);"></canvas>
+        <br><br>
+        <button class="btn-p" onclick="descargarImagen()"><i class="bi bi-download"></i>Descargar imagen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Crear/editar usuario -->
+  <div class="mo" id="mo-usuario">
+    <div class="modal" style="max-width:440px;">
+      <div class="mh"><span class="mt" id="mo-usuario-t">Nuevo usuario</span><button class="mc-btn" onclick="closeModal('mo-usuario')">×</button></div>
+      <div class="mb">
+        <input type="hidden" id="u2-id">
+        <div class="alerta alerta-err" id="u2-err"></div>
+        <div class="fg"><label class="fl">Nombre completo</label><input type="text" id="u2-nombre" class="fc" placeholder="Nombre Apellido"></div>
+        <div class="fg"><label class="fl">Correo electrónico</label><input type="email" id="u2-email" class="fc" placeholder="correo@consulado.es"></div>
+        <div class="fg">
+          <label class="fl">Rol</label>
+          <select id="u2-role" class="fc">
+            <option value="asistente">Gestor (asistente) — Acceso completo</option>
+            <option value="consul">Cónsul — Acceso limitado</option>
+            <option value="superadmin">Superadmin — Control total</option>
+          </select>
+        </div>
+        <div class="fg"><label class="fl">Contraseña <span id="u2-pass-hint" style="font-weight:400;color:var(--gris-claro);">(dejar vacío para no cambiar)</span></label><input type="password" id="u2-password" class="fc" placeholder="Mínimo 8 caracteres"></div>
+      </div>
+      <div class="mf">
+        <button class="btn-o" onclick="closeModal('mo-usuario')">Cancelar</button>
+        <button class="btn-p" onclick="saveUsuario()"><i class="bi bi-check-lg"></i>Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Ver ciudadano -->
+  <div class="mo" id="mo-ciudadano">
+    <div class="modal" style="max-width:540px;">
+      <div class="mh"><span class="mt" id="mo-ciu-t">Ciudadano</span><button class="mc-btn"
+          onclick="closeModal('mo-ciudadano')">×</button></div>
+      <div class="mb" id="mo-ciu-body"></div>
+    </div>
+  </div>
+
+  <script>
+    // ── NORMAS centralizadas ────────────────────────────────────────────────────
+    const NORMAS = {
+      DIAS_HABILES: [1, 2, 3, 4, 5], // lun=1 … vie=5; no sáb=6 ni dom=0
+      HORAS: ['08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30'],
+    }
+    function esFechaHabil(fechaStr) {
+      if (!fechaStr) return true
+      const d = new Date(fechaStr + 'T12:00:00')
+      return NORMAS.DIAS_HABILES.includes(d.getDay())
+    }
+
+    // ── API helper ─────────────────────────────────────────────────────────────
+    async function api(m, u, b) {
+      const o = { method: m, headers: { 'Content-Type': 'application/json' } }
+      if (b) o.body = JSON.stringify(b)
+      const r = await fetch(u, o)
+      if (r.status === 401) { window.location.href = '/'; return null }
+      return r.json()
+    }
+
+    // ── Badges ─────────────────────────────────────────────────────────────────
+    const STATUS_CLASS = { pendiente: 'b-pendiente', confirmada: 'b-confirmada', completada: 'b-completada', cancelada: 'b-cancelada', inasistencia: 'b-inasistencia', en_proceso: 'b-en_proceso', asistencia_tarde: 'b-asistencia_tarde' }
+    function badge(s) { return `<span class="badge ${STATUS_CLASS[s] || 'b-pendiente'}">${s.replace('_', ' ')}</span>` }
+    function fmt(d) { if (!d) return '—'; return new Date(d).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' }) }
+    function initials(n) { return (n || '?').split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2) }
+    function getCitaInfo(c) {
+      return {
+        nombre: c.citizen ? `${c.citizen.nombre} ${c.citizen.apellido}` : c.nombreExterno || 'Sin nombre',
+        email: c.citizen?.email || c.emailExterno || null
+      }
+    }
+
+    // ── Sidebar ────────────────────────────────────────────────────────────────
+    function openSidebar() { document.getElementById('sidebar').classList.add('open'); document.getElementById('overlay').classList.add('open') }
+    function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('open') }
+
+    // ── Tabs ───────────────────────────────────────────────────────────────────
+    const TITLES = { dashboard: 'Dashboard', citas: 'Gestión de Citas', buzon: 'Buzón / Bitácora', ciudadanos: 'Ciudadanos', banners: 'Avisos Web', fechas: 'Fechas Bloqueadas', crm: 'Registro Incompleto', usuarios: 'Gestión de Usuarios' }
+    function showTab(t) {
+      document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'))
+      document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'))
+      const tabEl = document.getElementById('tab-' + t)
+      if (!tabEl) return
+      tabEl.classList.add('active')
+      const navEl = document.querySelector(`.nav-link[onclick="showTab('${t}')"]`)
+      if (navEl) navEl.classList.add('active')
+      document.getElementById('page-title').textContent = TITLES[t] || t
+      closeSidebar()
+      if (t === 'dashboard') loadDashboard()
+      if (t === 'citas') loadCitas()
+      if (t === 'buzon') loadBuzon()
+      if (t === 'ciudadanos') loadCiudadanos(1)
+      if (t === 'banners') loadBanners()
+      if (t === 'fechas') loadFechas()
+      if (t === 'crm') loadCRM()
+      if (t === 'usuarios') loadUsuarios()
+    }
+
+    // ── Modales ────────────────────────────────────────────────────────────────
+    function openModal(id) { document.getElementById(id).classList.add('open') }
+    function closeModal(id) { document.getElementById(id).classList.remove('open') }
+    document.querySelectorAll('.mo').forEach(m => m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open') }))
+
+    // ── Dashboard ──────────────────────────────────────────────────────────────
+    async function loadDashboard() {
+      document.getElementById('fecha-hoy').textContent = new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
+      const s = await api('GET', '/api/admin/stats'); if (!s) return
+      document.getElementById('s-c').textContent = s.totalCiudadanos
+      document.getElementById('s-v').textContent = s.ciudadanosVerificados
+      document.getElementById('s-p').textContent = s.citasPendientes
+      document.getElementById('s-h').textContent = s.citasHoy
+      document.getElementById('s-s').textContent = s.citasSemana
+      document.getElementById('s-f').textContent = s.docPendientes ?? '—'
+      if (s.citasPendientes > 0) { const b = document.getElementById('nb-citas'); b.textContent = s.citasPendientes; b.style.display = 'inline' }
+      if ((s.docPendientes || 0) > 0) { const b = document.getElementById('nb-crm'); b.textContent = s.docPendientes; b.style.display = 'inline' }
+      if (s.logsSinLeer > 0) { const b = document.getElementById('nb-buzon'); b.textContent = s.logsSinLeer; b.style.display = 'inline' }
+      document.getElementById('s-sc').textContent = s.citasSinCuenta ?? '—'
+
+      const today = new Date().toISOString().split('T')[0]
+      const citas = await api('GET', `/api/admin/citas?fecha=${today}`)
+      const el = document.getElementById('citas-hoy')
+      if (!citas || !citas.length) { el.innerHTML = '<p style="color:var(--gris-claro);font-size:.88rem;padding:16px 0;">No hay citas programadas para hoy.</p>'; renderChartEstados(citas); return }
+      el.innerHTML = `<div class="tw"><table><thead><tr><th>Hora</th><th>Ciudadano</th><th>Trámite</th><th>Estado</th></tr></thead><tbody>${citas.map(c => { const i = getCitaInfo(c); return `<tr><td><strong>${c.hora}</strong></td><td>${i.nombre}</td><td>${c.tramite}</td><td>${badge(c.status)}</td></tr>` }).join('')
+        }</tbody></table></div>`
+      renderChartEstados(citas)
+    }
+
+    function renderChartEstados(citas) {
+      const el = document.getElementById('chart-estados'); if (!el) return
+      if (!citas || !citas.length) { el.innerHTML = '<span style="color:var(--gris-claro);font-size:.85rem;">Sin citas hoy.</span>'; return }
+      const counts = {}
+      citas.forEach(c => { counts[c.status] = (counts[c.status] || 0) + 1 })
+      const COLS = { pendiente: '#f59e0b', confirmada: '#22c55e', completada: '#3b82f6', cancelada: '#ef4444', inasistencia: '#8b5cf6', en_proceso: '#f97316' }
+      const LBLS = { pendiente: 'Pendiente', confirmada: 'Confirmada', completada: 'Completada', cancelada: 'Cancelada', inasistencia: 'Inasistencia', en_proceso: 'En proceso' }
+      el.innerHTML = Object.entries(counts).map(([k, v]) => `
+    <div style="display:flex;align-items:center;gap:6px;background:#fafaf7;border-radius:8px;padding:8px 12px;border:1px solid var(--borde);">
+      <div style="width:10px;height:10px;border-radius:50%;background:${COLS[k] || '#888'};flex-shrink:0;"></div>
+      <span style="font-size:.82rem;color:var(--gris);">${LBLS[k] || k}</span>
+      <strong style="font-size:1.1rem;color:${COLS[k] || '#888'};">${v}</strong>
+    </div>`).join('')
+    }
+
+    // ── Citas ──────────────────────────────────────────────────────────────────
+    let _citas = []
+    const STATUS_SORT = { pendiente: 0, confirmada: 1, en_proceso: 2, asistencia_tarde: 3, completada: 4, cancelada: 5, inasistencia: 5 }
+    function sortCitasUI(arr) {
+      return [...arr].sort((a, b) => {
+        const sa = STATUS_SORT[a.status] ?? 9, sb = STATUS_SORT[b.status] ?? 9
+        if (sa !== sb) return sa - sb
+        if (a.fecha && b.fecha && a.fecha !== b.fecha) return a.fecha.localeCompare(b.fecha)
+        return (a.hora || '').localeCompare(b.hora || '')
+      })
+    }
+    async function loadCitas() {
+      const desde = document.getElementById('f-desde').value
+      const hasta = document.getElementById('f-hasta').value
+      const status = document.getElementById('f-status').value
+      let url = '/api/admin/citas?'
+      if (desde) url += `fechaDesde=${desde}&`
+      if (hasta) url += `fechaHasta=${hasta}&`
+      if (status) url += `status=${status}&`
+      const raw = await api('GET', url) || []
+      _citas = sortCitasUI(raw)
+      const el = document.getElementById('citas-table')
+      if (!_citas.length) { el.innerHTML = '<p style="color:var(--gris-claro);font-size:.88rem;padding:20px 0;text-align:center;">No hay citas con estos filtros.</p>'; return }
+      el.innerHTML = `<table><thead><tr><th>Fecha cita</th><th>Hora</th><th>Ciudadano</th><th>Trámite</th><th>Estado</th><th>Solicitud</th><th>Acciones</th></tr></thead><tbody>${_citas.map(c => {
+        const i = getCitaInfo(c)
+        const activa = !['cancelada', 'completada', 'inasistencia'].includes(c.status)
+        const docPend = c.documentosPendientes ? `<span title="Documentos pendientes" style="color:#7e22ce;margin-left:4px;"><i class="bi bi-file-earmark-x"></i></span>` : ''
+        return `<tr>
+        <td>${c.fecha || '<span style="color:var(--gris-claro)">Sin fecha</span>'}</td><td><strong>${c.hora}</strong></td>
+        <td>${i.nombre}${i.email ? `<br><span style="font-size:.75rem;color:var(--gris-claro);">${i.email}</span>` : ''}</td>
+        <td style="font-size:.82rem;">${c.tramite}${docPend}</td>
+        <td>${badge(c.status)}</td>
+        <td style="font-size:.75rem;color:var(--gris-claro);white-space:nowrap;">${fmt(c.createdAt)}</td>
+        <td style="white-space:nowrap;">
+          ${c.status === 'pendiente' ? `<button class="btn-ic" onclick="avanzarStatus(${c.id},'confirmada')" title="Confirmar cita" style="color:#166534;border-color:#bbf7d0;"><i class="bi bi-check-lg"></i></button> ` : ''}
+          ${c.status === 'confirmada' ? `<button class="btn-ic" onclick="avanzarStatus(${c.id},'en_proceso')" title="Llegó — En proceso" style="color:#9a3412;border-color:#fed7aa;"><i class="bi bi-person-check"></i></button> ` : ''}
+          ${c.status === 'asistencia_tarde' ? `<button class="btn-ic" onclick="avanzarStatus(${c.id},'en_proceso')" title="Pasar a en proceso" style="color:#9a3412;"><i class="bi bi-person-check"></i></button> ` : ''}
+          ${c.status === 'en_proceso' ? `<button class="btn-ic" onclick="avanzarStatus(${c.id},'completada')" title="Completar" style="color:#1e40af;border-color:#bfdbfe;"><i class="bi bi-check2-all"></i></button> ` : ''}
+          ${c.status === 'inasistencia' ? `<button class="btn-ic" onclick="openReagendar(${c.id})" title="Rodar plaza" style="color:#7e22ce;border-color:#e9d5ff;"><i class="bi bi-calendar-event"></i> Rodar plaza</button> ` : ''}
+          ${activa ? `<button class="btn-ic" onclick="editCita(${c.id})" title="Editar"><i class="bi bi-pencil"></i></button> ` : ''}
+          ${activa ? `<button class="btn-ic" onclick="openReagendar(${c.id})" title="Reagendar" style="margin-left:2px;"><i class="bi bi-calendar-event"></i></button> ` : ''}
+          ${activa ? `<button class="btn-del" onclick="openCancelar(${c.id})" title="Cancelar" style="margin-left:2px;"><i class="bi bi-x-lg"></i></button>` : ''}
+        </td>
+      </tr>`
+      }).join('')
+        }</tbody></table>`
+    }
+
+    function clearFiltros() { document.getElementById('f-desde').value = ''; document.getElementById('f-hasta').value = ''; document.getElementById('f-status').value = ''; loadCitas() }
+
+    async function avanzarStatus(id, nuevoStatus) {
+      const r = await api('PUT', `/api/admin/citas/${id}`, { status: nuevoStatus })
+      if (r?.error) return alert(r.error)
+      loadCitas(); loadDashboard()
+    }
+
+    function _setCitaSections(mode) {
+      // mode: 'nueva' | 'editar-registrado' | 'editar-externo'
+      const block = document.getElementById('c-citizen-block')
+      const search = document.getElementById('c-search-section')
+      const ext = document.getElementById('c-external-section')
+      if (mode === 'nueva') {
+        block.style.display = 'none'; search.style.display = 'block'; ext.style.display = 'block'
+      } else if (mode === 'editar-registrado') {
+        block.style.display = 'block'; search.style.display = 'none'; ext.style.display = 'none'
+      } else { // editar-externo
+        block.style.display = 'none'; search.style.display = 'none'; ext.style.display = 'block'
+      }
+    }
+
+    function openModalCita() {
+      document.getElementById('c-id').value = ''
+      document.getElementById('c-cid').value = ''
+      document.getElementById('c-cid-confirmed').value = ''
+      document.getElementById('c-nombre').value = ''
+      document.getElementById('c-apellido').value = ''
+      document.getElementById('c-email').value = ''
+      document.getElementById('c-tel-pais').value = '+58'
+      document.getElementById('c-tel-num').value = ''
+      document.getElementById('c-fecha').value = ''
+      document.getElementById('c-hora').value = ''
+      document.getElementById('c-tramite').value = ''
+      document.getElementById('c-status').value = 'pendiente'
+      document.getElementById('c-notas').value = ''
+      document.getElementById('c-err').style.display = 'none'
+      document.getElementById('c-status-wrap').style.display = 'none'
+      document.getElementById('c-enproceso').checked = false
+      document.getElementById('c-cid-info').style.display = 'none'
+      document.getElementById('c-fecha-warn').style.display = 'none'
+      document.getElementById('c-doc-pendiente').checked = false
+      document.getElementById('c-doc-wrap').style.display = 'none'
+      renderDocLista([])
+      _setCitaSections('nueva')
+      document.getElementById('mo-cita-t').textContent = 'Nueva cita'
+      openModal('mo-cita')
+    }
+
+    function _splitTel(tel) {
+      const known = ['+598', '+597', '+595', '+593', '+592', '+591', '+509', '+507', '+506', '+505', '+504', '+503', '+502', '+380', '+420', '+385', '+358', '+351', '+212', '+966', '+972', '+971', '+58', '+57', '+56', '+55', '+54', '+53', '+52', '+51', '+49', '+48', '+47', '+46', '+45', '+44', '+43', '+41', '+40', '+39', '+36', '+34', '+33', '+32', '+31', '+30', '+27', '+91', '+90', '+86', '+82', '+81', '+64', '+61', '+7', '+1']
+      for (const code of known) { if (tel.startsWith(code)) return { pais: code, num: tel.slice(code.length).trim() } }
+      return { pais: '+58', num: tel }
+    }
+
+    function editCita(id) {
+      const c = _citas.find(x => x.id === id); if (!c) return
+      document.getElementById('c-id').value = c.id
+      document.getElementById('c-cid-confirmed').value = c.citizenId || ''
+      document.getElementById('c-err').style.display = 'none'
+      document.getElementById('c-fecha-warn').style.display = 'none'
+      document.getElementById('c-fecha').value = c.fecha || ''
+      document.getElementById('c-hora').value = c.hora || ''
+      document.getElementById('c-status').value = c.status
+      document.getElementById('c-notas').value = c.notas || ''
+      document.getElementById('c-enproceso').checked = false
+
+      // Trámite: asignar valor; si no existe opción exacta, crear opción temporal
+      const tramiteSel = document.getElementById('c-tramite')
+      tramiteSel.value = c.tramite
+      if (!tramiteSel.value && c.tramite) {
+        const opt = document.createElement('option')
+        opt.value = c.tramite; opt.text = c.tramite + ' ⚠'
+        tramiteSel.appendChild(opt); tramiteSel.value = c.tramite
+      }
+
+      // Secciones del ciudadano
+      if (c.citizenId && c.citizen) {
+        _setCitaSections('editar-registrado')
+        document.getElementById('c-citizen-name').textContent = `${c.citizen.nombre} ${c.citizen.apellido}`
+        document.getElementById('c-citizen-meta').textContent = [c.citizen.email, c.citizen.telefono].filter(Boolean).join(' · ')
+      } else {
+        _setCitaSections('editar-externo')
+        const partes = (c.nombreExterno || '').split(' ')
+        document.getElementById('c-nombre').value = partes[0] || ''
+        document.getElementById('c-apellido').value = partes.slice(1).join(' ') || ''
+        document.getElementById('c-email').value = c.emailExterno || ''
+        const tel = _splitTel(c.telefonoExterno || '')
+        document.getElementById('c-tel-pais').value = tel.pais
+        document.getElementById('c-tel-num').value = tel.num
+      }
+
+      // Documento pendiente
+      const docs = c.documentosPendientes ? JSON.parse(c.documentosPendientes) : []
+      document.getElementById('c-doc-pendiente').checked = docs.length > 0
+      document.getElementById('c-doc-wrap').style.display = docs.length > 0 ? 'block' : 'none'
+      renderDocLista(docs, c.tramite)
+      document.getElementById('mo-cita-t').textContent = 'Editar cita'
+      document.getElementById('c-status-wrap').style.display = 'block'
+      openModal('mo-cita')
+    }
+
+    async function saveCita() {
+      const id = document.getElementById('c-id').value
+      const fecha = document.getElementById('c-fecha').value
+      const hora = document.getElementById('c-hora').value
+      const tramite = document.getElementById('c-tramite').value
+      const errEl = document.getElementById('c-err')
+      if (!fecha || !hora || !tramite) { errEl.textContent = 'Fecha, hora y trámite son obligatorios.'; errEl.style.display = 'block'; return }
+      if (!esFechaHabil(fecha)) { errEl.textContent = 'Solo se pueden agendar citas de lunes a viernes.'; errEl.style.display = 'block'; return }
+      if (_fechasBloqueadas.includes(fecha)) { errEl.textContent = 'Esta fecha está bloqueada. No se pueden crear citas para ese día.'; errEl.style.display = 'block'; return }
+      errEl.style.display = 'none'
+      const nombreVal = document.getElementById('c-nombre').value.trim()
+      const apellidoVal = document.getElementById('c-apellido').value.trim()
+      const nombreCompleto = [nombreVal, apellidoVal].filter(Boolean).join(' ') || null
+      const telNum = document.getElementById('c-tel-num').value.trim()
+      const telPais = document.getElementById('c-tel-pais').value
+      const telefonoExterno = telNum ? (telPais + telNum) : null
+      const cidVal = document.getElementById('c-cid-confirmed').value
+      // Documentos pendientes
+      const docChecked = document.getElementById('c-doc-pendiente').checked
+      const docItems = docChecked ? getDocItems() : null
+      const docJson = docItems && docItems.length > 0 ? JSON.stringify(docItems) : null
+      const body = {
+        citizenId: cidVal ? parseInt(cidVal) : null,
+        nombreExterno: nombreCompleto,
+        emailExterno: document.getElementById('c-email').value || null,
+        telefonoExterno,
+        fecha, hora, tramite,
+        status: document.getElementById('c-enproceso').checked ? 'en_proceso' : (document.getElementById('c-id').value ? document.getElementById('c-status').value : 'pendiente'),
+        notas: document.getElementById('c-notas').value,
+        documentosPendientes: docJson,
+      }
+      const r = id ? await api('PUT', `/api/admin/citas/${id}`, body) : await api('POST', '/api/admin/citas', body)
+      if (r?.error) { errEl.textContent = r.error; errEl.style.display = 'block'; return }
+      closeModal('mo-cita')
+      loadCitas(); loadDashboard()
+    }
+
+    // ── Buscar ciudadano ────────────────────────────────────────────────────────
+    async function buscarCiudadano() {
+      const val = document.getElementById('c-cid').value.trim()
+      const infoEl = document.getElementById('c-cid-info')
+      if (!val) { infoEl.style.display = 'none'; return }
+      const r = await api('GET', `/api/admin/ciudadanos/buscar?q=${encodeURIComponent(val)}&modo=amplio`)
+      if (!r || r.error) {
+        infoEl.style.background = '#fee2e2'; infoEl.style.color = '#991b1b'
+        infoEl.textContent = 'No se encontró ciudadano con ese ID o correo.'
+        infoEl.style.display = 'block'; return
+      }
+      // Fill fields with found citizen data
+      document.getElementById('c-cid').value = r.id
+      document.getElementById('c-cid-confirmed').value = r.id
+      document.getElementById('c-nombre').value = r.nombre || ''
+      document.getElementById('c-apellido').value = r.apellido || ''
+      document.getElementById('c-email').value = r.email || ''
+      if (r.telefono) {
+        // try to extract country code
+        const tel = r.telefono
+        const known = ['+598', '+597', '+595', '+593', '+592', '+591', '+509', '+507', '+506', '+505', '+504', '+503', '+502', '+380', '+420', '+385', '+358', '+351', '+212', '+966', '+972', '+971', '+58', '+57', '+56', '+55', '+54', '+53', '+52', '+51', '+49', '+48', '+47', '+46', '+45', '+44', '+43', '+41', '+40', '+39', '+36', '+34', '+33', '+32', '+31', '+30', '+27', '+91', '+90', '+86', '+82', '+81', '+64', '+61', '+7', '+1']
+        let found = false
+        for (const code of known) { if (tel.startsWith(code)) { document.getElementById('c-tel-pais').value = code; document.getElementById('c-tel-num').value = tel.slice(code.length).trim(); found = true; break } }
+        if (!found) { document.getElementById('c-tel-num').value = tel }
+      }
+      infoEl.style.background = '#dcfce7'; infoEl.style.color = '#166534'
+      infoEl.textContent = `✓ Ciudadano encontrado: ${r.nombre} ${r.apellido} — ${r.email}`
+      infoEl.style.display = 'block'
+    }
+
+    // ── Cancelar ───────────────────────────────────────────────────────────────
+    function openCancelar(id) {
+      document.getElementById('can-id').value = id
+      document.getElementById('can-msg').value = ''
+      document.getElementById('can-nota').value = ''
+      openModal('mo-cancelar')
+    }
+    async function confirmarCancelacion() {
+      const id = document.getElementById('can-id').value
+      const r = await api('POST', `/api/admin/citas/${id}/cancelar`, {
+        mensajeCiudadano: document.getElementById('can-msg').value,
+        notaInterna: document.getElementById('can-nota').value,
+      })
+      if (r?.error) return alert(r.error)
+      closeModal('mo-cancelar')
+      loadCitas(); loadDashboard()
+    }
+
+    // ── Reagendar ──────────────────────────────────────────────────────────────
+    function openReagendar(id) {
+      const c = _citas.find(x => x.id === id); if (!c) return
+      document.getElementById('re-id').value = id
+      document.getElementById('re-fecha').value = ''
+      document.getElementById('re-hora').value = ''
+      document.getElementById('re-liberar').checked = true
+      document.getElementById('re-nota').value = ''
+      document.getElementById('re-motivo-wrap').style.display = 'none'
+      const i = getCitaInfo(c)
+      document.getElementById('re-info').innerHTML = `<strong>${i.nombre}</strong> · ${c.tramite}<br>Cita actual: <strong>${c.fecha} a las ${c.hora}</strong>`
+      openModal('mo-reagendar')
+    }
+    function validarFechaReagendar(fecha) {
+      const warn = document.getElementById('re-fecha-warn')
+      warn.style.display = esFechaHabil(fecha) ? 'none' : 'block'
+    }
+    function toggleMotivoNoLiberar() {
+      document.getElementById('re-motivo-wrap').style.display = document.getElementById('re-liberar').checked ? 'none' : 'block'
+    }
+    async function confirmarReagendar() {
+      const id = document.getElementById('re-id').value
+      const nuevaFecha = document.getElementById('re-fecha').value
+      const nuevaHora = document.getElementById('re-hora').value
+      if (!nuevaFecha || !nuevaHora) return alert('Selecciona fecha y hora nuevas.')
+      if (!esFechaHabil(nuevaFecha)) return alert('Solo se pueden agendar citas de lunes a viernes.')
+      const r = await api('POST', `/api/admin/citas/${id}/reagendar`, {
+        nuevaFecha, nuevaHora,
+        liberarPlaza: document.getElementById('re-liberar').checked,
+        motivoNoLiberar: document.getElementById('re-motivo').value,
+        notaInterna: document.getElementById('re-nota').value,
+      })
+      if (r?.error) return alert(r.error)
+      closeModal('mo-reagendar')
+      loadCitas(); loadDashboard()
+    }
+
+    let _ciudadanoActual = null
+
+    async function verCiudadano(id) {
+      const c = await api('GET', `/api/admin/ciudadanos/${id}`)
+      if (!c || c.error) return alert('No se pudo cargar el ciudadano.')
+      _ciudadanoActual = c
+      _renderCiudadanoModal(c, false)
+      openModal('mo-ciudadano')
+    }
+
+    function _renderCiudadanoModal(c, editMode) {
+      document.getElementById('mo-ciu-t').textContent = `${c.nombre} ${c.apellido}`
+      const TIPOS_DOC = ['CI Venezuela', 'DNI España', 'NIE', 'NIF', 'Pasaporte', 'CI Colombia', 'Otro']
+      if (!editMode) {
+        document.getElementById('mo-ciu-body').innerHTML = `
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;">
+            <div><div class="fl">Correo</div><div style="font-size:.88rem;">${c.email}</div></div>
+            <div><div class="fl">Teléfono</div><div style="font-size:.88rem;">${c.telefono || '—'}</div></div>
+            <div><div class="fl">Tipo documento</div><div style="font-size:.88rem;">${c.tipoDocumento || '—'}</div></div>
+            <div><div class="fl">Nro. documento</div><div style="font-size:.88rem;">${c.cedula || '—'}</div></div>
+            <div><div class="fl">Origen</div><div style="font-size:.88rem;">${c.esInvitado ? 'Web (invitado)' : 'Cuenta propia'}</div></div>
+            <div><div class="fl">Estado</div><div>${c.verified ? '<span class="badge b-confirmada">Verificado</span>' : '<span class="badge b-pendiente">Sin verificar</span>'}</div></div>
+          </div>
+          <div class="fl" style="margin-bottom:8px;">Historial de citas (${(c.citas || []).length})</div>
+          ${!c.citas?.length ? '<p style="color:var(--gris-claro);font-size:.85rem;">Sin citas registradas.</p>' : `
+          <div class="tw"><table><thead><tr><th>Fecha</th><th>Hora</th><th>Trámite</th><th>Estado</th></tr></thead><tbody>
+            ${c.citas.map(x => `<tr><td>${x.fecha || '—'}</td><td>${x.hora}</td><td style="font-size:.82rem;">${x.tramite}</td><td>${badge(x.status)}</td></tr>`).join('')}
+          </tbody></table></div>`}
+          <hr style="margin:16px 0;">
+          <div style="display:flex;gap:8px;">
+            <button class="btn-o" style="flex:1;" onclick="_renderCiudadanoModal(_ciudadanoActual, true)"><i class="bi bi-pencil"></i> Editar datos</button>
+            ${!c.verified ? `<button class="btn-p" style="flex:1;" onclick="_verificarCiudadano()"><i class="bi bi-patch-check"></i> Verificar</button>` : ''}
+          </div>`
+      } else {
+        document.getElementById('mo-ciu-body').innerHTML = `
+          <div class="fr">
+            <div class="fg"><label class="fl">Nombres *</label><input id="ciu-nombre" class="fc" value="${c.nombre}"></div>
+            <div class="fg"><label class="fl">Apellidos *</label><input id="ciu-apellido" class="fc" value="${c.apellido}"></div>
+          </div>
+          <div class="fg"><label class="fl">Correo *</label><input id="ciu-email" class="fc" type="email" value="${c.email}"></div>
+          <div class="fr">
+            <div class="fg"><label class="fl">Tipo documento</label>
+              <select id="ciu-tipodoc" class="fc">
+                <option value="">— Sin especificar —</option>
+                ${TIPOS_DOC.map(t => `<option value="${t}"${c.tipoDocumento === t ? ' selected' : ''}>${t}</option>`).join('')}
+              </select>
+            </div>
+            <div class="fg"><label class="fl">Nro. documento</label><input id="ciu-cedula" class="fc" value="${c.cedula || ''}"></div>
+          </div>
+          <div class="fg"><label class="fl">Teléfono</label><input id="ciu-telefono" class="fc" value="${c.telefono || ''}"></div>
+          <hr style="margin:16px 0;">
+          <div style="display:flex;gap:8px;">
+            <button class="btn-o" style="flex:1;" onclick="_renderCiudadanoModal(_ciudadanoActual, false)">Cancelar</button>
+            <button class="btn-p" style="flex:1;" onclick="_guardarCiudadano()"><i class="bi bi-check-lg"></i> Guardar</button>
+          </div>`
+      }
+    }
+
+    async function _verificarCiudadano() {
+      if (!_ciudadanoActual) return
+      const r = await api('PUT', `/api/admin/ciudadanos/${_ciudadanoActual.id}`, { verified: true })
+      if (r?.error) return alert(r.error)
+      _ciudadanoActual.verified = true
+      _renderCiudadanoModal(_ciudadanoActual, false)
+      loadCiudadanos()
+    }
+
+    async function _guardarCiudadano() {
+      if (!_ciudadanoActual) return
+      const body = {
+        nombre: document.getElementById('ciu-nombre').value.trim(),
+        apellido: document.getElementById('ciu-apellido').value.trim(),
+        email: document.getElementById('ciu-email').value.trim(),
+        telefono: document.getElementById('ciu-telefono').value.trim() || null,
+        cedula: document.getElementById('ciu-cedula').value.trim() || null,
+        tipoDocumento: document.getElementById('ciu-tipodoc').value || null,
+      }
+      if (!body.nombre || !body.apellido || !body.email) return alert('Nombre, apellido y correo son obligatorios.')
+      const r = await api('PUT', `/api/admin/ciudadanos/${_ciudadanoActual.id}`, body)
+      if (r?.error) return alert(r.error)
+      Object.assign(_ciudadanoActual, r)
+      _renderCiudadanoModal(_ciudadanoActual, false)
+      loadCiudadanos()
+    }
+
+    // ── Buzón ──────────────────────────────────────────────────────────────────
+    const LOG_COLORS = { creacion: 'dot-creacion', cancelacion: 'dot-cancelacion', reagendamiento: 'dot-reagendamiento', inasistencia: 'dot-inasistencia', confirmacion: 'dot-confirmacion' }
+    const LOG_LABELS = { creacion: 'Nueva cita', cancelacion: 'Cancelación', reagendamiento: 'Reagendamiento', inasistencia: 'Inasistencia', confirmacion: 'Confirmación' }
+
+    let _buzonLastRead = localStorage.getItem('buzonLastRead_' + (window._userId || '')) ? new Date(localStorage.getItem('buzonLastRead_' + (window._userId || ''))) : new Date(0)
+
+    async function loadBuzon() {
+      const tipo = document.getElementById('f-log-tipo').value
+      const logs = await api('GET', `/api/admin/bitacora?tipo=${tipo}&limit=80`)
+      const el = document.getElementById('buzon-list')
+      if (!logs || !logs.length) { el.innerHTML = '<p style="color:var(--gris-claro);font-size:.88rem;">Sin registros.</p>'; return }
+
+      // Update badge based on local lastRead
+      const sinLeer = logs.filter(l => new Date(l.createdAt) > _buzonLastRead).length
+      const nb = document.getElementById('nb-buzon')
+      if (sinLeer > 0) { nb.textContent = sinLeer; nb.style.display = 'inline' } else { nb.textContent = ''; nb.style.display = 'none' }
+
+      el.innerHTML = `<div style="display:flex;justify-content:flex-end;margin-bottom:10px;">
+    <button class="btn-o" onclick="marcarTodoLeido()" style="font-size:.78rem;padding:5px 10px;"><i class="bi bi-check2-all"></i> Marcar todo como leído</button>
+  </div>`+ logs.map(l => {
+        const col = LOG_COLORS[l.tipo] || 'dot-creacion'
+        const lbl = LOG_LABELS[l.tipo] || l.tipo
+        const fecha = new Date(l.createdAt).toLocaleString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+        const esNuevo = new Date(l.createdAt) > _buzonLastRead
+        let desc = l.notaInterna || ''
+        if (l.cita) desc = `${l.cita.tramite} · ${l.cita.fecha} ${l.cita.hora}`
+        if (l.mensajeCiudadano) desc += ` — Msg: "${l.mensajeCiudadano.slice(0, 55)}..."`
+        return `<div class="log-item" style="${esNuevo ? 'background:#fffbeb;border-radius:8px;padding:10px 8px;margin:-2px -8px;' : ''}">
+      <div class="log-dot ${col}"></div>
+      <div class="log-body">
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span class="log-tipo" style="color:${l.tipo === 'cancelacion' ? 'var(--rojo)' : l.tipo === 'inasistencia' ? '#7e22ce' : 'var(--gris)'}">${lbl}</span>
+          ${esNuevo ? '<span style="background:#f59e0b;color:#fff;font-size:.65rem;font-weight:700;padding:1px 6px;border-radius:10px;">NUEVO</span>' : ''}
+        </div>
+        <div class="log-desc">${desc || '—'}</div>
+        <div class="log-meta">${fecha} · ${l.realizadoPor}${l.ciudadanoEmail ? ` · ${l.ciudadanoEmail}` : ''}</div>
+      </div>
+    </div>`
+      }).join('')
+    }
+
+    function marcarTodoLeido() {
+      _buzonLastRead = new Date()
+      localStorage.setItem('buzonLastRead_' + (window._userId || ''), _buzonLastRead.toISOString())
+      api('POST', '/api/admin/bitacora/leer-todo', {}).catch(() => { })
+      const nb = document.getElementById('nb-buzon'); nb.textContent = ''; nb.style.display = 'none'
+      loadBuzon()
+    }
+
+    // ── Ciudadanos ─────────────────────────────────────────────────────────────
+    async function loadCiudadanos(page = 1) {
+      const q = document.getElementById('sq').value
+      const d = await api('GET', `/api/admin/ciudadanos?q=${encodeURIComponent(q)}&page=${page}`)
+      const el = document.getElementById('ciu-table')
+      if (!d || !d.ciudadanos.length) { el.innerHTML = '<p style="color:var(--gris-claro);font-size:.88rem;padding:16px 0;">No se encontraron ciudadanos.</p>'; return }
+      el.innerHTML = `<table><thead><tr><th>Nombre</th><th>Correo</th><th>Teléfono</th><th>Citas</th><th>Estado</th><th></th></tr></thead><tbody>${d.ciudadanos.map(c => `<tr>
+      <td><strong>${c.nombre} ${c.apellido}</strong><br><span style="font-size:.72rem;color:var(--gris-claro);">ID ${c.id}${c.cedula ? ' · ' + c.cedula : ''}</span></td>
+      <td>${c.email}</td>
+      <td>${c.telefono || '—'}</td>
+      <td><span class="badge b-pendiente">${c._count.citas}</span></td>
+      <td>${c.verified ? '<span class="badge b-confirmada">Verificado</span>' : '<span class="badge b-pendiente">Pendiente</span>'}</td>
+      <td><button class="btn-o" style="font-size:.78rem;padding:4px 10px;" onclick="verCiudadano(${c.id})"><i class="bi bi-eye"></i> Ver</button></td>
+    </tr>`).join('')
+        }</tbody></table>`
+      const pag = document.getElementById('ciu-pag'); pag.innerHTML = ''
+      if (d.pages > 1) {
+        for (let i = 1; i <= d.pages; i++)pag.innerHTML += `<button style="padding:5px 10px;border-radius:6px;font-size:.82rem;cursor:pointer;border:1.5px solid var(--borde);background:${i === page ? 'var(--rojo)' : '#fff'};color:${i === page ? '#fff' : 'var(--texto)'};" onclick="loadCiudadanos(${i})">${i}</button>`
+        pag.innerHTML += `<span style="font-size:.78rem;color:var(--gris-claro);margin-left:4px;">${d.total} registros</span>`
+      }
+    }
+
+    // ── Banners ────────────────────────────────────────────────────────────────
+    let _banners = []
+    async function loadBanners() {
+      _banners = await api('GET', '/api/admin/banners') || []
+      const el = document.getElementById('banners-list')
+      if (!_banners.length) { el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--gris-claro);"><i class="bi bi-megaphone" style="font-size:2rem;display:block;margin-bottom:8px;"></i>No hay avisos. Crea el primero.</div>'; return }
+      el.innerHTML = _banners.map(b => `
+    <div class="card" style="margin-bottom:10px;opacity:${b.activo ? 1 : .6};">
+      <div style="display:flex;gap:12px;align-items:flex-start;">
+        <div style="width:9px;height:9px;border-radius:50%;background:${b.activo ? '#22c55e' : '#d1d5db'};flex-shrink:0;margin-top:4px;"></div>
+        <div style="flex:1;">
+          ${b.categoria ? `<div style="font-size:.72rem;font-weight:600;color:var(--rojo);text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px;">${b.categoria}</div>` : ''}
+          <div style="font-weight:600;">${b.titulo}</div>
+          <div style="font-size:.85rem;color:var(--gris);margin-top:3px;">${b.cuerpo}</div>
+          <div style="font-size:.73rem;color:var(--gris-claro);margin-top:5px;">Orden: ${b.orden} · ${b.activo ? 'Visible' : 'Oculto'}</div>
+        </div>
+        <div style="display:flex;gap:5px;flex-shrink:0;">
+          <button class="btn-ic" onclick="editBanner(${b.id})"><i class="bi bi-pencil"></i></button>
+          <button class="btn-del" onclick="deleteBanner(${b.id})"><i class="bi bi-trash"></i></button>
+        </div>
+      </div>
+    </div>`).join('')
+    }
+    function openModalBanner() {
+      document.getElementById('b-id').value = ''
+      document.getElementById('b-categoria').value = ''
+      document.getElementById('b-titulo').value = ''
+      document.getElementById('b-cuerpo').value = ''
+      document.getElementById('b-orden').value = 0
+      document.getElementById('b-activo').checked = true
+      document.getElementById('mo-banner-t').textContent = 'Nuevo aviso'
+      openModal('mo-banner')
+    }
+    function editBanner(id) {
+      const b = _banners.find(x => x.id === id); if (!b) return
+      document.getElementById('b-id').value = b.id
+      document.getElementById('b-categoria').value = b.categoria || ''
+      document.getElementById('b-titulo').value = b.titulo
+      document.getElementById('b-cuerpo').value = b.cuerpo
+      document.getElementById('b-orden').value = b.orden
+      document.getElementById('b-activo').checked = b.activo
+      document.getElementById('mo-banner-t').textContent = 'Editar aviso'
+      openModal('mo-banner')
+    }
+    async function saveBanner() {
+      const id = document.getElementById('b-id').value
+      const body = { categoria: document.getElementById('b-categoria').value || null, titulo: document.getElementById('b-titulo').value, cuerpo: document.getElementById('b-cuerpo').value, orden: parseInt(document.getElementById('b-orden').value) || 0, activo: document.getElementById('b-activo').checked }
+      if (id) await api('PUT', `/api/admin/banners/${id}`, body); else await api('POST', '/api/admin/banners', body)
+      closeModal('mo-banner'); _banners = []; loadBanners()
+    }
+    async function deleteBanner(id) { if (!confirm('¿Eliminar este aviso?')) return; await api('DELETE', `/api/admin/banners/${id}`); _banners = []; loadBanners() }
+
+    // ── Fechas ─────────────────────────────────────────────────────────────────
+    async function loadFechas() {
+      const f = await api('GET', '/api/admin/fechas-bloqueadas')
+      const el = document.getElementById('fechas-list')
+      if (!f || !f.length) { el.innerHTML = '<p style="color:var(--gris-claro);font-size:.85rem;">No hay fechas bloqueadas.</p>'; return }
+      const hoy = new Date().toISOString().split('T')[0]
+      el.innerHTML = f.map(x => {
+        const pasada = x.fecha < hoy
+        const nombreEsc = (x.motivo || x.fecha).replace(/'/g, "\\'")
+        return `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--borde);">
+      <div>
+        <strong>${x.fecha}</strong>${pasada ? '<span style="font-size:.7rem;color:var(--gris-claro);margin-left:6px;">· pasada</span>' : ''}
+        ${x.motivo ? `<br><span style="font-size:.78rem;color:var(--gris-claro);">${x.motivo}</span>` : ''}
+      </div>
+      <div style="display:flex;gap:5px;align-items:center;">
+        <button class="btn-ic" onclick="generarImagenEfemeride('${nombreEsc}','${x.fecha}')" title="Generar imagen"><i class="bi bi-image"></i></button>
+        ${!pasada
+            ? `<button class="btn-del" onclick="desbloquear('${x.fecha}')" title="Desbloquear"><i class="bi bi-unlock"></i></button>`
+            : `<button class="btn-ic" disabled title="Fecha pasada — no se puede eliminar" style="opacity:.3;cursor:not-allowed;"><i class="bi bi-lock-fill"></i></button>`}
+      </div>
+    </div>`
+      }).join('')
+    }
+    async function bloquearFecha() {
+      const f = document.getElementById('nf').value; if (!f) return alert('Selecciona una fecha.')
+      const motivo = document.getElementById('nfm').value
+      const r = await api('POST', '/api/admin/fechas-bloqueadas', { fecha: f, motivo })
+      if (r?.error) return alert(r.error)
+      document.getElementById('nf').value = ''; document.getElementById('nfm').value = ''
+      await cargarFechasBloqueadas()
+      loadFechas()
+      generarImagenEfemeride(motivo || f, f)
+    }
+    async function desbloquear(f) {
+      const hoy = new Date().toISOString().split('T')[0]
+      if (f < hoy) return alert('No se pueden eliminar fechas pasadas.')
+      if (!confirm(`¿Desbloquear ${f}?`)) return
+      await api('DELETE', '/api/admin/fechas-bloqueadas', { fecha: f })
+      await cargarFechasBloqueadas()
+      loadFechas()
+    }
+
+    // ── CRM: Registro incompleto (citas con documentos pendientes) ─────────────
+    async function loadCRM() {
+      const citas = await api('GET', '/api/admin/registro-incompleto') || []
+      const el = document.getElementById('crm-table')
+      if (!citas.length) { el.innerHTML = '<p style="color:var(--gris-claro);font-size:.88rem;padding:16px 0;">No hay citas con documentos pendientes.</p>'; return }
+      el.innerHTML = citas.map(c => {
+        const i = getCitaInfo(c)
+        const docs = c.documentosPendientes ? JSON.parse(c.documentosPendientes) : []
+        return `<div class="crm-card" id="crm-${c.id}">
+          <div class="crm-card-header">
+            <strong>${i.nombre}</strong>
+            <span style="color:var(--gris);">·</span>
+            <span style="font-size:.82rem;">${c.tramite}</span>
+            <span style="margin-left:auto;font-size:.75rem;color:var(--gris-claro);">${c.fecha || '—'} ${c.hora || ''}</span>
+            ${badge(c.status)}
+          </div>
+          ${docs.length ? `<div style="margin-bottom:10px;">
+            <div style="font-size:.78rem;font-weight:600;color:var(--gris);margin-bottom:6px;">Documentos pendientes — tildar al recibirlos:</div>
+            ${docs.map((d, idx) => `<label class="crm-doc-item"><input type="checkbox" onchange="toggleDoc(${c.id}, ${idx}, this)"> ${d}</label>`).join('')}
+          </div>` : '<p style="font-size:.8rem;color:var(--gris-claro);margin-bottom:8px;">Sin documentos pendientes registrados.</p>'}
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn-o" style="font-size:.78rem;padding:4px 10px;" onclick="editCita(${c.id});showTab('citas')"><i class="bi bi-pencil"></i> Editar cita</button>
+            <button class="btn-p" style="font-size:.78rem;padding:4px 10px;" onclick="finalizarCRM(${c.id})"><i class="bi bi-check-circle"></i> Finalizar</button>
+          </div>
+        </div>`
+      }).join('')
+    }
+
+    async function toggleDoc(citaId, docIdx, cb) {
+      cb.disabled = true
+      const r = await api('PATCH', `/api/admin/registro-incompleto/${citaId}/doc`, { docIdx })
+      if (r?.error) { alert(r.error); cb.disabled = false; cb.checked = false; return }
+      // Reload CRM to reflect the updated doc list
+      await loadCRM()
+    }
+
+    async function finalizarCRM(citaId) {
+      if (!confirm('¿Marcar esta cita como finalizada? Pasará a estado "completada" y saldrá de esta lista.')) return
+      const r = await api('POST', `/api/admin/registro-incompleto/${citaId}/finalizar`, {})
+      if (r?.error) return alert(r.error)
+      loadCRM(); loadDashboard()
+    }
+
+    // ── Usuarios ────────────────────────────────────────────────────────────────
+    let _usuarios = []
+    async function loadUsuarios() {
+      _usuarios = await api('GET', '/api/admin/usuarios') || []
+      const el = document.getElementById('usuarios-table')
+      if (!_usuarios.length) { el.innerHTML = '<p style="color:var(--gris-claro);font-size:.88rem;">No hay usuarios.</p>'; return }
+      const ROLE_LABEL = { superadmin: 'Superadmin', consul: 'Cónsul', asistente: 'Gestor' }
+      const ROLE_CLASS = { superadmin: 'b-cancelada', consul: 'b-confirmada', asistente: 'b-completada' }
+      el.innerHTML = `<table><thead><tr><th>Nombre</th><th>Correo</th><th>Rol</th><th>Creado</th><th>Acciones</th></tr></thead><tbody>${_usuarios.map(u => `<tr>
+        <td><strong>${u.nombre}</strong></td>
+        <td>${u.email}</td>
+        <td><span class="badge ${ROLE_CLASS[u.role] || 'b-pendiente'}">${ROLE_LABEL[u.role] || u.role}</span></td>
+        <td style="font-size:.75rem;color:var(--gris-claro);">${fmt(u.createdAt)}</td>
+        <td><button class="btn-ic" onclick="editUsuario(${u.id})" title="Editar"><i class="bi bi-pencil"></i></button> <button class="btn-del" onclick="deleteUsuario(${u.id})" title="Eliminar"><i class="bi bi-trash"></i></button></td>
+      </tr>`).join('')}</tbody></table>`
+    }
+    function openModalUsuario() {
+      document.getElementById('u2-id').value = ''
+      document.getElementById('u2-nombre').value = ''
+      document.getElementById('u2-email').value = ''
+      document.getElementById('u2-role').value = 'asistente'
+      document.getElementById('u2-password').value = ''
+      document.getElementById('u2-err').style.display = 'none'
+      document.getElementById('u2-pass-hint').style.display = 'none'
+      document.getElementById('mo-usuario-t').textContent = 'Nuevo usuario'
+      openModal('mo-usuario')
+    }
+    function editUsuario(id) {
+      const u = _usuarios.find(x => x.id === id); if (!u) return
+      document.getElementById('u2-id').value = u.id
+      document.getElementById('u2-nombre').value = u.nombre
+      document.getElementById('u2-email').value = u.email
+      document.getElementById('u2-role').value = u.role
+      document.getElementById('u2-password').value = ''
+      document.getElementById('u2-err').style.display = 'none'
+      document.getElementById('u2-pass-hint').style.display = 'inline'
+      document.getElementById('mo-usuario-t').textContent = 'Editar usuario'
+      openModal('mo-usuario')
+    }
+    async function saveUsuario() {
+      const id = document.getElementById('u2-id').value
+      const errEl = document.getElementById('u2-err')
+      const body = { nombre: document.getElementById('u2-nombre').value, email: document.getElementById('u2-email').value, role: document.getElementById('u2-role').value, password: document.getElementById('u2-password').value || undefined }
+      if (!body.nombre || !body.email) { errEl.textContent = 'Nombre y correo son obligatorios.'; errEl.style.display = 'block'; return }
+      const r = id ? await api('PUT', `/api/admin/usuarios/${id}`, body) : await api('POST', '/api/admin/usuarios', body)
+      if (r?.error) { errEl.textContent = r.error; errEl.style.display = 'block'; return }
+      closeModal('mo-usuario'); loadUsuarios()
+    }
+    async function deleteUsuario(id) {
+      if (!confirm('¿Eliminar este usuario? Esta acción no se puede deshacer.')) return
+      const r = await api('DELETE', `/api/admin/usuarios/${id}`)
+      if (r?.error) return alert(r.error)
+      loadUsuarios()
+    }
+
+    // ── Requisitos por trámite ─────────────────────────────────────────────────
+    const REQUISITOS_TRAMITE = {
+      'Pasaporte — Primera expedición': ['Pasaporte anterior (si lo tiene)', 'DNI o NIE en vigor', 'Formulario de solicitud (EX-15)', 'Fotografía reciente fondo blanco', 'Justificante de pago de tasas'],
+      'Pasaporte — Renovación': ['Pasaporte anterior', 'DNI o NIE en vigor', 'Formulario de solicitud (EX-15)', 'Fotografía reciente fondo blanco', 'Justificante de pago de tasas'],
+      'Pasaporte — Menores de 12 años': ['Pasaporte anterior (si lo tiene)', 'Libro de familia o inscripción de nacimiento', 'DNI de ambos progenitores', 'Formulario EX-15 firmado por tutores', 'Fotografía reciente'],
+      'NIF — Número de Identificación Fiscal': ['Pasaporte en vigor', 'NIE o DNI (si lo tiene)', 'Certificado de residencia o empadronamiento'],
+      'NIE — Número de Identidad de Extranjero': ['Pasaporte en vigor', 'Formulario EX-15', 'Justificante de pago de tasas', 'Motivo de la solicitud (contrato, estudios, etc.)'],
+      'Inscripción de nacimiento': ['Certificado literal de nacimiento (apostillado)', 'DNI/Pasaporte de ambos progenitores', 'Libro de familia (si existe)', 'Formulario de inscripción'],
+      'Inscripción de matrimonio': ['Certificado literal de matrimonio (apostillado)', 'Pasaportes o DNI de ambos cónyuges', 'Libro de familia previo (si existe)', 'Certificado de estado civil previo'],
+      'Inscripción de defunción': ['Certificado literal de defunción (apostillado)', 'Pasaporte o DNI del fallecido', 'Libro de familia del fallecido'],
+      'Fe de vida': ['Pasaporte o DNI en vigor', 'Presencia física del interesado'],
+      'Alta consular': ['Pasaporte español en vigor', 'Prueba de residencia en Venezuela', 'Formulario de inscripción consular'],
+      'Baja consular': ['Pasaporte español en vigor', 'Solicitud escrita de baja'],
+      'Certificado de residencia': ['Pasaporte español en vigor', 'Prueba de domicilio actual (recibo de servicios, contrato)'],
+      'Certificado de No Residente': ['Pasaporte o DNI en vigor', 'Declaración jurada de no residencia'],
+      'Certificado de Antecedentes Penales': ['Pasaporte en vigor', 'Formulario de solicitud', 'Justificante de pago de tasas'],
+      'Poder notarial': ['Pasaporte o DNI del poderdante', 'Datos del apoderado (nombre completo, DNI)', 'Borrador del poder (si se tiene)'],
+      'Conservación de Nacionalidad': ['Pasaporte español en vigor', 'Prueba de nacimiento en España o de progenitor español', 'Formulario de conservación'],
+      'Recuperación de Nacionalidad': ['Pasaporte o DNI anterior (si existe)', 'Certificado de nacimiento', 'Formulario de recuperación de nacionalidad'],
+      'Ley de Memoria Democrática (LMD)': ['Árbol genealógico documentado', 'Certificados de nacimiento de ascendientes españoles', 'Documentación que acredite exilio o represión'],
+      'Cambio de censo electoral': ['Pasaporte o DNI en vigor', 'Solicitud de cambio de sección censal'],
+    }
+    let _docItems = []
+    function renderDocLista(items, tramite) {
+      _docItems = items ? [...items] : []
+      const el = document.getElementById('c-doc-lista'); if (!el) return
+      const tramiteActual = tramite || document.getElementById('c-tramite').value
+      const reqBase = REQUISITOS_TRAMITE[tramiteActual] || []
+      // Merge: requisitos del trámite + items personalizados no en la lista base
+      const custom = _docItems.filter(d => !reqBase.includes(d))
+      const lista = [...reqBase.map(r => ({ texto: r, enLista: true, marcado: _docItems.includes(r) })), ...custom.map(r => ({ texto: r, enLista: false, marcado: true }))]
+      el.innerHTML = lista.map((item, i) => `
+        <div style="display:flex;align-items:center;gap:7px;padding:4px 0;border-bottom:1px solid #f5f5f5;">
+          <input type="checkbox" id="doc-item-${i}" ${item.marcado ? 'checked' : ''} onchange="toggleDocItem('${item.texto.replace(/'/g, "\\'")}',this.checked)" style="accent-color:var(--rojo);width:15px;height:15px;cursor:pointer;">
+          <label for="doc-item-${i}" style="font-size:.85rem;cursor:pointer;flex:1;">${item.texto}</label>
+          ${!item.enLista ? `<button type="button" onclick="removeDocItem('${item.texto.replace(/'/g, "\\'")}',${i})" style="background:none;border:none;color:var(--gris-claro);cursor:pointer;font-size:.85rem;padding:0 4px;">×</button>` : ''}
+        </div>`).join('')
+    }
+    function toggleDocItem(texto, checked) {
+      if (checked && !_docItems.includes(texto)) _docItems.push(texto)
+      else if (!checked) _docItems = _docItems.filter(d => d !== texto)
+    }
+    function removeDocItem(texto) {
+      _docItems = _docItems.filter(d => d !== texto)
+      renderDocLista(_docItems)
+    }
+    function agregarDocOtro() {
+      const val = document.getElementById('c-doc-otro').value.trim()
+      if (!val) return
+      if (!_docItems.includes(val)) { _docItems.push(val); renderDocLista(_docItems) }
+      document.getElementById('c-doc-otro').value = ''
+    }
+    function getDocItems() { return _docItems.filter(Boolean) }
+    function toggleDocPendiente() {
+      const checked = document.getElementById('c-doc-pendiente').checked
+      document.getElementById('c-doc-wrap').style.display = checked ? 'block' : 'none'
+      if (checked) renderDocLista(_docItems, document.getElementById('c-tramite').value)
+    }
+    // Al cambiar trámite, re-render lista si doc pendiente activo
+    document.getElementById('c-tramite').addEventListener('change', function() {
+      if (document.getElementById('c-doc-pendiente').checked) renderDocLista(_docItems, this.value)
+    })
+
+    // ── Fechas bloqueadas (validación en cita modal) ────────────────────────────
+    let _fechasBloqueadas = []
+    async function cargarFechasBloqueadas() {
+      const f = await fetch('/api/fechas-bloqueadas').then(r => r.json()).catch(() => [])
+      _fechasBloqueadas = f.map(x => x.fecha)
+    }
+    function validarFechaCita(fecha) {
+      const warn = document.getElementById('c-fecha-warn')
+      if (!esFechaHabil(fecha)) {
+        warn.innerHTML = '<i class="bi bi-exclamation-triangle"></i> Solo se pueden agendar citas de lunes a viernes.'
+        warn.style.display = 'block'
+      } else if (_fechasBloqueadas.includes(fecha)) {
+        warn.innerHTML = '<i class="bi bi-exclamation-triangle"></i> Esta fecha está bloqueada.'
+        warn.style.display = 'block'
+      } else {
+        warn.style.display = 'none'
+      }
+    }
+
+    // ── Auth ───────────────────────────────────────────────────────────────────
+    async function logout() { await api('POST', '/api/auth/logout'); window.location.href = '/' }
+
+    // ── Init ───────────────────────────────────────────────────────────────────
+    async function init() {
+      const me = await api('GET', '/api/auth/me'); if (!me) return
+      const n = me.user.nombre || me.user.email
+      const role = me.user.role
+      window._userId = me.user.sub || me.user.email
+      window._userRole = role
+      const _storedRead = localStorage.getItem('buzonLastRead_' + window._userId)
+      if (_storedRead) {
+        _buzonLastRead = new Date(_storedRead)
+      } else {
+        _buzonLastRead = new Date()
+        localStorage.setItem('buzonLastRead_' + window._userId, _buzonLastRead.toISOString())
+        api('POST', '/api/admin/bitacora/leer-todo', {}).catch(() => { })
+      }
+      document.getElementById('u-name').textContent = n
+      document.getElementById('u-role').textContent = role === 'consul' ? 'Cónsul' : role === 'superadmin' ? 'Super Admin' : 'Gestor'
+      document.getElementById('u-av').textContent = initials(n)
+      document.getElementById('fecha-hoy').textContent = new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
+
+      // ── Permisos por rol ──
+      // consul: solo Dashboard, Ciudadanos, Avisos web, Fechas bloqueadas
+      if (role === 'consul') {
+        document.querySelectorAll('.nav-rol-citas, .nav-rol-buzon, .nav-rol-crm').forEach(el => el.style.display = 'none')
+      }
+      // superadmin: mostrar gestión de usuarios
+      if (role === 'superadmin') {
+        document.querySelectorAll('.nav-rol-superadmin').forEach(el => el.style.display = '')
+      }
+
+      cargarFechasBloqueadas()
+      loadDashboard()
+      setInterval(() => { if (document.getElementById('tab-dashboard').classList.contains('active')) loadDashboard() }, 60000)
+    }
+
+    // ── Efemérides ─────────────────────────────────────────────────────────────
+    function openModalEfemeride() {
+      document.getElementById('ef-select').value = ''
+      document.getElementById('ef-anio').value = new Date().getFullYear()
+      document.getElementById('ef-fecha-result').value = ''
+      openModal('mo-efemeride')
+    }
+
+    function onSelectEfemeride() {
+      const sel = document.getElementById('ef-select')
+      const opt = sel.options[sel.selectedIndex]
+      const mes = opt.dataset.mes
+      const dia = opt.dataset.dia
+      const anio = document.getElementById('ef-anio').value
+      if (mes && dia && anio) {
+        const fecha = `${anio}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`
+        document.getElementById('ef-fecha-result').value = fecha
+      } else {
+        document.getElementById('ef-fecha-result').value = ''
+      }
+    }
+
+    async function guardarEfemeride() {
+      const sel = document.getElementById('ef-select')
+      const opt = sel.options[sel.selectedIndex]
+      const nombre = opt.dataset.nombre
+      const fecha = document.getElementById('ef-fecha-result').value
+      if (!fecha || !nombre) return alert('Selecciona una efeméride y asegúrate de que la fecha sea válida.')
+      const r = await api('POST', '/api/admin/fechas-bloqueadas', { fecha, motivo: nombre })
+      if (r?.error) return alert(r.error)
+      generarImagenEfemeride(nombre, fecha)
+      closeModal('mo-efemeride')
+      loadFechas()
+    }
+
+    function generarImagenEfemeride(nombre, fecha) {
+      const canvas = document.getElementById('ef-canvas')
+      const ctx = canvas.getContext('2d')
+      const W = 600, H = 340
+
+      // Fondo
+      ctx.fillStyle = '#FAFAF7'
+      ctx.fillRect(0, 0, W, H)
+
+      // Franja roja superior
+      ctx.fillStyle = '#AA151B'
+      ctx.fillRect(0, 0, W, 80)
+
+      // Franja dorada bajo el rojo
+      ctx.fillStyle = '#F8CE46'
+      ctx.fillRect(0, 80, W, 12)
+
+      // Franja roja inferior
+      ctx.fillStyle = '#AA151B'
+      ctx.fillRect(0, 92, W, 12)
+
+      // Título
+      ctx.fillStyle = '#ffffff'
+      ctx.font = 'bold 15px DM Sans, Arial'
+      ctx.textAlign = 'center'
+      ctx.fillText('VICECONSULADO HONORARIO DE ESPAÑA', W / 2, 32)
+      ctx.font = '13px DM Sans, Arial'
+      ctx.fillStyle = 'rgba(255,255,255,0.85)'
+      ctx.fillText('Porlamar, Nueva Esparta — Venezuela', W / 2, 56)
+
+      // Aviso
+      ctx.fillStyle = '#AA151B'
+      ctx.font = 'bold 13px DM Sans, Arial'
+      ctx.fillText('⚠ AVISO DE CIERRE', W / 2, 136)
+
+      // Nombre de la efeméride
+      ctx.fillStyle = '#1a1a1a'
+      ctx.font = 'bold 26px Libre Baskerville, Georgia'
+      ctx.fillText(nombre, W / 2, 182)
+
+      // Fecha formateada
+      const [y, m, d] = fecha.split('-')
+      const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
+      const fechaStr = `${parseInt(d)} de ${meses[parseInt(m) - 1]} de ${y}`
+      ctx.font = '18px DM Sans, Arial'
+      ctx.fillStyle = '#555'
+      ctx.fillText(fechaStr, W / 2, 218)
+
+      // Línea divisora
+      ctx.strokeStyle = '#e8e5df'
+      ctx.lineWidth = 1
+      ctx.beginPath()
+      ctx.moveTo(80, 242)
+      ctx.lineTo(W - 80, 242)
+      ctx.stroke()
+
+      // Mensaje
+      ctx.font = '13px DM Sans, Arial'
+      ctx.fillStyle = '#888'
+      ctx.fillText('El Viceconsulado no prestará servicios este día.', W / 2, 268)
+      ctx.fillText('Para consultas: espaciosigo@gmail.com', W / 2, 290)
+
+      openModal('mo-imagen-ef')
+    }
+
+    function descargarImagen() {
+      const canvas = document.getElementById('ef-canvas')
+      const link = document.createElement('a')
+      link.download = `aviso-cierre-${Date.now()}.png`
+      link.href = canvas.toDataURL('image/png')
+      link.click()
+    }
+
+    document.getElementById('sq').addEventListener('keypress', e => { if (e.key === 'Enter') loadCiudadanos(1) })
+    init()
+  </script>
+</body>
+
+</html>

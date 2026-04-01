@@ -1,0 +1,38 @@
+{
+  "consulado": {
+    "nombre":        "Viceconsulado Honorario de España",
+    "nombreCompleto":"Viceconsulado Honorario de España en Nueva Esparta",
+    "ciudad":        "Porlamar, Estado Nueva Esparta, Venezuela",
+    "direccion":     "Av. José Asunción Rodríguez, Porlamar 6301, Nueva Esparta",
+    "viceconsul":    "Manuel Leiros",
+    "email":         "ch.porlamar@maec.es",
+    "emailSMTP":     "viceconsuladomargarita@gmail.com",
+    "whatsapp":      "584248429665",
+    "whatsappDisplay": "+58 424-8429665",
+    "telefonoEmergencia": "+58 424 209 0264",
+    "instagram":     "viceconsulado_espana_ne",
+    "instagramUrl":  "https://www.instagram.com/viceconsulado_espana_ne",
+    "circunscripcion": "Estado Nueva Esparta"
+  },
+  "horarios": {
+    "atencion": {
+      "dias":    "Lunes a Viernes",
+      "apertura": "08:00",
+      "cierre":   "12:00",
+      "texto":    "8:00 AM — 12:00 PM",
+      "nota":     "Atención presencial e información general"
+    },
+    "citas": {
+      "dias":    "Lunes a Viernes",
+      "apertura": "08:30",
+      "cierre":   "12:00",
+      "texto":    "8:30 AM — 12:00 PM",
+      "nota":     "Exclusivamente con cita previa para trámites consulares"
+    }
+  },
+  "links": {
+    "consultadoGeneral": "https://www.exteriores.gob.es/Consulados/caracas/es/Paginas/index.aspx",
+    "whatsappCita":      "https://wa.me/584248429665?text=Hola%2C%20deseo%20solicitar%20una%20cita",
+    "whatsappConsulta":  "https://wa.me/584248429665?text=Hola%2C%20tengo%20una%20consulta%20sobre%20tr%C3%A1mites%20consulares"
+  }
+}

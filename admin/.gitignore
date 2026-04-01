@@ -1,0 +1,14 @@
+node_modules/
+.env
+*.db
+*.db-journal
+.next/
+out/
+build/
+dist/
+coverage/
+.DS_Store
+*.tsbuildinfo
+next-env.d.ts
+.vercel
+app/generated/

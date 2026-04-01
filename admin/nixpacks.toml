@@ -1,0 +1,6 @@
+# Railway build config
+[phases.build]
+cmds = ["npm run build"]
+
+[start]
+cmd = "sh start.sh"
