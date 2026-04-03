@@ -392,6 +392,8 @@ router.delete('/fechas-bloqueadas', async (req, res) => {
 })
 
 // ── USUARIOS (solo superadmin) ─────────────────────────────────────────────
+const MODULOS_VALIDOS = ['dashboard', 'ciudadanos', 'banners', 'fechas_bloqueadas', 'citas', 'usuarios']
+
 function requireSuperadmin(req, res, next) {
   if (req.session?.role !== 'superadmin') return res.status(403).json({ error: 'No autorizado' })
   next()
@@ -399,44 +401,56 @@ function requireSuperadmin(req, res, next) {
 
 router.get('/usuarios', requireSuperadmin, async (req, res) => {
   try {
-    const usuarios = await prisma.adminUser.findMany({ select: { id: true, nombre: true, email: true, role: true, createdAt: true }, orderBy: { createdAt: 'asc' } })
+    const usuarios = await prisma.adminUser.findMany({
+      select: { id: true, nombre: true, email: true, role: true, cargo: true, permisos: true, createdAt: true },
+      orderBy: { createdAt: 'asc' },
+    })
     res.json(usuarios)
   } catch (err) { res.status(500).json({ error: 'Error del servidor' }) }
 })
 
 router.post('/usuarios', requireSuperadmin, async (req, res) => {
   try {
-    const { nombre, email, password, role } = req.body
+    const { nombre, email, password, role, cargo, permisos } = req.body
     if (!nombre || !email || !password) return res.status(400).json({ error: 'Nombre, correo y contraseña son obligatorios' })
     if (password.length < 8) return res.status(400).json({ error: 'Contraseña mínimo 8 caracteres' })
     const existing = await prisma.adminUser.findUnique({ where: { email } })
     if (existing) return res.status(409).json({ error: 'Ya existe un usuario con ese correo' })
     const hashed = await bcrypt.hash(password, 12)
-    const user = await prisma.adminUser.create({ data: { nombre, email, password: hashed, role: role || 'asistente' } })
-    res.json({ id: user.id, nombre: user.nombre, email: user.email, role: user.role, createdAt: user.createdAt })
+    const permisosLimpios = Array.isArray(permisos) ? permisos.filter(p => MODULOS_VALIDOS.includes(p)) : []
+    const user = await prisma.adminUser.create({
+      data: { nombre, email, password: hashed, role: role || 'asistente', cargo: cargo || null, permisos: permisosLimpios },
+    })
+    res.json({ id: user.id, nombre: user.nombre, email: user.email, role: user.role, cargo: user.cargo, permisos: user.permisos, createdAt: user.createdAt })
   } catch (err) { res.status(500).json({ error: 'Error del servidor' }) }
 })
 
 router.put('/usuarios/:id', requireSuperadmin, async (req, res) => {
   try {
-    const { nombre, email, role, password } = req.body
+    const { nombre, email, role, cargo, permisos, password } = req.body
+    const targetId = req.params.id
     const data = {}
     if (nombre) data.nombre = nombre
     if (email) data.email = email
-    if (role) data.role = role
+    if (cargo !== undefined) data.cargo = cargo || null
+    if (Array.isArray(permisos)) data.permisos = permisos.filter(p => MODULOS_VALIDOS.includes(p))
+    if (role) {
+      if (targetId === req.session.sub) return res.status(400).json({ error: 'No puedes cambiar el rol de tu propia cuenta' })
+      data.role = role
+    }
     if (password) {
       if (password.length < 8) return res.status(400).json({ error: 'Contraseña mínimo 8 caracteres' })
       data.password = await bcrypt.hash(password, 12)
     }
-    const user = await prisma.adminUser.update({ where: { id: parseInt(req.params.id) }, data })
-    res.json({ id: user.id, nombre: user.nombre, email: user.email, role: user.role })
+    const user = await prisma.adminUser.update({ where: { id: targetId }, data })
+    res.json({ id: user.id, nombre: user.nombre, email: user.email, role: user.role, cargo: user.cargo, permisos: user.permisos })
   } catch (err) { res.status(500).json({ error: 'Error del servidor' }) }
 })
 
 router.delete('/usuarios/:id', requireSuperadmin, async (req, res) => {
   try {
-    if (parseInt(req.params.id) === req.session.sub) return res.status(400).json({ error: 'No puedes eliminarte a ti mismo' })
-    await prisma.adminUser.delete({ where: { id: parseInt(req.params.id) } })
+    if (req.params.id === req.session.sub) return res.status(400).json({ error: 'No puedes eliminarte a ti mismo' })
+    await prisma.adminUser.delete({ where: { id: req.params.id } })
     res.json({ ok: true })
   } catch (err) { res.status(500).json({ error: 'Error del servidor' }) }
 })

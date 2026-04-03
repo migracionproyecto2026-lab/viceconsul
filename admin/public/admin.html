@@ -1070,9 +1070,8 @@
         <div class="card">
           <div class="card-title"><i class="bi bi-shield-lock"></i>Gestión de accesos</div>
           <p style="font-size:.82rem;color:var(--gris);margin-bottom:14px;">
-            <strong>Gestor (asistente)</strong> — acceso completo a todos los módulos.<br>
-            <strong>Cónsul</strong> — solo Dashboard, Ciudadanos, Avisos web y Fechas bloqueadas.<br>
-            <strong>Superadmin</strong> — acceso completo más gestión de usuarios.
+            Crea y administra los accesos al panel. Asigna un rol base y ajusta los módulos visibles con los permisos individuales.<br>
+            <strong>Gestor</strong> — acceso operativo. <strong>Cónsul</strong> — acceso de supervisión. <strong>Superadmin</strong> — control total más gestión de usuarios.
           </p>
           <div class="tw" id="usuarios-table"></div>
         </div>
@@ -1487,20 +1486,34 @@
 
   <!-- MODAL: Crear/editar usuario -->
   <div class="mo" id="mo-usuario">
-    <div class="modal" style="max-width:440px;">
+    <div class="modal" style="max-width:480px;">
       <div class="mh"><span class="mt" id="mo-usuario-t">Nuevo usuario</span><button class="mc-btn" onclick="closeModal('mo-usuario')">×</button></div>
       <div class="mb">
         <input type="hidden" id="u2-id">
         <div class="alerta alerta-err" id="u2-err"></div>
-        <div class="fg"><label class="fl">Nombre completo</label><input type="text" id="u2-nombre" class="fc" placeholder="Nombre Apellido"></div>
+        <div class="fr">
+          <div class="fg"><label class="fl">Nombre completo</label><input type="text" id="u2-nombre" class="fc" placeholder="Nombre Apellido"></div>
+          <div class="fg"><label class="fl">Cargo</label><input type="text" id="u2-cargo" class="fc" placeholder="ej. Asistente Consular"></div>
+        </div>
         <div class="fg"><label class="fl">Correo electrónico</label><input type="email" id="u2-email" class="fc" placeholder="correo@consulado.es"></div>
         <div class="fg">
           <label class="fl">Rol</label>
           <select id="u2-role" class="fc">
-            <option value="asistente">Gestor (asistente) — Acceso completo</option>
-            <option value="consul">Cónsul — Acceso limitado</option>
+            <option value="asistente">Gestor (asistente) — Acceso operativo</option>
+            <option value="consul">Cónsul — Acceso de supervisión</option>
             <option value="superadmin">Superadmin — Control total</option>
           </select>
+        </div>
+        <div class="fg">
+          <label class="fl" style="margin-bottom:8px;">Permisos de módulos</label>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 16px;">
+            <label style="display:flex;align-items:center;gap:7px;font-size:.85rem;cursor:pointer;"><input type="checkbox" class="u2-perm" value="dashboard" style="accent-color:var(--rojo);"> Dashboard</label>
+            <label style="display:flex;align-items:center;gap:7px;font-size:.85rem;cursor:pointer;"><input type="checkbox" class="u2-perm" value="citas" style="accent-color:var(--rojo);"> Citas</label>
+            <label style="display:flex;align-items:center;gap:7px;font-size:.85rem;cursor:pointer;"><input type="checkbox" class="u2-perm" value="ciudadanos" style="accent-color:var(--rojo);"> Ciudadanos</label>
+            <label style="display:flex;align-items:center;gap:7px;font-size:.85rem;cursor:pointer;"><input type="checkbox" class="u2-perm" value="banners" style="accent-color:var(--rojo);"> Avisos web</label>
+            <label style="display:flex;align-items:center;gap:7px;font-size:.85rem;cursor:pointer;"><input type="checkbox" class="u2-perm" value="fechas_bloqueadas" style="accent-color:var(--rojo);"> Fechas bloqueadas</label>
+            <label style="display:flex;align-items:center;gap:7px;font-size:.85rem;cursor:pointer;"><input type="checkbox" class="u2-perm" value="usuarios" style="accent-color:var(--rojo);"> Usuarios</label>
+          </div>
         </div>
         <div class="fg"><label class="fl">Contraseña <span id="u2-pass-hint" style="font-weight:400;color:var(--gris-claro);">(dejar vacío para no cambiar)</span></label><input type="password" id="u2-password" class="fc" placeholder="Mínimo 8 caracteres"></div>
       </div>
@@ -2190,52 +2203,82 @@
 
     // ── Usuarios ────────────────────────────────────────────────────────────────
     let _usuarios = []
+    const MODULOS = ['dashboard', 'ciudadanos', 'banners', 'fechas_bloqueadas', 'citas', 'usuarios']
+    const MODULO_LABEL = { dashboard: 'Dashboard', ciudadanos: 'Ciudadanos', banners: 'Avisos', fechas_bloqueadas: 'Fechas', citas: 'Citas', usuarios: 'Usuarios' }
+
     async function loadUsuarios() {
       _usuarios = await api('GET', '/api/admin/usuarios') || []
       const el = document.getElementById('usuarios-table')
       if (!_usuarios.length) { el.innerHTML = '<p style="color:var(--gris-claro);font-size:.88rem;">No hay usuarios.</p>'; return }
       const ROLE_LABEL = { superadmin: 'Superadmin', consul: 'Cónsul', asistente: 'Gestor' }
       const ROLE_CLASS = { superadmin: 'b-cancelada', consul: 'b-confirmada', asistente: 'b-completada' }
-      el.innerHTML = `<table><thead><tr><th>Nombre</th><th>Correo</th><th>Rol</th><th>Creado</th><th>Acciones</th></tr></thead><tbody>${_usuarios.map(u => `<tr>
-        <td><strong>${u.nombre}</strong></td>
-        <td>${u.email}</td>
-        <td><span class="badge ${ROLE_CLASS[u.role] || 'b-pendiente'}">${ROLE_LABEL[u.role] || u.role}</span></td>
-        <td style="font-size:.75rem;color:var(--gris-claro);">${fmt(u.createdAt)}</td>
-        <td><button class="btn-ic" onclick="editUsuario(${u.id})" title="Editar"><i class="bi bi-pencil"></i></button> <button class="btn-del" onclick="deleteUsuario(${u.id})" title="Eliminar"><i class="bi bi-trash"></i></button></td>
-      </tr>`).join('')}</tbody></table>`
+      el.innerHTML = `<table><thead><tr><th>Nombre</th><th>Correo</th><th>Cargo</th><th>Rol</th><th>Permisos</th><th>Acciones</th></tr></thead><tbody>${_usuarios.map(u => {
+        const chips = (u.permisos || []).map(p => `<span style="display:inline-block;background:#f0f0f0;border-radius:20px;padding:1px 8px;font-size:.7rem;margin:1px;">${MODULO_LABEL[p] || p}</span>`).join(' ') || '<span style="color:var(--gris-claro);font-size:.78rem;">—</span>'
+        return `<tr>
+          <td><strong>${u.nombre}</strong></td>
+          <td style="font-size:.82rem;">${u.email}</td>
+          <td style="font-size:.82rem;color:var(--gris);">${u.cargo || '—'}</td>
+          <td><span class="badge ${ROLE_CLASS[u.role] || 'b-pendiente'}">${ROLE_LABEL[u.role] || u.role}</span></td>
+          <td style="max-width:180px;">${chips}</td>
+          <td style="white-space:nowrap;"><button class="btn-ic" onclick="editUsuario('${u.id}')" title="Editar"><i class="bi bi-pencil"></i></button> <button class="btn-del" onclick="deleteUsuario('${u.id}')" title="Eliminar"><i class="bi bi-trash"></i></button></td>
+        </tr>`
+      }).join('')}</tbody></table>`
     }
+
+    function _setPermisos(lista) {
+      document.querySelectorAll('.u2-perm').forEach(cb => { cb.checked = (lista || []).includes(cb.value) })
+    }
+    function _getPermisos() {
+      return [...document.querySelectorAll('.u2-perm:checked')].map(cb => cb.value)
+    }
+
     function openModalUsuario() {
       document.getElementById('u2-id').value = ''
       document.getElementById('u2-nombre').value = ''
+      document.getElementById('u2-cargo').value = ''
       document.getElementById('u2-email').value = ''
       document.getElementById('u2-role').value = 'asistente'
       document.getElementById('u2-password').value = ''
       document.getElementById('u2-err').style.display = 'none'
       document.getElementById('u2-pass-hint').style.display = 'none'
       document.getElementById('mo-usuario-t').textContent = 'Nuevo usuario'
+      _setPermisos([])
       openModal('mo-usuario')
     }
+
     function editUsuario(id) {
       const u = _usuarios.find(x => x.id === id); if (!u) return
       document.getElementById('u2-id').value = u.id
       document.getElementById('u2-nombre').value = u.nombre
+      document.getElementById('u2-cargo').value = u.cargo || ''
       document.getElementById('u2-email').value = u.email
       document.getElementById('u2-role').value = u.role
       document.getElementById('u2-password').value = ''
       document.getElementById('u2-err').style.display = 'none'
       document.getElementById('u2-pass-hint').style.display = 'inline'
       document.getElementById('mo-usuario-t').textContent = 'Editar usuario'
+      _setPermisos(u.permisos || [])
       openModal('mo-usuario')
     }
+
     async function saveUsuario() {
       const id = document.getElementById('u2-id').value
       const errEl = document.getElementById('u2-err')
-      const body = { nombre: document.getElementById('u2-nombre').value, email: document.getElementById('u2-email').value, role: document.getElementById('u2-role').value, password: document.getElementById('u2-password').value || undefined }
+      const body = {
+        nombre: document.getElementById('u2-nombre').value,
+        cargo: document.getElementById('u2-cargo').value || null,
+        email: document.getElementById('u2-email').value,
+        role: document.getElementById('u2-role').value,
+        permisos: _getPermisos(),
+      }
+      const pass = document.getElementById('u2-password').value
+      if (pass) body.password = pass
       if (!body.nombre || !body.email) { errEl.textContent = 'Nombre y correo son obligatorios.'; errEl.style.display = 'block'; return }
       const r = id ? await api('PUT', `/api/admin/usuarios/${id}`, body) : await api('POST', '/api/admin/usuarios', body)
       if (r?.error) { errEl.textContent = r.error; errEl.style.display = 'block'; return }
       closeModal('mo-usuario'); loadUsuarios()
     }
+
     async function deleteUsuario(id) {
       if (!confirm('¿Eliminar este usuario? Esta acción no se puede deshacer.')) return
       const r = await api('DELETE', `/api/admin/usuarios/${id}`)
