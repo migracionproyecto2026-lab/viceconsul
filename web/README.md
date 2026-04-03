@@ -1,34 +1,16 @@
-# 🇪🇸 Viceconsulado Honorario de España — Nueva Esparta
+# Viceconsulado Honorario de España — Nueva Esparta
 
-Página web y sistema de citas para el Viceconsulado Honorario de España en Isla de Margarita, Venezuela.
+Página web oficial del Viceconsulado Honorario de España en Porlamar, Estado Nueva Esparta, Venezuela.
 
-## 🌐 Ver página
+**[https://migracionproyecto2026-lab.github.io/viceconsul/](https://migracionproyecto2026-lab.github.io/viceconsul/)**
 
-**[https://espaciosigo-ai.github.io/viceconsulado-porlamar/](https://espaciosigo-ai.github.io/viceconsulado-porlamar/)**
+---
 
-## 📁 Estructura
+**Jurisdicción:** Margarita, Coche y demás islas del archipiélago  
+**Horario de atención:** Lunes a Viernes, 8:00 AM – 12:00 PM  
+**Contacto:** ch.porlamar@maec.es  
+**WhatsApp:** +58 424-8429665
 
-```
-├── index.html                    → Página web (GitHub Pages)
-├── scripts/
-│   └── apps-script-citas.js      → Google Apps Script para citas
-├── docs/
-│   ├── GUIA-INSTALACION.md       → Paso a paso para desplegar
-│   ├── GUIA-WHATSAPP.md          → Configuración de WhatsApp Business
-│   ├── GUIA-CLIENTA.md           → Manual para la administradora
-│   └── ERRORES-COMUNES.md        → Solución de problemas
-└── README.md
-```
+---
 
-## ⚙️ Stack
-
-- **Frontend:** HTML/CSS/JS puro (sin frameworks, sin build)
-- **Hosting:** GitHub Pages (gratis)
-- **Backend:** Google Apps Script
-- **Base de datos:** Google Sheets
-- **Calendario:** Google Calendar
-- **Mensajería:** WhatsApp Business (app gratuita)
-
-## 🚀 Instalación
-
-Ver `docs/GUIA-INSTALACION.md`
+© Viceconsulado Honorario de España en Nueva Esparta

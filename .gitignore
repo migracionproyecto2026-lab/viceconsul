@@ -1,6 +1,11 @@
 # Notas locales con credenciales
 PENDIENTE*.txt
 
+# Archivos del sistema anterior (Google Apps Script) y scripts internos
+web/scripts/apps-script-citas.js
+web/docs/GUIA-INSTALACION.md
+web/docs/ERRORES-COMUNES.md
+
 # Scripts internos con credenciales / archivos de desarrollo IA
 admin/seed.js
 admin/seed-demo.js

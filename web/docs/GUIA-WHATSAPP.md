@@ -25,7 +25,7 @@ Ve a **Ajustes → Herramientas para la empresa → Perfil de empresa**
 | Dirección | [Dirección real] Porlamar, Isla de Margarita |
 | Horario | Lunes a Viernes 8:00 AM - 1:00 PM |
 | Correo | ch.porlamar@maec.es |
-| Sitio web | https://espaciosigo-ai.github.io/viceconsulado-porlamar/ |
+| Sitio web | https://migracionproyecto2026-lab.github.io/viceconsul/ |
 
 Foto de perfil: Escudo de España o logo institucional.
 
@@ -49,7 +49,7 @@ Para una atención más rápida, le recomendamos visitar nuestra página web don
 📅 Formulario para solicitar cita
 📍 Ubicación y horarios
 
-🌐 https://espaciosigo-ai.github.io/viceconsulado-porlamar/
+🌐 https://migracionproyecto2026-lab.github.io/viceconsul/
 
 Si prefiere, puede escribirnos aquí y le atenderemos en horario de Lunes a Viernes de 8:00 AM a 1:00 PM.
 
@@ -80,7 +80,7 @@ Gracias por comunicarse con el Viceconsulado Honorario de España en Nueva Espar
 Nuestro horario de atención es de Lunes a Viernes de 8:00 AM a 1:00 PM.
 
 Mientras tanto, puede consultar información sobre trámites y solicitar su cita en nuestra página web:
-🌐 https://espaciosigo-ai.github.io/viceconsulado-porlamar/
+🌐 https://migracionproyecto2026-lab.github.io/viceconsul/
 
 Le responderemos a la brevedad en nuestro próximo día hábil.
 ```
@@ -108,7 +108,7 @@ Atajo: pasaporte
 ⚠️ Mayores de 12 años necesitan toma de huellas (solo en Caracas o en operativos especiales).
 
 📋 Requisitos completos y formularios:
-https://espaciosigo-ai.github.io/viceconsulado-porlamar/
+https://migracionproyecto2026-lab.github.io/viceconsul/
 
 📅 ¿Desea agendar cita? Puede hacerlo en la web o responda "cita" por aquí.
 ```
@@ -128,7 +128,7 @@ Atajo: nacimiento
 ✅ Este trámite es GRATUITO
 
 📋 Requisitos completos y formularios:
-https://espaciosigo-ai.github.io/viceconsulado-porlamar/
+https://migracionproyecto2026-lab.github.io/viceconsul/
 
 📅 ¿Desea agendar cita? Puede hacerlo en la web o responda "cita".
 ```
@@ -146,7 +146,7 @@ Atajo: matrimonio
 
 ✅ Trámite GRATUITO. Deben acudir AMBOS contrayentes.
 
-📋 Más info: https://espaciosigo-ai.github.io/viceconsulado-porlamar/
+📋 Más info: https://migracionproyecto2026-lab.github.io/viceconsul/
 ```
 
 ### /cita
@@ -158,7 +158,7 @@ Atajo: cita
 Puede agendar su cita de dos formas:
 
 1️⃣ *Por la web (recomendado):*
-https://espaciosigo-ai.github.io/viceconsulado-porlamar/
+https://migracionproyecto2026-lab.github.io/viceconsul/
 → Vaya a "Agendar Cita"
 
 2️⃣ *Por aquí:* Envíenos los siguientes datos:

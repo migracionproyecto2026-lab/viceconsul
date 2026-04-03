@@ -7,7 +7,7 @@
 
 El panel administrativo es el centro de control del viceconsulado. Desde aquí se gestionan las citas, los ciudadanos registrados, los avisos de la web pública y las fechas en que no se atiende.
 
-**Acceso:** [URL del servidor — pendiente de despliegue]
+**Acceso:** https://viceconsul-production.up.railway.app/admin
 **Usuario principal:** Manuel Leiros (Cónsul)
 **Usuario secundario:** Elizabeth (Asistente consular)
 
