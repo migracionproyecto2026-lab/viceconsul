@@ -1670,14 +1670,14 @@
         <td>${badge(c.status)}</td>
         <td style="font-size:.75rem;color:var(--gris-claro);white-space:nowrap;">${fmt(c.createdAt)}</td>
         <td style="white-space:nowrap;">
-          ${c.status === 'pendiente' ? `<button class="btn-ic" onclick="avanzarStatus(${c.id},'confirmada')" title="Confirmar cita" style="color:#166534;border-color:#bbf7d0;"><i class="bi bi-check-lg"></i></button> ` : ''}
-          ${c.status === 'confirmada' ? `<button class="btn-ic" onclick="avanzarStatus(${c.id},'en_proceso')" title="Llegó — En proceso" style="color:#9a3412;border-color:#fed7aa;"><i class="bi bi-person-check"></i></button> ` : ''}
-          ${c.status === 'asistencia_tarde' ? `<button class="btn-ic" onclick="avanzarStatus(${c.id},'en_proceso')" title="Pasar a en proceso" style="color:#9a3412;"><i class="bi bi-person-check"></i></button> ` : ''}
-          ${c.status === 'en_proceso' ? `<button class="btn-ic" onclick="avanzarStatus(${c.id},'completada')" title="Completar" style="color:#1e40af;border-color:#bfdbfe;"><i class="bi bi-check2-all"></i></button> ` : ''}
-          ${c.status === 'inasistencia' ? `<button class="btn-ic" onclick="openReagendar(${c.id})" title="Rodar plaza" style="color:#7e22ce;border-color:#e9d5ff;"><i class="bi bi-calendar-event"></i> Rodar plaza</button> ` : ''}
-          ${activa ? `<button class="btn-ic" onclick="editCita(${c.id})" title="Editar"><i class="bi bi-pencil"></i></button> ` : ''}
-          ${activa ? `<button class="btn-ic" onclick="openReagendar(${c.id})" title="Reagendar" style="margin-left:2px;"><i class="bi bi-calendar-event"></i></button> ` : ''}
-          ${activa ? `<button class="btn-del" onclick="openCancelar(${c.id})" title="Cancelar" style="margin-left:2px;"><i class="bi bi-x-lg"></i></button>` : ''}
+          ${c.status === 'pendiente' ? `<button class="btn-ic" onclick="avanzarStatus('${c.id}','confirmada')" title="Confirmar cita" style="color:#166534;border-color:#bbf7d0;"><i class="bi bi-check-lg"></i></button> ` : ''}
+          ${c.status === 'confirmada' ? `<button class="btn-ic" onclick="avanzarStatus('${c.id}','en_proceso')" title="Llegó — En proceso" style="color:#9a3412;border-color:#fed7aa;"><i class="bi bi-person-check"></i></button> ` : ''}
+          ${c.status === 'asistencia_tarde' ? `<button class="btn-ic" onclick="avanzarStatus('${c.id}','en_proceso')" title="Pasar a en proceso" style="color:#9a3412;"><i class="bi bi-person-check"></i></button> ` : ''}
+          ${c.status === 'en_proceso' ? `<button class="btn-ic" onclick="avanzarStatus('${c.id}','completada')" title="Completar" style="color:#1e40af;border-color:#bfdbfe;"><i class="bi bi-check2-all"></i></button> ` : ''}
+          ${c.status === 'inasistencia' ? `<button class="btn-ic" onclick="openReagendar('${c.id}')" title="Rodar plaza" style="color:#7e22ce;border-color:#e9d5ff;"><i class="bi bi-calendar-event"></i> Rodar plaza</button> ` : ''}
+          ${activa ? `<button class="btn-ic" onclick="editCita('${c.id}')" title="Editar"><i class="bi bi-pencil"></i></button> ` : ''}
+          ${activa ? `<button class="btn-ic" onclick="openReagendar('${c.id}')" title="Reagendar" style="margin-left:2px;"><i class="bi bi-calendar-event"></i></button> ` : ''}
+          ${activa ? `<button class="btn-del" onclick="openCancelar('${c.id}')" title="Cancelar" style="margin-left:2px;"><i class="bi bi-x-lg"></i></button>` : ''}
         </td>
       </tr>`
       }).join('')
@@ -2054,7 +2054,7 @@
       <td>${c.telefono || '—'}</td>
       <td><span class="badge b-pendiente">${c._count.citas}</span></td>
       <td>${c.verified ? '<span class="badge b-confirmada">Verificado</span>' : '<span class="badge b-pendiente">Pendiente</span>'}</td>
-      <td><button class="btn-o" style="font-size:.78rem;padding:4px 10px;" onclick="verCiudadano(${c.id})"><i class="bi bi-eye"></i> Ver</button></td>
+      <td><button class="btn-o" style="font-size:.78rem;padding:4px 10px;" onclick="verCiudadano('${c.id}')"><i class="bi bi-eye"></i> Ver</button></td>
     </tr>`).join('')
         }</tbody></table>`
       const pag = document.getElementById('ciu-pag'); pag.innerHTML = ''
@@ -2081,8 +2081,8 @@
           <div style="font-size:.73rem;color:var(--gris-claro);margin-top:5px;">Orden: ${b.orden} · ${b.activo ? 'Visible' : 'Oculto'}</div>
         </div>
         <div style="display:flex;gap:5px;flex-shrink:0;">
-          <button class="btn-ic" onclick="editBanner(${b.id})"><i class="bi bi-pencil"></i></button>
-          <button class="btn-del" onclick="deleteBanner(${b.id})"><i class="bi bi-trash"></i></button>
+          <button class="btn-ic" onclick="editBanner('${b.id}')"><i class="bi bi-pencil"></i></button>
+          <button class="btn-del" onclick="deleteBanner('${b.id}')"><i class="bi bi-trash"></i></button>
         </div>
       </div>
     </div>`).join('')
@@ -2179,8 +2179,8 @@
             ${docs.map((d, idx) => `<label class="crm-doc-item"><input type="checkbox" onchange="toggleDoc(${c.id}, ${idx}, this)"> ${d}</label>`).join('')}
           </div>` : '<p style="font-size:.8rem;color:var(--gris-claro);margin-bottom:8px;">Sin documentos pendientes registrados.</p>'}
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <button class="btn-o" style="font-size:.78rem;padding:4px 10px;" onclick="editCita(${c.id});showTab('citas')"><i class="bi bi-pencil"></i> Editar cita</button>
-            <button class="btn-p" style="font-size:.78rem;padding:4px 10px;" onclick="finalizarCRM(${c.id})"><i class="bi bi-check-circle"></i> Finalizar</button>
+            <button class="btn-o" style="font-size:.78rem;padding:4px 10px;" onclick="editCita('${c.id}');showTab('citas')"><i class="bi bi-pencil"></i> Editar cita</button>
+            <button class="btn-p" style="font-size:.78rem;padding:4px 10px;" onclick="finalizarCRM('${c.id}')"><i class="bi bi-check-circle"></i> Finalizar</button>
           </div>
         </div>`
       }).join('')
