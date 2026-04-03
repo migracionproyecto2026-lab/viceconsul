@@ -869,6 +869,8 @@
       color: #92400e;
       margin-bottom: 12px;
     }
+    @keyframes _spin { to { transform: rotate(360deg) } }
+    .toast-msg { position:fixed;bottom:24px;right:24px;background:#1a1a1a;color:#fff;padding:10px 18px;border-radius:8px;font-size:.85rem;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,.25);transition:opacity .4s;pointer-events:none; }
   </style>
 </head>
 
@@ -1293,7 +1295,7 @@
       </div>
       <div class="mf">
         <button class="btn-o" onclick="closeModal('mo-cita')">Cancelar</button>
-        <button class="btn-p" onclick="saveCita()"><i class="bi bi-check-lg"></i>Guardar</button>
+        <button id="c-btn" class="btn-p" onclick="saveCita()"><i class="bi bi-check-lg"></i>Guardar</button>
       </div>
     </div>
   </div>
@@ -1305,6 +1307,7 @@
           onclick="closeModal('mo-cancelar')">×</button></div>
       <div class="mb">
         <input type="hidden" id="can-id">
+        <div class="alerta alerta-err" id="can-err" style="display:none;"></div>
         <div class="nota-box"><i class="bi bi-info-circle"></i> Se enviará un correo al ciudadano con el mensaje que
           escribas abajo.</div>
         <div class="fg">
@@ -1320,8 +1323,7 @@
       </div>
       <div class="mf">
         <button class="btn-o" onclick="closeModal('mo-cancelar')">Volver</button>
-        <button class="btn-del" onclick="confirmarCancelacion()"><i class="bi bi-x-circle"></i>Confirmar
-          cancelación</button>
+        <button id="can-btn" class="btn-del" onclick="confirmarCancelacion()"><i class="bi bi-x-circle"></i>Confirmar cancelación</button>
       </div>
     </div>
   </div>
@@ -1333,6 +1335,7 @@
           onclick="closeModal('mo-reagendar')">×</button></div>
       <div class="mb">
         <input type="hidden" id="re-id">
+        <div class="alerta alerta-err" id="re-err" style="display:none;"></div>
         <div id="re-info" class="nota-box" style="margin-bottom:14px;"></div>
         <div class="fr">
           <div class="fg"><label class="fl">Nueva fecha</label><input type="date" id="re-fecha" class="fc" required onchange="validarFechaReagendar(this.value)">
@@ -1375,8 +1378,7 @@
       </div>
       <div class="mf">
         <button class="btn-o" onclick="closeModal('mo-reagendar')">Cancelar</button>
-        <button class="btn-p" onclick="confirmarReagendar()"><i class="bi bi-calendar-event"></i>Confirmar
-          reagendamiento</button>
+        <button id="re-btn" class="btn-p" onclick="confirmarReagendar()"><i class="bi bi-calendar-event"></i>Confirmar reagendamiento</button>
       </div>
     </div>
   </div>
@@ -1388,6 +1390,7 @@
           onclick="closeModal('mo-banner')">×</button></div>
       <div class="mb">
         <input type="hidden" id="b-id">
+        <div class="alerta alerta-err" id="b-err" style="display:none;"></div>
         <div class="fg"><label class="fl">Categoría <span style="color:var(--gris-claro);font-weight:400;">(opcional — ej: Aviso Importante)</span></label><input type="text" id="b-categoria" class="fc" placeholder="Ej: Jornada Especial"></div>
         <div class="fg"><label class="fl">Título</label><input type="text" id="b-titulo" class="fc" required></div>
         <div class="fg"><label class="fl">Mensaje</label><textarea id="b-cuerpo" class="fc" rows="4"
@@ -1402,7 +1405,7 @@
       </div>
       <div class="mf">
         <button class="btn-o" onclick="closeModal('mo-banner')">Cancelar</button>
-        <button class="btn-p" onclick="saveBanner()"><i class="bi bi-check-lg"></i>Guardar</button>
+        <button id="b-btn" class="btn-p" onclick="saveBanner()"><i class="bi bi-check-lg"></i>Guardar</button>
       </div>
     </div>
   </div>
@@ -1519,7 +1522,7 @@
       </div>
       <div class="mf">
         <button class="btn-o" onclick="closeModal('mo-usuario')">Cancelar</button>
-        <button class="btn-p" onclick="saveUsuario()"><i class="bi bi-check-lg"></i>Guardar</button>
+        <button id="u2-btn" class="btn-p" onclick="saveUsuario()"><i class="bi bi-check-lg"></i>Guardar</button>
       </div>
     </div>
   </div>
@@ -1549,9 +1552,11 @@
     async function api(m, u, b) {
       const o = { method: m, headers: { 'Content-Type': 'application/json' } }
       if (b) o.body = JSON.stringify(b)
-      const r = await fetch(u, o)
-      if (r.status === 401) { window.location.href = '/'; return null }
-      return r.json()
+      try {
+        const r = await fetch(u, o)
+        if (r.status === 401) { window.location.href = '/'; return null }
+        try { return await r.json() } catch { return { error: 'Respuesta inesperada del servidor' } }
+      } catch { return { error: 'Error de conexión. Verifica que el servidor esté activo.' } }
     }
 
     // ── Badges ─────────────────────────────────────────────────────────────────
@@ -1564,6 +1569,26 @@
         nombre: c.citizen ? `${c.citizen.nombre} ${c.citizen.apellido}` : c.nombreExterno || 'Sin nombre',
         email: c.citizen?.email || c.emailExterno || null
       }
+    }
+
+    // ── Utilidades UI ─────────────────────────────────────────────────────────
+    function toast(msg, ok = true) {
+      const el = document.createElement('div')
+      el.className = 'toast-msg'
+      el.style.background = ok ? '#166534' : '#991b1b'
+      el.textContent = msg
+      document.body.appendChild(el)
+      setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 400) }, 2800)
+    }
+    const _SVG_SPIN = '<svg width="13" height="13" viewBox="0 0 24 24" style="animation:_spin 1s linear infinite;flex-shrink:0;vertical-align:middle;"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="3" fill="none" stroke-dasharray="40 60"/></svg>'
+    function _btnLoading(id, label = 'Guardando…') {
+      const btn = document.getElementById(id); if (!btn) return
+      btn._origHTML = btn.innerHTML; btn.disabled = true
+      btn.innerHTML = `<span style="display:inline-flex;align-items:center;gap:6px;">${_SVG_SPIN}${label}</span>`
+    }
+    function _btnReset(id) {
+      const btn = document.getElementById(id); if (!btn) return
+      btn.disabled = false; btn.innerHTML = btn._origHTML
     }
 
     // ── Sidebar ────────────────────────────────────────────────────────────────
@@ -1707,8 +1732,8 @@
 
     async function avanzarStatus(id, nuevoStatus) {
       const r = await api('PUT', `/api/admin/citas/${id}`, { status: nuevoStatus })
-      if (r?.error) return alert(r.error)
-      loadCitas(); loadDashboard()
+      if (r?.error) return toast(r.error, false)
+      toast('Estado actualizado'); loadCitas(); loadDashboard()
     }
 
     function _setCitaSections(mode) {
@@ -1822,24 +1847,27 @@
       const telPais = document.getElementById('c-tel-pais').value
       const telefonoExterno = telNum ? (telPais + telNum) : null
       const cidVal = document.getElementById('c-cid-confirmed').value
-      // Documentos pendientes
       const docChecked = document.getElementById('c-doc-pendiente').checked
       const docItems = docChecked ? getDocItems() : null
       const docJson = docItems && docItems.length > 0 ? JSON.stringify(docItems) : null
       const body = {
-        citizenId: cidVal ? parseInt(cidVal) : null,
+        citizenId: cidVal || null,
         nombreExterno: nombreCompleto,
         emailExterno: document.getElementById('c-email').value || null,
         telefonoExterno,
         fecha, hora, tramite,
-        status: document.getElementById('c-enproceso').checked ? 'en_proceso' : (document.getElementById('c-id').value ? document.getElementById('c-status').value : 'pendiente'),
+        status: document.getElementById('c-enproceso').checked ? 'en_proceso' : (id ? document.getElementById('c-status').value : 'pendiente'),
         notas: document.getElementById('c-notas').value,
         documentosPendientes: docJson,
       }
-      const r = id ? await api('PUT', `/api/admin/citas/${id}`, body) : await api('POST', '/api/admin/citas', body)
-      if (r?.error) { errEl.textContent = r.error; errEl.style.display = 'block'; return }
-      closeModal('mo-cita')
-      loadCitas(); loadDashboard()
+      _btnLoading('c-btn')
+      try {
+        const r = id ? await api('PUT', `/api/admin/citas/${id}`, body) : await api('POST', '/api/admin/citas', body)
+        if (r?.error) { errEl.textContent = r.error; errEl.style.display = 'block'; return }
+        closeModal('mo-cita')
+        toast(id ? 'Cita actualizada' : 'Cita creada')
+        loadCitas(); loadDashboard()
+      } finally { _btnReset('c-btn') }
     }
 
     // ── Buscar ciudadano ────────────────────────────────────────────────────────
@@ -1881,13 +1909,19 @@
     }
     async function confirmarCancelacion() {
       const id = document.getElementById('can-id').value
-      const r = await api('POST', `/api/admin/citas/${id}/cancelar`, {
-        mensajeCiudadano: document.getElementById('can-msg').value,
-        notaInterna: document.getElementById('can-nota').value,
-      })
-      if (r?.error) return alert(r.error)
-      closeModal('mo-cancelar')
-      loadCitas(); loadDashboard()
+      const errEl = document.getElementById('can-err')
+      errEl.style.display = 'none'
+      _btnLoading('can-btn', 'Cancelando…')
+      try {
+        const r = await api('POST', `/api/admin/citas/${id}/cancelar`, {
+          mensajeCiudadano: document.getElementById('can-msg').value,
+          notaInterna: document.getElementById('can-nota').value,
+        })
+        if (r?.error) { errEl.textContent = r.error; errEl.style.display = 'block'; return }
+        closeModal('mo-cancelar')
+        toast('Cita cancelada')
+        loadCitas(); loadDashboard()
+      } finally { _btnReset('can-btn') }
     }
 
     // ── Reagendar ──────────────────────────────────────────────────────────────
@@ -1914,17 +1948,23 @@
       const id = document.getElementById('re-id').value
       const nuevaFecha = document.getElementById('re-fecha').value
       const nuevaHora = document.getElementById('re-hora').value
-      if (!nuevaFecha || !nuevaHora) return alert('Selecciona fecha y hora nuevas.')
-      if (!esFechaHabil(nuevaFecha)) return alert('Solo se pueden agendar citas de lunes a viernes.')
-      const r = await api('POST', `/api/admin/citas/${id}/reagendar`, {
-        nuevaFecha, nuevaHora,
-        liberarPlaza: document.getElementById('re-liberar').checked,
-        motivoNoLiberar: document.getElementById('re-motivo').value,
-        notaInterna: document.getElementById('re-nota').value,
-      })
-      if (r?.error) return alert(r.error)
-      closeModal('mo-reagendar')
-      loadCitas(); loadDashboard()
+      const errEl = document.getElementById('re-err')
+      errEl.style.display = 'none'
+      if (!nuevaFecha || !nuevaHora) { errEl.textContent = 'Selecciona fecha y hora nuevas.'; errEl.style.display = 'block'; return }
+      if (!esFechaHabil(nuevaFecha)) { errEl.textContent = 'Solo se pueden agendar citas de lunes a viernes.'; errEl.style.display = 'block'; return }
+      _btnLoading('re-btn', 'Reagendando…')
+      try {
+        const r = await api('POST', `/api/admin/citas/${id}/reagendar`, {
+          nuevaFecha, nuevaHora,
+          liberarPlaza: document.getElementById('re-liberar').checked,
+          motivoNoLiberar: document.getElementById('re-motivo').value,
+          notaInterna: document.getElementById('re-nota').value,
+        })
+        if (r?.error) { errEl.textContent = r.error; errEl.style.display = 'block'; return }
+        closeModal('mo-reagendar')
+        toast('Cita reagendada')
+        loadCitas(); loadDashboard()
+      } finally { _btnReset('re-btn') }
     }
 
     let _ciudadanoActual = null
@@ -1977,6 +2017,7 @@
             <div class="fg"><label class="fl">Nro. documento</label><input id="ciu-cedula" class="fc" value="${c.cedula || ''}"></div>
           </div>
           <div class="fg"><label class="fl">Teléfono</label><input id="ciu-telefono" class="fc" value="${c.telefono || ''}"></div>
+          <div class="alerta alerta-err" id="ciu-err" style="display:none;"></div>
           <hr style="margin:16px 0;">
           <div style="display:flex;gap:8px;">
             <button class="btn-o" style="flex:1;" onclick="_renderCiudadanoModal(_ciudadanoActual, false)">Cancelar</button>
@@ -1988,14 +2029,15 @@
     async function _verificarCiudadano() {
       if (!_ciudadanoActual) return
       const r = await api('PUT', `/api/admin/ciudadanos/${_ciudadanoActual.id}`, { verified: true })
-      if (r?.error) return alert(r.error)
+      if (r?.error) return toast(r.error, false)
       _ciudadanoActual.verified = true
       _renderCiudadanoModal(_ciudadanoActual, false)
-      loadCiudadanos()
+      toast('Ciudadano verificado'); loadCiudadanos()
     }
 
     async function _guardarCiudadano() {
       if (!_ciudadanoActual) return
+      const errEl = document.getElementById('ciu-err')
       const body = {
         nombre: document.getElementById('ciu-nombre').value.trim(),
         apellido: document.getElementById('ciu-apellido').value.trim(),
@@ -2004,12 +2046,12 @@
         cedula: document.getElementById('ciu-cedula').value.trim() || null,
         tipoDocumento: document.getElementById('ciu-tipodoc').value || null,
       }
-      if (!body.nombre || !body.apellido || !body.email) return alert('Nombre, apellido y correo son obligatorios.')
+      if (!body.nombre || !body.apellido || !body.email) { if (errEl) { errEl.textContent = 'Nombre, apellido y correo son obligatorios.'; errEl.style.display = 'block' } return }
       const r = await api('PUT', `/api/admin/ciudadanos/${_ciudadanoActual.id}`, body)
-      if (r?.error) return alert(r.error)
+      if (r?.error) { if (errEl) { errEl.textContent = r.error; errEl.style.display = 'block' } return }
       Object.assign(_ciudadanoActual, r)
       _renderCiudadanoModal(_ciudadanoActual, false)
-      loadCiudadanos()
+      toast('Datos actualizados'); loadCiudadanos()
     }
 
     // ── Buzón ──────────────────────────────────────────────────────────────────
@@ -2129,11 +2171,27 @@
     }
     async function saveBanner() {
       const id = document.getElementById('b-id').value
-      const body = { categoria: document.getElementById('b-categoria').value || null, titulo: document.getElementById('b-titulo').value, cuerpo: document.getElementById('b-cuerpo').value, orden: parseInt(document.getElementById('b-orden').value) || 0, activo: document.getElementById('b-activo').checked }
-      if (id) await api('PUT', `/api/admin/banners/${id}`, body); else await api('POST', '/api/admin/banners', body)
-      closeModal('mo-banner'); _banners = []; loadBanners()
+      const errEl = document.getElementById('b-err')
+      errEl.style.display = 'none'
+      const titulo = document.getElementById('b-titulo').value.trim()
+      const cuerpo = document.getElementById('b-cuerpo').value.trim()
+      if (!titulo || !cuerpo) { errEl.textContent = 'Título y mensaje son obligatorios.'; errEl.style.display = 'block'; return }
+      const body = { categoria: document.getElementById('b-categoria').value || null, titulo, cuerpo, orden: parseInt(document.getElementById('b-orden').value) || 0, activo: document.getElementById('b-activo').checked }
+      _btnLoading('b-btn')
+      try {
+        const r = id ? await api('PUT', `/api/admin/banners/${id}`, body) : await api('POST', '/api/admin/banners', body)
+        if (r?.error) { errEl.textContent = r.error; errEl.style.display = 'block'; return }
+        closeModal('mo-banner')
+        toast(id ? 'Aviso actualizado' : 'Aviso creado')
+        _banners = []; loadBanners()
+      } finally { _btnReset('b-btn') }
     }
-    async function deleteBanner(id) { if (!confirm('¿Eliminar este aviso?')) return; await api('DELETE', `/api/admin/banners/${id}`); _banners = []; loadBanners() }
+    async function deleteBanner(id) {
+      if (!confirm('¿Eliminar este aviso?')) return
+      const r = await api('DELETE', `/api/admin/banners/${id}`)
+      if (r?.error) return toast(r.error, false)
+      toast('Aviso eliminado'); _banners = []; loadBanners()
+    }
 
     // ── Fechas ─────────────────────────────────────────────────────────────────
     async function loadFechas() {
@@ -2283,6 +2341,7 @@
     async function saveUsuario() {
       const id = document.getElementById('u2-id').value
       const errEl = document.getElementById('u2-err')
+      errEl.style.display = 'none'
       const body = {
         nombre: document.getElementById('u2-nombre').value,
         cargo: document.getElementById('u2-cargo').value || null,
@@ -2293,9 +2352,14 @@
       const pass = document.getElementById('u2-password').value
       if (pass) body.password = pass
       if (!body.nombre || !body.email) { errEl.textContent = 'Nombre y correo son obligatorios.'; errEl.style.display = 'block'; return }
-      const r = id ? await api('PUT', `/api/admin/usuarios/${id}`, body) : await api('POST', '/api/admin/usuarios', body)
-      if (r?.error) { errEl.textContent = r.error; errEl.style.display = 'block'; return }
-      closeModal('mo-usuario'); loadUsuarios()
+      _btnLoading('u2-btn')
+      try {
+        const r = id ? await api('PUT', `/api/admin/usuarios/${id}`, body) : await api('POST', '/api/admin/usuarios', body)
+        if (r?.error) { errEl.textContent = r.error; errEl.style.display = 'block'; return }
+        closeModal('mo-usuario')
+        toast(id ? 'Usuario actualizado' : 'Usuario creado')
+        loadUsuarios()
+      } finally { _btnReset('u2-btn') }
     }
 
     async function deleteUsuario(id) {
