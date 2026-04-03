@@ -23,12 +23,11 @@ const ALLOWED_ORIGINS = [
   'http://127.0.0.1:8080',
   'https://espaciosigo-ai.github.io',
   'https://migracionproyecto2026-lab.github.io',
-  // URL pública de Railway — añadir en variable de entorno RAILWAY_PUBLIC_URL
+  'https://viceconsul-production.up.railway.app',
   ...(process.env.RAILWAY_PUBLIC_URL ? [process.env.RAILWAY_PUBLIC_URL] : []),
 ]
 app.use(cors({
   origin: (origin, cb) => {
-    // Permitir peticiones sin origin (ej. curl, Postman, mismo servidor)
     if (!origin || ALLOWED_ORIGINS.includes(origin)) return cb(null, true)
     cb(new Error(`CORS bloqueado: ${origin}`))
   },
