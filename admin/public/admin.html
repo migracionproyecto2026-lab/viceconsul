@@ -1572,6 +1572,7 @@
 
     // ── Tabs ───────────────────────────────────────────────────────────────────
     const TITLES = { dashboard: 'Dashboard', citas: 'Gestión de Citas', buzon: 'Buzón / Bitácora', ciudadanos: 'Ciudadanos', banners: 'Avisos Web', fechas: 'Fechas Bloqueadas', crm: 'Registro Incompleto', usuarios: 'Gestión de Usuarios' }
+    let _activeTab = null
     function showTab(t) {
       document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'))
       document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'))
@@ -1581,6 +1582,7 @@
       const navEl = document.querySelector(`.nav-link[onclick="showTab('${t}')"]`)
       if (navEl) navEl.classList.add('active')
       document.getElementById('page-title').textContent = TITLES[t] || t
+      _activeTab = t
       closeSidebar()
       if (t === 'dashboard') loadDashboard()
       if (t === 'citas') loadCitas()
@@ -1590,7 +1592,24 @@
       if (t === 'fechas') loadFechas()
       if (t === 'crm') loadCRM()
       if (t === 'usuarios') loadUsuarios()
+      _resetPoll()
     }
+
+    // ── Polling automático (30 s) ──────────────────────────────────────────────
+    const POLL_INTERVAL = 30000
+    const POLL_TABS = { citas: loadCitas, dashboard: loadDashboard }
+    let _pollTimer = null
+    function _modalAbierto() { return !!document.querySelector('.mo.open') }
+    function _resetPoll() {
+      clearInterval(_pollTimer)
+      const fn = POLL_TABS[_activeTab]
+      if (!fn) return
+      _pollTimer = setInterval(() => {
+        if (_modalAbierto() || document.hidden) return
+        fn()
+      }, POLL_INTERVAL)
+    }
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) _resetPoll() })
 
     // ── Modales ────────────────────────────────────────────────────────────────
     function openModal(id) { document.getElementById(id).classList.add('open') }
