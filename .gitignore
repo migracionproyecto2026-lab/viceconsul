@@ -1,3 +1,6 @@
+# Notas locales con credenciales
+PENDIENTE*.txt
+
 # Dependencies
 node_modules/
 .pnp
