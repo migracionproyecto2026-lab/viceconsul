@@ -18,12 +18,20 @@ app.use((req, res, next) => {
 })
 
 // ── CORS ───────────────────────────────────────────────────────────────────
+const ALLOWED_ORIGINS = [
+  'http://localhost:8080',
+  'http://127.0.0.1:8080',
+  'https://espaciosigo-ai.github.io',
+  'https://migracionproyecto2026-lab.github.io',
+  // URL pública de Railway — añadir en variable de entorno RAILWAY_PUBLIC_URL
+  ...(process.env.RAILWAY_PUBLIC_URL ? [process.env.RAILWAY_PUBLIC_URL] : []),
+]
 app.use(cors({
-  origin: [
-    'http://localhost:8080',
-    'http://127.0.0.1:8080',
-    'https://espaciosigo-ai.github.io',
-  ],
+  origin: (origin, cb) => {
+    // Permitir peticiones sin origin (ej. curl, Postman, mismo servidor)
+    if (!origin || ALLOWED_ORIGINS.includes(origin)) return cb(null, true)
+    cb(new Error(`CORS bloqueado: ${origin}`))
+  },
   credentials: true,
 }))
 
@@ -36,23 +44,13 @@ app.use('/images', express.static(path.join(__dirname, 'public/images')))
 
 // ── Rate limiting ──────────────────────────────────────────────────────────
 const loginLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 10, message: { error: 'Demasiados intentos. Espera 15 minutos.' }, standardHeaders: true, legacyHeaders: false })
-const apiLimiter  = rateLimit({ windowMs: 60 * 1000, max: 120, standardHeaders: true, legacyHeaders: false })
+const apiLimiter = rateLimit({ windowMs: 60 * 1000, max: 120, standardHeaders: true, legacyHeaders: false })
 
 // ── Rutas API ──────────────────────────────────────────────────────────────
 app.use('/api/auth', loginLimiter, require('./routes/auth'))
 app.use('/api/admin', apiLimiter, require('./routes/admin'))
 
-// Ruta pública: configuración e identidad del consulado
-app.get('/api/config', (req, res) => {
-  try {
-    const config = require('./config/settings.json')
-    res.json(config)
-  } catch (err) {
-    res.status(500).json({ error: 'Configuración no disponible' })
-  }
-})
-
-// Ruta pública: configuración centralizada
+// Ruta pública: configuración centralizada (desde la base de datos)
 app.get('/api/config', async (req, res) => {
   try {
     const { prisma } = require('./lib/db')

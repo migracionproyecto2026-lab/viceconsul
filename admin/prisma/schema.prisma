@@ -3,74 +3,74 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
 model Citizen {
-  id           Int       @id @default(autoincrement())
-  nombre       String
-  apellido     String
-  email        String    @unique
-  password     String?
-  telefono     String?
-  cedula       String?
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  nombre        String
+  apellido      String
+  email         String    @unique
+  password      String?
+  telefono      String?
+  cedula        String?
   tipoDocumento String?
-  esInvitado   Boolean   @default(false)
-  verified     Boolean   @default(false)
-  verifyCode   String?
-  verifyExpiry DateTime?
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  citas        Appointment[]
+  esInvitado    Boolean   @default(false)
+  verified      Boolean   @default(false)
+  verifyCode    String?
+  verifyExpiry  DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  citas         Appointment[]
 }
 
 model AdminUser {
-  id             Int       @id @default(autoincrement())
-  nombre         String
-  email          String    @unique
-  password       String
-  role           String    @default("asistente")
-  buzonLastRead  DateTime?
-  createdAt      DateTime  @default(now())
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  nombre        String
+  email         String    @unique
+  password      String
+  role          String    @default("asistente")
+  buzonLastRead DateTime?
+  createdAt     DateTime  @default(now())
 }
 
 model Appointment {
-  id                  Int      @id @default(autoincrement())
-  citizenId           Int?
-  citizen             Citizen? @relation(fields: [citizenId], references: [id])
-  nombreExterno       String?
-  emailExterno        String?
-  telefonoExterno     String?
-  tipoDocumento       String?
-  cedulaExterno       String?
-  fecha               String?
-  hora                String
-  tramite             String
-  status              String   @default("pendiente")
-  notas               String?
+  id                   String       @id @default(auto()) @map("_id") @db.ObjectId
+  citizenId            String?      @db.ObjectId
+  citizen              Citizen?     @relation(fields: [citizenId], references: [id])
+  nombreExterno        String?
+  emailExterno         String?
+  telefonoExterno      String?
+  tipoDocumento        String?
+  cedulaExterno        String?
+  fecha                String?
+  hora                 String
+  tramite              String
+  status               String       @default("pendiente")
+  notas                String?
   documentosPendientes String?
-  recordatorioEnviado Boolean  @default(false)
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
-  logs                ActivityLog[]
+  recordatorioEnviado  Boolean      @default(false)
+  createdAt            DateTime     @default(now())
+  updatedAt            DateTime     @updatedAt
+  logs                 ActivityLog[]
 }
 
 model ActivityLog {
-  id               Int      @id @default(autoincrement())
+  id               String       @id @default(auto()) @map("_id") @db.ObjectId
   tipo             String
-  citaId           Int?
+  citaId           String?      @db.ObjectId
   cita             Appointment? @relation(fields: [citaId], references: [id])
   ciudadanoEmail   String?
   mensajeCiudadano String?
   notaInterna      String?
   datos            String?
   realizadoPor     String
-  createdAt        DateTime @default(now())
+  createdAt        DateTime     @default(now())
 }
 
 model Banner {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
   categoria String?
   titulo    String
   cuerpo    String
@@ -80,14 +80,13 @@ model Banner {
 }
 
 model BlockedDate {
-  id     Int     @id @default(autoincrement())
+  id     String  @id @default(auto()) @map("_id") @db.ObjectId
   fecha  String  @unique
   motivo String?
 }
 
 model Setting {
-  id    Int    @id @default(autoincrement())
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
   clave String @unique
   valor String
 }
-
