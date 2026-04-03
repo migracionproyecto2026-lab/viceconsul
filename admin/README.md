@@ -1,36 +1,108 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Viceconsulado Admin — Panel de Gestión
 
-## Getting Started
+Servidor Express que expone la API REST del Viceconsulado y sirve el panel de administración como HTML estático. Usa Prisma con MongoDB Atlas como base de datos.
 
-First, run the development server:
+---
+
+## Stack
+
+- **Runtime:** Node.js + Express
+- **Base de datos:** MongoDB Atlas vía Prisma ORM
+- **Autenticación:** JWT en cookie HttpOnly
+- **Correo:** Nodemailer + Gmail
+- **Deploy:** Railway (`start.sh` → `prisma db push` → `node server.js`)
+
+---
+
+## Variables de entorno
+
+| Variable | Requerida | Descripción |
+|---|---|---|
+| `DATABASE_URL` | Sí | `mongodb+srv://usuario:pass@cluster.mongodb.net/viceconsul` |
+| `JWT_SECRET` | Sí | Clave para firmar tokens de sesión |
+| `PORT` | No | Puerto (Railway lo asigna; local usa 3000) |
+| `GMAIL_USER` | No | Correo remitente de notificaciones |
+| `GMAIL_PASS` | No | Contraseña de aplicación de Gmail |
+
+---
+
+## Quick-start local
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+cp .env.example .env   # completar DATABASE_URL y JWT_SECRET
+npx prisma db push
+npm run dev            # → http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## Primer uso: crear superadmin
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+El endpoint `/api/setup` solo funciona si no existe ningún admin en la base de datos:
 
-## Learn More
+```bash
+curl -X POST http://localhost:3000/api/setup \
+  -H "Content-Type: application/json" \
+  -d '{"nombre":"Admin","email":"admin@consulado.com","password":"clave1234"}'
+```
 
-To learn more about Next.js, take a look at the following resources:
+Una vez creado el primer admin, el endpoint queda bloqueado automáticamente.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Rutas de la API
 
-## Deploy on Vercel
+### Públicas
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+| Método | Ruta | Descripción |
+|---|---|---|
+| `GET` | `/api/config` | Configuración pública del consulado (desde BD) |
+| `GET` | `/api/banners` | Banners activos para la web pública |
+| `GET` | `/api/fechas-bloqueadas` | Fechas sin disponibilidad |
+| `GET` | `/api/public/verificar` | Verificar si existe un ciudadano por cédula o email |
+| `POST` | `/api/public/cita` | Solicitar cita desde la web pública |
+| `POST` | `/api/setup` | Crear primer superadmin (solo si no hay ninguno) |
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Autenticación (`/api/auth`)
+
+| Método | Ruta | Descripción |
+|---|---|---|
+| `POST` | `/api/auth/register` | Registro de ciudadano |
+| `POST` | `/api/auth/login` | Login (admin o ciudadano) |
+| `POST` | `/api/auth/verify` | Verificar cuenta con código de email |
+| `POST` | `/api/auth/logout` | Cerrar sesión |
+| `GET` | `/api/auth/me` | Obtener sesión activa |
+
+### Admin (requiere sesión de admin) (`/api/admin`)
+
+| Método | Ruta | Descripción |
+|---|---|---|
+| `GET` | `/api/admin/stats` | Estadísticas del dashboard |
+| `GET` | `/api/admin/citas` | Listar citas (filtros: fecha, status, mes, rango) |
+| `POST` | `/api/admin/citas` | Crear cita desde el panel |
+| `PATCH` | `/api/admin/citas/:id` | Actualizar estado, notas, documentos pendientes |
+| `DELETE` | `/api/admin/citas/:id` | Eliminar cita |
+| `GET` | `/api/admin/ciudadanos` | Listar ciudadanos registrados |
+| `GET` | `/api/admin/buzon` | Buzón de actividad reciente |
+| `GET` | `/api/admin/banners` | Listar banners |
+| `POST` | `/api/admin/banners` | Crear banner |
+| `PATCH` | `/api/admin/banners/:id` | Editar banner |
+| `DELETE` | `/api/admin/banners/:id` | Eliminar banner |
+| `GET` | `/api/admin/fechas-bloqueadas` | Listar fechas bloqueadas |
+| `POST` | `/api/admin/fechas-bloqueadas` | Bloquear fecha |
+| `DELETE` | `/api/admin/fechas-bloqueadas/:id` | Desbloquear fecha |
+
+---
+
+## Modelos de base de datos
+
+| Modelo | Descripción |
+|---|---|
+| `Citizen` | Ciudadanos registrados (con o sin cuenta) |
+| `AdminUser` | Usuarios del panel (roles: `superadmin`, `asistente`) |
+| `Appointment` | Citas consulares |
+| `ActivityLog` | Buzón de actividad y auditoría |
+| `Banner` | Avisos de la web pública |
+| `BlockedDate` | Fechas sin disponibilidad |
+| `Setting` | Configuración general del consulado |
