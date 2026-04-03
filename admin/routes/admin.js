@@ -104,7 +104,7 @@ router.post('/citas', async (req, res) => {
 
     const cita = await prisma.appointment.create({
       data: {
-        citizenId: citizenId ? parseInt(citizenId) : null,
+        citizenId: citizenId || null,
         nombreExterno: nombreExterno || null,
         emailExterno: emailExterno || null,
         telefonoExterno: telefonoExterno || null,
@@ -126,7 +126,7 @@ router.post('/citas', async (req, res) => {
 router.put('/citas/:id', async (req, res) => {
   try {
     const { status, notas, fecha, hora, tramite, documentosPendientes } = req.body
-    const id = parseInt(req.params.id)
+    const id = req.params.id
     const prev = await prisma.appointment.findUnique({ where: { id }, include: { citizen: true } })
     if (!prev) return res.status(404).json({ error: 'Cita no encontrada' })
 
@@ -169,7 +169,7 @@ router.put('/citas/:id', async (req, res) => {
 router.post('/citas/:id/cancelar', async (req, res) => {
   try {
     const { mensajeCiudadano, notaInterna } = req.body
-    const id = parseInt(req.params.id)
+    const id = req.params.id
     const cita = await prisma.appointment.findUnique({
       where: { id },
       include: { citizen: { select: { nombre: true, apellido: true, email: true } } },
@@ -194,7 +194,7 @@ router.post('/citas/:id/cancelar', async (req, res) => {
 router.post('/citas/:id/reagendar', async (req, res) => {
   try {
     const { nuevaFecha, nuevaHora, liberarPlaza, motivoNoLiberar, notaInterna } = req.body
-    const id = parseInt(req.params.id)
+    const id = req.params.id
     const cita = await prisma.appointment.findUnique({
       where: { id },
       include: { citizen: { select: { nombre: true, apellido: true, email: true } } },
@@ -245,15 +245,15 @@ router.patch('/registro-incompleto/:id/doc', async (req, res) => {
   try {
     const { docIdx } = req.body
     if (docIdx === undefined) return res.status(400).json({ error: 'docIdx requerido' })
-    const cita = await prisma.appointment.findUnique({ where: { id: parseInt(req.params.id) } })
+    const cita = await prisma.appointment.findUnique({ where: { id: req.params.id } })
     if (!cita) return res.status(404).json({ error: 'Cita no encontrada' })
     const docs = JSON.parse(cita.documentosPendientes || '[]')
     const docNombre = docs[parseInt(docIdx)]
     if (!docNombre) return res.status(400).json({ error: 'Documento no encontrado en el índice indicado' })
     docs.splice(parseInt(docIdx), 1)
     const newDocs = docs.length ? JSON.stringify(docs) : null
-    await prisma.appointment.update({ where: { id: parseInt(req.params.id) }, data: { documentosPendientes: newDocs } })
-    await logActividad({ tipo: 'documento_recibido', citaId: parseInt(req.params.id), notaInterna: `Documento recibido: ${docNombre}`, realizadoPor: getNombreAdmin(req.session) })
+    await prisma.appointment.update({ where: { id: req.params.id }, data: { documentosPendientes: newDocs } })
+    await logActividad({ tipo: 'documento_recibido', citaId: req.params.id, notaInterna: `Documento recibido: ${docNombre}`, realizadoPor: getNombreAdmin(req.session) })
     res.json({ ok: true, docsRestantes: docs })
   } catch (err) { console.error(err); res.status(500).json({ error: 'Error del servidor' }) }
 })
@@ -261,7 +261,7 @@ router.patch('/registro-incompleto/:id/doc', async (req, res) => {
 // Finalizar una cita de registro incompleto (pasa a completada)
 router.post('/registro-incompleto/:id/finalizar', async (req, res) => {
   try {
-    const id = parseInt(req.params.id)
+    const id = req.params.id
     const cita = await prisma.appointment.findUnique({ where: { id } })
     if (!cita) return res.status(404).json({ error: 'Cita no encontrada' })
     await prisma.appointment.update({ where: { id }, data: { status: 'completada' } })
@@ -335,7 +335,7 @@ router.get('/ciudadanos/buscar', async (req, res) => {
 
 router.get('/ciudadanos/:id', async (req, res) => {
   try {
-    const citizen = await prisma.citizen.findUnique({ where: { id: parseInt(req.params.id) }, include: { citas: { orderBy: { createdAt: 'desc' }, take: 20 } } })
+    const citizen = await prisma.citizen.findUnique({ where: { id: req.params.id }, include: { citas: { orderBy: { createdAt: 'desc' }, take: 20 } } })
     if (!citizen) return res.status(404).json({ error: 'Ciudadano no encontrado' })
     const { password, verifyCode, verifyExpiry, ...safe } = citizen
     res.json(safe)
@@ -345,7 +345,7 @@ router.get('/ciudadanos/:id', async (req, res) => {
 router.put('/ciudadanos/:id', async (req, res) => {
   try {
     const { nombre, apellido, telefono, cedula, tipoDocumento, verified } = req.body
-    const citizen = await prisma.citizen.update({ where: { id: parseInt(req.params.id) }, data: { nombre, apellido, telefono, cedula, tipoDocumento, verified } })
+    const citizen = await prisma.citizen.update({ where: { id: req.params.id }, data: { nombre, apellido, telefono, cedula, tipoDocumento, verified } })
     const { password, verifyCode, verifyExpiry, ...safe } = citizen
     res.json(safe)
   } catch (err) { res.status(500).json({ error: 'Error del servidor' }) }
@@ -366,11 +366,11 @@ router.post('/banners', async (req, res) => {
 router.put('/banners/:id', async (req, res) => {
   try {
     const { categoria, titulo, cuerpo, activo, orden } = req.body
-    res.json(await prisma.banner.update({ where: { id: parseInt(req.params.id) }, data: { categoria: categoria ?? undefined, titulo, cuerpo, activo, orden } }))
+    res.json(await prisma.banner.update({ where: { id: req.params.id }, data: { categoria: categoria ?? undefined, titulo, cuerpo, activo, orden } }))
   } catch (err) { res.status(500).json({ error: 'Error del servidor' }) }
 })
 router.delete('/banners/:id', async (req, res) => {
-  try { await prisma.banner.delete({ where: { id: parseInt(req.params.id) } }); res.json({ ok: true }) }
+  try { await prisma.banner.delete({ where: { id: req.params.id } }); res.json({ ok: true }) }
   catch (err) { res.status(500).json({ error: 'Error del servidor' }) }
 })
 
