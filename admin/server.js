@@ -24,6 +24,9 @@ const ALLOWED_ORIGINS = [
   'https://espaciosigo-ai.github.io',
   'https://migracionproyecto2026-lab.github.io',
   'https://viceconsul-production.up.railway.app',
+  'https://admin.viceconsulado-nuevaesparta.com',
+  'https://www.viceconsulado-nuevaesparta.com',
+  'https://viceconsulado-nuevaesparta.com',
   ...(process.env.RAILWAY_PUBLIC_URL ? [process.env.RAILWAY_PUBLIC_URL] : []),
 ]
 app.use(cors({
