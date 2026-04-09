@@ -2339,7 +2339,9 @@ function toggleFaq(btn) {
       set('cfg-viceconsul-nombre',  cfg.viceconsul_nombre);
       set('cfg-email-oficial',      cfg.email_oficial);
       set('cfg-whatsapp-contacto',  cfg.whatsapp_contacto);
-      set('cfg-ubicacion-completa', cfg.ubicacion_ciudad + ', ' + cfg.ubicacion_estado);
+      if (cfg.ubicacion_ciudad && cfg.ubicacion_estado) {
+        set('cfg-ubicacion-completa', cfg.ubicacion_ciudad + ', ' + cfg.ubicacion_estado);
+      }
       
       var hint = document.getElementById('cfg-citas-hint');
       if (hint && cfg.horario_citas) {
