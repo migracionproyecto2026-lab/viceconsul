@@ -4,7 +4,9 @@ const FROM = `"Viceconsulado Honorario de España" <${process.env.GMAIL_USER}>`
 
 function getTransporter() {
   return nodemailer.createTransport({
-    service: 'gmail',
+    host: 'smtp.office365.com',
+    port: 587,
+    secure: false,
     auth: { user: process.env.GMAIL_USER, pass: process.env.GMAIL_PASS },
   })
 }
