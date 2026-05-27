@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const { prisma } = require('../lib/db')
 const { requireAdmin } = require('../lib/auth')
-const { sendAppointmentConfirmation, sendCancellationEmail, sendNoShowEmail } = require('../lib/email')
+const { sendAppointmentReceived, sendAppointmentConfirmation, sendCancellationEmail, sendNoShowEmail, renderEmail } = require('../lib/email')
 const bcrypt = require('bcryptjs')
 
 router.use(requireAdmin)
@@ -117,7 +117,7 @@ router.post('/citas', async (req, res) => {
     await logActividad({ tipo: 'creacion', citaId: cita.id, ciudadanoEmail: getCitaEmail(cita), notaInterna: `Cita creada: ${tramite}${fecha ? ' el ' + fecha + ' a las ' + hora : ''}`, realizadoPor: getNombreAdmin(req.session) })
 
     const email = getCitaEmail(cita)
-    if (email) await sendAppointmentConfirmation(email, getCitaNombre(cita), cita).catch(console.error)
+    if (email) sendAppointmentReceived(email, getCitaNombre(cita), cita).catch(console.error) // fire-and-forget
 
     res.json(cita)
   } catch (err) { console.error(err); res.status(500).json({ error: 'Error del servidor' }) }
@@ -156,14 +156,41 @@ router.put('/citas/:id', async (req, res) => {
       include: { citizen: { select: { nombre: true, apellido: true, email: true } } },
     })
 
-    if (status === 'inasistencia' && status !== prev.status) {
+    // Correos automáticos según cambio de status (fire-and-forget, no bloquean la respuesta)
+    if (status && status !== prev.status) {
       const email = getCitaEmail(cita)
-      if (email) await sendNoShowEmail(email, getCitaNombre(cita), cita).catch(console.error)
-      await logActividad({ tipo: 'inasistencia', citaId: cita.id, ciudadanoEmail: getCitaEmail(cita), notaInterna: 'Inasistencia registrada', realizadoPor: getNombreAdmin(req.session) })
+      if (email && status === 'confirmada') sendAppointmentConfirmation(email, getCitaNombre(cita), cita).catch(console.error)
+      if (status === 'inasistencia') {
+        if (email) sendNoShowEmail(email, getCitaNombre(cita), cita).catch(console.error)
+        await logActividad({ tipo: 'inasistencia', citaId: cita.id, ciudadanoEmail: email, notaInterna: 'Inasistencia registrada', realizadoPor: getNombreAdmin(req.session) })
+      }
     }
 
     res.json(cita)
   } catch (err) { console.error(err); res.status(500).json({ error: 'Error del servidor' }) }
+})
+
+// Ticket/correo de una cita renderizado como HTML (para ver dentro del panel)
+const STATUS_TO_TEMPLATE = {
+  pendiente: 'recibida', confirmada: 'confirmacion', completada: 'confirmacion',
+  en_proceso: 'confirmacion', asistencia_tarde: 'confirmacion',
+  cancelada: 'cancelacion', inasistencia: 'inasistencia',
+}
+router.get('/citas/:id/ticket', async (req, res) => {
+  try {
+    const cita = await prisma.appointment.findUnique({
+      where: { id: req.params.id },
+      include: { citizen: { select: { nombre: true, apellido: true, email: true } } },
+    })
+    if (!cita) return res.status(404).send('Cita no encontrada')
+    const tipo = STATUS_TO_TEMPLATE[cita.status] || 'recibida'
+    const data = {
+      nombre: getCitaNombre(cita),
+      cita: { tramite: cita.tramite, fecha: cita.fecha || 'Por confirmar', hora: cita.hora },
+    }
+    const { html } = renderEmail(tipo, data)
+    res.set('Content-Type', 'text/html; charset=utf-8').send(html)
+  } catch (err) { console.error(err); res.status(500).send('Error del servidor') }
 })
 
 router.post('/citas/:id/cancelar', async (req, res) => {
@@ -180,7 +207,7 @@ router.post('/citas/:id/cancelar', async (req, res) => {
     await prisma.appointment.update({ where: { id }, data: { status: 'cancelada' } })
 
     const email = getCitaEmail(cita)
-    if (email) await sendCancellationEmail(email, getCitaNombre(cita), cita, mensajeCiudadano).catch(console.error)
+    if (email) sendCancellationEmail(email, getCitaNombre(cita), cita, mensajeCiudadano).catch(console.error) // fire-and-forget
 
     const log = await logActividad({
       tipo: 'cancelacion', citaId: id, ciudadanoEmail: email, mensajeCiudadano, notaInterna,
@@ -222,7 +249,7 @@ router.post('/citas/:id/reagendar', async (req, res) => {
     })
 
     const email = getCitaEmail(citaActualizada)
-    if (email) await sendAppointmentConfirmation(email, getCitaNombre(citaActualizada), citaActualizada).catch(console.error)
+    if (email) sendAppointmentConfirmation(email, getCitaNombre(citaActualizada), citaActualizada).catch(console.error) // fire-and-forget
 
     res.json({ ok: true, cita: citaActualizada })
   } catch (err) { console.error(err); res.status(500).json({ error: 'Error del servidor' }) }

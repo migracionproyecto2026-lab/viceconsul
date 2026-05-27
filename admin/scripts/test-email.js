@@ -20,6 +20,7 @@ const nombre = 'Christian Bracconi'
 
 const pruebas = {
   verificacion: () => email.sendVerificationEmail(to, nombre, '482913'),
+  recibida: () => email.sendAppointmentReceived(to, nombre, cita),
   confirmacion: () => email.sendAppointmentConfirmation(to, nombre, cita),
   recordatorio: () => email.sendAppointmentReminder(to, nombre, cita),
   cancelacion: () => email.sendCancellationEmail(to, nombre, cita, 'La sede permanecerá cerrada por jornada de pasaportes. Le contactaremos para reagendar.'),

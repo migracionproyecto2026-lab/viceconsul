@@ -9,8 +9,13 @@ const ORO = '#C9A227'
 const TEXTO = '#2b2b2b'
 const GRIS = '#6b6b6b'
 const FONDO = '#f1efe9'
-const LOGO_URL = 'https://viceconsulado-nuevaesparta.com/images/LogoPng.png'
-const SITIO_URL = 'https://viceconsulado-nuevaesparta.com'
+const LOGO_URL = 'https://www.viceconsulado-nuevaesparta.com/images/LogoPng.png'
+const SITIO_URL = 'https://www.viceconsulado-nuevaesparta.com'
+const CONTACTO_EMAIL = 'ch.porlamar@maec.es'          // correo oficial de respuesta (recibe)
+const WHATSAPP_TEL = '584248429665'
+const WHATSAPP_URL = `https://wa.me/${WHATSAPP_TEL}?text=Hola%2C%20necesito%20informaci%C3%B3n%20sobre%20mi%20tr%C3%A1mite`
+const WHATSAPP_LOGO = 'https://admin.viceconsulado-nuevaesparta.com/images/whatsapp.png'
+const VERDE_WA = '#25D366'
 
 function getTransporter() {
   const port = Number(process.env.SMTP_PORT) || 465
@@ -74,6 +79,22 @@ function layout({ titulo, preheader = '', cuerpo }) {
             </td>
           </tr>
 
+          <!-- Botón WhatsApp -->
+          <tr>
+            <td align="center" style="background:#ffffff;padding:6px 24px 26px;" class="px">
+              <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 auto;">
+                <tr>
+                  <td align="center" bgcolor="${VERDE_WA}" style="border-radius:9px;">
+                    <a href="${WHATSAPP_URL}" target="_blank" style="display:inline-block;padding:13px 24px;font-family:Arial,Helvetica,sans-serif;font-size:14.5px;font-weight:bold;color:#ffffff;text-decoration:none;border-radius:9px;">
+                      <img src="${WHATSAPP_LOGO}" width="19" height="19" alt="" style="vertical-align:middle;margin-right:8px;">Información por WhatsApp
+                    </a>
+                  </td>
+                </tr>
+              </table>
+              <p style="margin:11px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:12px;color:${GRIS};">Para información específica de su trámite</p>
+            </td>
+          </tr>
+
           <!-- Pie -->
           <tr>
             <td style="background:#faf8f3;border-top:1px solid #ece7db;padding:20px 24px;" class="px" align="center">
@@ -81,7 +102,7 @@ function layout({ titulo, preheader = '', cuerpo }) {
               <p style="margin:0;font-family:Arial,Helvetica,sans-serif;color:${GRIS};font-size:12px;line-height:1.55;">
                 Porlamar, Nueva Esparta, Venezuela<br>
                 Correo automático — para consultas responda a
-                <a href="mailto:${process.env.GMAIL_USER}" style="color:${ROJO};text-decoration:none;">${process.env.GMAIL_USER}</a><br>
+                <a href="mailto:${CONTACTO_EMAIL}" style="color:${ROJO};text-decoration:none;">${CONTACTO_EMAIL}</a><br>
                 <a href="${SITIO_URL}" style="color:${GRIS};text-decoration:underline;">${SITIO_URL.replace('https://','')}</a>
               </p>
             </td>
@@ -112,11 +133,9 @@ function aviso(texto, color = ORO) {
   </table>`
 }
 
-// ── Verificación de cuenta ─────────────────────────────────────────────────
-async function sendVerificationEmail(to, nombre, code) {
-  if (!process.env.GMAIL_PASS) { console.log(`\n[DEV] Código verificación para ${to}: ${code}\n`); return true }
-  await getTransporter().sendMail({
-    from: FROM, to,
+// ── Plantillas: cada una devuelve { subject, html } ─────────────────────────
+const TEMPLATES = {
+  verificacion: ({ nombre, code }) => ({
     subject: 'Código de verificación — Viceconsulado Nueva Esparta',
     html: layout({
       titulo: 'Verificación de cuenta',
@@ -129,35 +148,38 @@ async function sendVerificationEmail(to, nombre, code) {
         </div>
         <p style="margin:0;color:${GRIS};font-size:13px;">Expira en 15 minutos. Si no solicitó esto, ignore este correo.</p>`,
     }),
-  })
-  return true
-}
+  }),
 
-// ── Confirmación de cita ───────────────────────────────────────────────────
-async function sendAppointmentConfirmation(to, nombre, cita) {
-  if (!process.env.GMAIL_PASS) { console.log(`\n[DEV] Confirmación de cita para ${to}`); return true }
-  await getTransporter().sendMail({
-    from: FROM, to,
+  // Al solicitar la cita (status pendiente)
+  recibida: ({ nombre, cita }) => ({
+    subject: `Solicitud de cita recibida: ${cita.tramite}`,
+    html: layout({
+      titulo: 'Hemos recibido su solicitud',
+      preheader: `${cita.tramite} · ${cita.fecha} · ${cita.hora} — pendiente de confirmación`,
+      cuerpo: `
+        <p style="margin:0 0 12px;">Estimado/a <strong>${nombre}</strong>,</p>
+        <p style="margin:0;">Hemos recibido su solicitud de cita. Queda <strong>pendiente de confirmación</strong> por nuestro personal; recibirá un nuevo correo cuando sea confirmada.</p>
+        ${infoTable([['Trámite', cita.tramite], ['Fecha', cita.fecha], ['Hora', cita.hora]])}
+        ${aviso('Si necesita modificar o cancelar su solicitud, contáctenos por los medios indicados al pie.')}`,
+    }),
+  }),
+
+  // Cuando el personal confirma la cita
+  confirmacion: ({ nombre, cita }) => ({
     subject: `Cita confirmada: ${cita.tramite} — ${cita.fecha}`,
     html: layout({
       titulo: 'Su cita ha sido confirmada',
       preheader: `${cita.tramite} · ${cita.fecha} · ${cita.hora}`,
       cuerpo: `
         <p style="margin:0 0 12px;">Estimado/a <strong>${nombre}</strong>,</p>
-        <p style="margin:0;">Su cita en el Viceconsulado Honorario de España ha sido registrada:</p>
+        <p style="margin:0;">Su cita en el Viceconsulado Honorario de España ha sido <strong>confirmada</strong>:</p>
         ${infoTable([['Trámite', cita.tramite], ['Fecha', cita.fecha], ['Hora', cita.hora]])}
         ${aviso('Por favor llegue <strong>10 minutos antes</strong> con todos sus documentos.')}
         <p style="margin:0;color:${GRIS};font-size:13px;">Dirección: Porlamar, Nueva Esparta, Venezuela.</p>`,
     }),
-  })
-  return true
-}
+  }),
 
-// ── Recordatorio 1 hora antes ──────────────────────────────────────────────
-async function sendAppointmentReminder(to, nombre, cita) {
-  if (!process.env.GMAIL_PASS) { console.log(`\n[DEV] Recordatorio para ${to} — cita en ~1h`); return true }
-  await getTransporter().sendMail({
-    from: FROM, to,
+  recordatorio: ({ nombre, cita }) => ({
     subject: `Recordatorio: su cita es hoy a las ${cita.hora}`,
     html: layout({
       titulo: 'Recordatorio de cita',
@@ -168,15 +190,9 @@ async function sendAppointmentReminder(to, nombre, cita) {
         ${infoTable([['Trámite', cita.tramite], ['Hora', `<span style="font-size:16px;font-weight:bold;color:${ROJO};">${cita.hora}</span>`]])}
         ${aviso('Recuerde traer todos los documentos requeridos para su trámite.')}`,
     }),
-  })
-  return true
-}
+  }),
 
-// ── Cancelación de cita ────────────────────────────────────────────────────
-async function sendCancellationEmail(to, nombre, cita, mensajeCiudadano) {
-  if (!process.env.GMAIL_PASS) { console.log(`\n[DEV] Cancelación para ${to}: ${mensajeCiudadano}`); return true }
-  await getTransporter().sendMail({
-    from: FROM, to,
+  cancelacion: ({ nombre, cita, mensajeCiudadano }) => ({
     subject: `Cancelación de cita: ${cita.tramite} — ${cita.fecha}`,
     html: layout({
       titulo: 'Cancelación de su cita',
@@ -188,15 +204,9 @@ async function sendCancellationEmail(to, nombre, cita, mensajeCiudadano) {
         ${mensajeCiudadano ? aviso(mensajeCiudadano, ROJO) : ''}
         <p style="margin:0;color:${GRIS};font-size:13px;">Si desea agendar una nueva cita, puede hacerlo en nuestra página web o contactándonos directamente.</p>`,
     }),
-  })
-  return true
-}
+  }),
 
-// ── Inasistencia ───────────────────────────────────────────────────────────
-async function sendNoShowEmail(to, nombre, cita) {
-  if (!process.env.GMAIL_PASS) { console.log(`\n[DEV] Inasistencia para ${to}`); return true }
-  await getTransporter().sendMail({
-    from: FROM, to,
+  inasistencia: ({ nombre, cita }) => ({
     subject: `Inasistencia registrada — ${cita.tramite}`,
     html: layout({
       titulo: 'Registro de inasistencia',
@@ -207,14 +217,52 @@ async function sendNoShowEmail(to, nombre, cita) {
         ${infoTable([['Trámite', cita.tramite], ['Fecha', cita.fecha], ['Hora', cita.hora]])}
         <p style="margin:0;color:${GRIS};font-size:13px;">Si esto fue un error o desea reagendar, contáctenos a la brevedad posible.</p>`,
     }),
+  }),
+}
+
+// Render sin enviar (para previews/tests)
+function renderEmail(tipo, data) {
+  const t = TEMPLATES[tipo]
+  if (!t) throw new Error(`Plantilla desconocida: ${tipo}`)
+  return t(data)
+}
+
+// Envía un correo de un tipo dado; respeta el fallback a consola si no hay GMAIL_PASS
+async function send(tipo, to, data, devMsg) {
+  if (!process.env.GMAIL_PASS) { console.log(`\n[DEV] ${devMsg || tipo} para ${to}`); return true }
+  const { subject, html } = renderEmail(tipo, data)
+  await getTransporter().sendMail({
+    from: FROM,
+    to,
+    bcc: process.env.GMAIL_USER,   // respaldo en la cuenta del consulado
+    replyTo: CONTACTO_EMAIL,        // las respuestas van al correo oficial
+    subject,
+    html,
   })
   return true
 }
 
+// ── Wrappers públicos (firmas estables) ─────────────────────────────────────
+const sendVerificationEmail = (to, nombre, code) =>
+  send('verificacion', to, { nombre, code }, `Código verificación ${code}`)
+const sendAppointmentReceived = (to, nombre, cita) =>
+  send('recibida', to, { nombre, cita }, 'Solicitud recibida')
+const sendAppointmentConfirmation = (to, nombre, cita) =>
+  send('confirmacion', to, { nombre, cita }, 'Confirmación de cita')
+const sendAppointmentReminder = (to, nombre, cita) =>
+  send('recordatorio', to, { nombre, cita }, 'Recordatorio (~1h)')
+const sendCancellationEmail = (to, nombre, cita, mensajeCiudadano) =>
+  send('cancelacion', to, { nombre, cita, mensajeCiudadano }, 'Cancelación')
+const sendNoShowEmail = (to, nombre, cita) =>
+  send('inasistencia', to, { nombre, cita }, 'Inasistencia')
+
 module.exports = {
   sendVerificationEmail,
+  sendAppointmentReceived,
   sendAppointmentConfirmation,
   sendAppointmentReminder,
   sendCancellationEmail,
   sendNoShowEmail,
+  renderEmail,
+  TEMPLATES,
 }

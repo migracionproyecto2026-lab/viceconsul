@@ -184,13 +184,13 @@ app.post('/api/public/cita', async (req, res) => {
 
     // Enviar correo de confirmación si hay email
     if (email) {
-      const { sendAppointmentConfirmation } = require('./lib/email')
+      const { sendAppointmentReceived } = require('./lib/email')
       const nombreDisplay = nombreCompleto || email
-      sendAppointmentConfirmation(email, nombreDisplay, {
+      sendAppointmentReceived(email, nombreDisplay, {
         tramite,
         fecha: fecha || 'Por confirmar',
         hora: hora || '08:30',
-      }).catch(err => console.error('[email] Error enviando confirmación:', err))
+      }).catch(err => console.error('[email] Error enviando acuse de solicitud:', err))
     }
 
     res.json({ ok: true, id: cita.id })
