@@ -69,6 +69,8 @@ router.get('/stats', async (req, res) => {
 router.get('/citas', async (req, res) => {
   try {
     const { fecha, status, mes, fechaDesde, fechaHasta } = req.query
+    const page = Math.max(1, parseInt(req.query.page || '1'))
+    const limit = 20
     const where = {}
     if (fecha) where.fecha = fecha
     if (status) where.status = status
@@ -77,11 +79,17 @@ router.get('/citas', async (req, res) => {
     else if (fechaDesde) where.fecha = { gte: fechaDesde }
     else if (fechaHasta) where.fecha = { lte: fechaHasta }
 
-    const citas = await prisma.appointment.findMany({
-      where,
-      include: { citizen: { select: { id: true, nombre: true, apellido: true, email: true, telefono: true } } },
-    })
-    res.json(sortCitas(citas))
+    const [citas, total] = await Promise.all([
+      prisma.appointment.findMany({
+        where,
+        include: { citizen: { select: { id: true, nombre: true, apellido: true, email: true, telefono: true } } },
+        orderBy: { createdAt: 'desc' },
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+      prisma.appointment.count({ where }),
+    ])
+    res.json({ citas, total, page, pages: Math.ceil(total / limit) })
   } catch (err) { console.error(err); res.status(500).json({ error: 'Error del servidor' }) }
 })
 
@@ -258,12 +266,20 @@ router.post('/citas/:id/reagendar', async (req, res) => {
 // ── REGISTRO INCOMPLETO (citas con documentos pendientes) ──────────────────
 router.get('/registro-incompleto', async (req, res) => {
   try {
-    const citas = await prisma.appointment.findMany({
-      where: { NOT: { documentosPendientes: null }, status: { notIn: ['cancelada', 'completada'] } },
-      include: { citizen: { select: { nombre: true, apellido: true, email: true } } },
-      orderBy: { createdAt: 'desc' },
-    })
-    res.json(citas)
+    const page = Math.max(1, parseInt(req.query.page || '1'))
+    const limit = 20
+    const where = { NOT: { documentosPendientes: null }, status: { notIn: ['cancelada', 'completada'] } }
+    const [citas, total] = await Promise.all([
+      prisma.appointment.findMany({
+        where,
+        include: { citizen: { select: { nombre: true, apellido: true, email: true } } },
+        orderBy: { createdAt: 'desc' },
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+      prisma.appointment.count({ where }),
+    ])
+    res.json({ citas, total, page, pages: Math.ceil(total / limit) })
   } catch (err) { console.error(err); res.status(500).json({ error: 'Error del servidor' }) }
 })
 
@@ -300,15 +316,21 @@ router.post('/registro-incompleto/:id/finalizar', async (req, res) => {
 // ── BITÁCORA ───────────────────────────────────────────────────────────────
 router.get('/bitacora', async (req, res) => {
   try {
-    const { tipo, limit = 50 } = req.query
+    const { tipo } = req.query
+    const page = Math.max(1, parseInt(req.query.page || '1'))
+    const limit = 20
     const where = tipo ? { tipo } : {}
-    const logs = await prisma.activityLog.findMany({
-      where,
-      include: { cita: { select: { tramite: true, fecha: true, hora: true } } },
-      orderBy: { createdAt: 'desc' },
-      take: parseInt(limit),
-    })
-    res.json(logs)
+    const [logs, total] = await Promise.all([
+      prisma.activityLog.findMany({
+        where,
+        include: { cita: { select: { tramite: true, fecha: true, hora: true } } },
+        orderBy: { createdAt: 'desc' },
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+      prisma.activityLog.count({ where }),
+    ])
+    res.json({ logs, total, page, pages: Math.ceil(total / limit) })
   } catch (err) { res.status(500).json({ error: 'Error del servidor' }) }
 })
 

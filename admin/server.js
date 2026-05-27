@@ -37,8 +37,21 @@ app.use(cors({
   credentials: true,
 }))
 
+// ── Cabeceras de seguridad (sin dependencias) ───────────────────────────────
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff')
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN')
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
+  res.setHeader('X-XSS-Protection', '0')
+  res.setHeader('X-Permitted-Cross-Domain-Policies', 'none')
+  if (req.secure || req.headers['x-forwarded-proto'] === 'https') {
+    res.setHeader('Strict-Transport-Security', 'max-age=15552000; includeSubDomains')
+  }
+  next()
+})
+
 // ── Middleware ─────────────────────────────────────────────────────────────
-app.use(express.json())
+app.use(express.json({ limit: '100kb' }))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 // Servir imágenes
@@ -47,6 +60,8 @@ app.use('/images', express.static(path.join(__dirname, 'public/images')))
 // ── Rate limiting ──────────────────────────────────────────────────────────
 const loginLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 10, message: { error: 'Demasiados intentos. Espera 15 minutos.' }, standardHeaders: true, legacyHeaders: false })
 const apiLimiter = rateLimit({ windowMs: 60 * 1000, max: 120, standardHeaders: true, legacyHeaders: false })
+// Endpoints públicos sensibles (solicitud de cita y verificación): límite estricto anti-abuso
+const publicLimiter = rateLimit({ windowMs: 60 * 1000, max: 30, message: { error: 'Demasiadas solicitudes. Intente de nuevo en un minuto.' }, standardHeaders: true, legacyHeaders: false })
 
 // ── Rutas API ──────────────────────────────────────────────────────────────
 app.use('/api/auth', loginLimiter, require('./routes/auth'))
@@ -89,7 +104,7 @@ app.get('/api/fechas-bloqueadas', async (req, res) => {
 })
 
 // Ruta pública: verificar si existe ciudadano por cédula o email
-app.get('/api/public/verificar', async (req, res) => {
+app.get('/api/public/verificar', publicLimiter, async (req, res) => {
   try {
     const { prisma } = require('./lib/db')
     const { cedula, email } = req.query
@@ -105,7 +120,7 @@ app.get('/api/public/verificar', async (req, res) => {
 })
 
 // Ruta pública: solicitud de cita desde la web estática
-app.post('/api/public/cita', async (req, res) => {
+app.post('/api/public/cita', publicLimiter, async (req, res) => {
   try {
     const { prisma } = require('./lib/db')
     const { nombres, apellidos, tipoDocumento, cedula, codigoPais, telefono, email, tramite, fecha, hora, observaciones } = req.body

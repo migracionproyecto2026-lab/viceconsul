@@ -1559,6 +1559,18 @@
       } catch { return { error: 'Error de conexión. Verifica que el servidor esté activo.' } }
     }
 
+    // ── Paginación (Anterior / Siguiente + Página X de Y) ───────────────────────
+    function pager(page, pages, total, fn) {
+      if (!total) return ''
+      if (pages <= 1) return `<div style="text-align:right;font-size:.78rem;color:var(--gris-claro);margin-top:10px;">${total} registro${total === 1 ? '' : 's'}</div>`
+      const dis = 'opacity:.4;cursor:default;pointer-events:none;'
+      return `<div style="display:flex;align-items:center;justify-content:flex-end;gap:12px;margin-top:14px;flex-wrap:wrap;">
+        <button class="btn-o" style="font-size:.8rem;padding:5px 12px;${page <= 1 ? dis : ''}" ${page <= 1 ? '' : `onclick="${fn}(${page - 1})"`}><i class="bi bi-chevron-left"></i> Anterior</button>
+        <span style="font-size:.82rem;color:var(--gris);">Página <strong>${page}</strong> de ${pages} · ${total} registros</span>
+        <button class="btn-o" style="font-size:.8rem;padding:5px 12px;${page >= pages ? dis : ''}" ${page >= pages ? '' : `onclick="${fn}(${page + 1})"`}>Siguiente <i class="bi bi-chevron-right"></i></button>
+      </div>`
+    }
+
     // ── Badges ─────────────────────────────────────────────────────────────────
     const STATUS_CLASS = { pendiente: 'b-pendiente', confirmada: 'b-confirmada', completada: 'b-completada', cancelada: 'b-cancelada', inasistencia: 'b-inasistencia', en_proceso: 'b-en_proceso', asistencia_tarde: 'b-asistencia_tarde' }
     function badge(s) { return `<span class="badge ${STATUS_CLASS[s] || 'b-pendiente'}">${s.replace('_', ' ')}</span>` }
@@ -1691,19 +1703,19 @@
         return (a.hora || '').localeCompare(b.hora || '')
       })
     }
-    async function loadCitas() {
+    async function loadCitas(page = 1) {
       const desde = document.getElementById('f-desde').value
       const hasta = document.getElementById('f-hasta').value
       const status = document.getElementById('f-status').value
-      let url = '/api/admin/citas?'
+      let url = `/api/admin/citas?page=${page}&`
       if (desde) url += `fechaDesde=${desde}&`
       if (hasta) url += `fechaHasta=${hasta}&`
       if (status) url += `status=${status}&`
-      const raw = await api('GET', url) || []
-      _citas = sortCitasUI(raw)
+      const d = await api('GET', url)
+      _citas = (d && d.citas) || []
       const el = document.getElementById('citas-table')
       if (!_citas.length) { el.innerHTML = '<p style="color:var(--gris-claro);font-size:.88rem;padding:20px 0;text-align:center;">No hay citas con estos filtros.</p>'; return }
-      el.innerHTML = `<table><thead><tr><th>Fecha cita</th><th>Hora</th><th>Ciudadano</th><th>Trámite</th><th>Estado</th><th>Solicitud</th><th>Acciones</th></tr></thead><tbody>${_citas.map(c => {
+      el.innerHTML = `<table><thead><tr><th>Fecha cita</th><th>Hora</th><th>Ciudadano</th><th>Trámite</th><th>Estado</th><th>Solicitud</th><th>Ticket</th><th>Acciones</th></tr></thead><tbody>${_citas.map(c => {
         const i = getCitaInfo(c)
         const activa = !['cancelada', 'completada', 'inasistencia'].includes(c.status)
         const docPend = c.documentosPendientes ? `<span title="Documentos pendientes" style="color:#7e22ce;margin-left:4px;"><i class="bi bi-file-earmark-x"></i></span>` : ''
@@ -1713,8 +1725,8 @@
         <td style="font-size:.82rem;">${c.tramite}${docPend}</td>
         <td>${badge(c.status)}</td>
         <td style="font-size:.75rem;color:var(--gris-claro);white-space:nowrap;">${fmt(c.createdAt)}</td>
+        <td><button class="btn-ic" onclick="verTicket('${c.id}')" title="Ver ticket / correo" style="color:#475569;"><i class="bi bi-receipt"></i></button></td>
         <td style="white-space:nowrap;">
-          <button class="btn-ic" onclick="verTicket('${c.id}')" title="Ver ticket / correo" style="color:#475569;"><i class="bi bi-receipt"></i></button>
           ${c.status === 'pendiente' ? `<button class="btn-ic" onclick="avanzarStatus('${c.id}','confirmada')" title="Confirmar cita" style="color:#166534;border-color:#bbf7d0;"><i class="bi bi-check-lg"></i></button> ` : ''}
           ${c.status === 'confirmada' ? `<button class="btn-ic" onclick="avanzarStatus('${c.id}','en_proceso')" title="Llegó — En proceso" style="color:#9a3412;border-color:#fed7aa;"><i class="bi bi-person-check"></i></button> ` : ''}
           ${c.status === 'asistencia_tarde' ? `<button class="btn-ic" onclick="avanzarStatus('${c.id}','en_proceso')" title="Pasar a en proceso" style="color:#9a3412;"><i class="bi bi-person-check"></i></button> ` : ''}
@@ -1726,7 +1738,7 @@
         </td>
       </tr>`
       }).join('')
-        }</tbody></table>`
+        }</tbody></table>${pager(d.page, d.pages, d.total, 'loadCitas')}`
     }
 
     function clearFiltros() { document.getElementById('f-desde').value = ''; document.getElementById('f-hasta').value = ''; document.getElementById('f-status').value = ''; loadCitas() }
@@ -2064,11 +2076,12 @@
 
     let _buzonLastRead = localStorage.getItem('buzonLastRead_' + (window._userId || '')) ? new Date(localStorage.getItem('buzonLastRead_' + (window._userId || ''))) : new Date(0)
 
-    async function loadBuzon() {
+    async function loadBuzon(page = 1) {
       const tipo = document.getElementById('f-log-tipo').value
-      const logs = await api('GET', `/api/admin/bitacora?tipo=${tipo}&limit=80`)
+      const d = await api('GET', `/api/admin/bitacora?tipo=${tipo}&page=${page}`)
+      const logs = (d && d.logs) || []
       const el = document.getElementById('buzon-list')
-      if (!logs || !logs.length) { el.innerHTML = '<p style="color:var(--gris-claro);font-size:.88rem;">Sin registros.</p>'; return }
+      if (!logs.length) { el.innerHTML = '<p style="color:var(--gris-claro);font-size:.88rem;">Sin registros.</p>'; return }
 
       // Update badge based on local lastRead
       const sinLeer = logs.filter(l => new Date(l.createdAt) > _buzonLastRead).length
@@ -2096,7 +2109,7 @@
         <div class="log-meta">${fecha} · ${l.realizadoPor}${l.ciudadanoEmail ? ` · ${l.ciudadanoEmail}` : ''}</div>
       </div>
     </div>`
-      }).join('')
+      }).join('') + pager(d.page, d.pages, d.total, 'loadBuzon')
     }
 
     function marcarTodoLeido() {
@@ -2112,7 +2125,7 @@
       const q = document.getElementById('sq').value
       const d = await api('GET', `/api/admin/ciudadanos?q=${encodeURIComponent(q)}&page=${page}`)
       const el = document.getElementById('ciu-table')
-      if (!d || !d.ciudadanos.length) { el.innerHTML = '<p style="color:var(--gris-claro);font-size:.88rem;padding:16px 0;">No se encontraron ciudadanos.</p>'; return }
+      if (!d || !d.ciudadanos.length) { el.innerHTML = '<p style="color:var(--gris-claro);font-size:.88rem;padding:16px 0;">No se encontraron ciudadanos.</p>'; document.getElementById('ciu-pag').innerHTML = ''; return }
       el.innerHTML = `<table><thead><tr><th>Nombre</th><th>Correo</th><th>Teléfono</th><th>Citas</th><th>Estado</th><th></th></tr></thead><tbody>${d.ciudadanos.map(c => `<tr>
       <td><strong>${c.nombre} ${c.apellido}</strong><br><span style="font-size:.72rem;color:var(--gris-claro);">ID ${c.id}${c.cedula ? ' · ' + c.cedula : ''}</span></td>
       <td>${c.email}</td>
@@ -2122,11 +2135,7 @@
       <td><button class="btn-o" style="font-size:.78rem;padding:4px 10px;" onclick="verCiudadano('${c.id}')"><i class="bi bi-eye"></i> Ver</button></td>
     </tr>`).join('')
         }</tbody></table>`
-      const pag = document.getElementById('ciu-pag'); pag.innerHTML = ''
-      if (d.pages > 1) {
-        for (let i = 1; i <= d.pages; i++)pag.innerHTML += `<button style="padding:5px 10px;border-radius:6px;font-size:.82rem;cursor:pointer;border:1.5px solid var(--borde);background:${i === page ? 'var(--rojo)' : '#fff'};color:${i === page ? '#fff' : 'var(--texto)'};" onclick="loadCiudadanos(${i})">${i}</button>`
-        pag.innerHTML += `<span style="font-size:.78rem;color:var(--gris-claro);margin-left:4px;">${d.total} registros</span>`
-      }
+      document.getElementById('ciu-pag').innerHTML = pager(d.page, d.pages, d.total, 'loadCiudadanos')
     }
 
     // ── Banners ────────────────────────────────────────────────────────────────
@@ -2240,8 +2249,9 @@
     }
 
     // ── CRM: Registro incompleto (citas con documentos pendientes) ─────────────
-    async function loadCRM() {
-      const citas = await api('GET', '/api/admin/registro-incompleto') || []
+    async function loadCRM(page = 1) {
+      const d = await api('GET', `/api/admin/registro-incompleto?page=${page}`)
+      const citas = (d && d.citas) || []
       const el = document.getElementById('crm-table')
       if (!citas.length) { el.innerHTML = '<p style="color:var(--gris-claro);font-size:.88rem;padding:16px 0;">No hay citas con documentos pendientes.</p>'; return }
       el.innerHTML = citas.map(c => {
@@ -2264,7 +2274,7 @@
             <button class="btn-p" style="font-size:.78rem;padding:4px 10px;" onclick="finalizarCRM('${c.id}')"><i class="bi bi-check-circle"></i> Finalizar</button>
           </div>
         </div>`
-      }).join('')
+      }).join('') + pager(d.page, d.pages, d.total, 'loadCRM')
     }
 
     async function toggleDoc(citaId, docIdx, cb) {
