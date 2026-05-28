@@ -1,0 +1,203 @@
+{
+  "fuente": "web/index.html (viceconsulado-nuevaesparta.com) — extracción del 2026-05-27",
+  "competencia_general": "Viceconsulado Honorario de España en Nueva Esparta (Margarita, Coche, Cubagua). Algunos trámites se inician aquí pero se completan en el Consulado General en Caracas.",
+  "horario": "Lunes a viernes, 8:00 a 12:00",
+  "cita_obligatoria_para_tramites": true,
+  "duracion_cita_minutos": 30,
+  "horarios_disponibles": ["08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30"],
+  "tramites": [
+    {
+      "id": "pasaportes",
+      "nombre": "Pasaportes",
+      "badge": "PAS",
+      "subtitulo": "Primera expedición y renovación",
+      "competencia": "viceconsulado_inicia_caracas_completa",
+      "con_cita": true,
+      "tasa_aplicable": true,
+      "presencial_obligatorio": true,
+      "subtramites": [
+        {
+          "tipo": "Primera expedición",
+          "requisitos": [
+            "Certificación literal de nacimiento del Registro Civil español (original y fotocopia)",
+            "3 fotografías recientes, 32 × 26 mm, fondo blanco, de frente (la cara debe ocupar el 80% de la superficie)",
+            "Cédula de Identidad venezolana del interesado (original y fotocopia recortada)",
+            "Cédula de Identidad de Extranjero o Gaceta de Naturalización del progenitor que transmite la nacionalidad española (fotocopia)",
+            "Pasaporte del progenitor español (original y fotocopia)"
+          ],
+          "nota": "El trámite debe hacerse personalmente. Los menores de edad deben venir acompañados del padre y la madre."
+        },
+        {
+          "tipo": "Renovación",
+          "requisitos": [
+            "Pasaporte anterior (si fue robado o extraviado: denuncia policial)",
+            "3 fotografías recientes 32 × 26 mm, fondo blanco, de frente",
+            "Cédula de identidad (original y fotocopia recortada). Menores: original y fotocopia recortada de la cédula del padre y la madre",
+            "Partida literal de nacimiento (original y fotocopia)",
+            "Fotocopia de la página 2 del pasaporte del progenitor español",
+            "Menores de edad: deben acudir con padre y madre. Si alguno no comparece: autorización notariada (apostillada si el notario no es español)"
+          ],
+          "nota": "Se puede renovar cuando quede menos de 1 año para su caducidad."
+        }
+      ],
+      "huellas_dactilares": {
+        "edad_min": 12,
+        "donde": "Caracas o durante operativos especiales en Margarita",
+        "tiempo_entrega_post_huellas_meses": 2
+      },
+      "opciones_select_cita": ["Pasaporte — Primera expedición", "Pasaporte — Renovación", "Pasaporte — Menores de 12 años"],
+      "enlaces": [
+        { "texto": "Consultar tasas", "url": "https://www.exteriores.gob.es/Consulados/caracas/es/Consulado/Paginas/Tasas-consulares.aspx" }
+      ]
+    },
+    {
+      "id": "nacimiento",
+      "nombre": "Inscripción de Nacimiento",
+      "badge": "NAC",
+      "subtitulo": "Registro Civil — Nacionalidad",
+      "competencia": "viceconsulado_recibe_caracas_registra",
+      "con_cita": true,
+      "gratuito": true,
+      "presencial_obligatorio": true,
+      "requisitos": [
+        "Hoja declaratoria de datos para inscripción de nacimiento (firmada)",
+        "Formulario de inscripción como residente y municipio electoral",
+        "Acta de nacimiento venezolana apostillada (Apostilla de La Haya)",
+        "Cédula de identidad del interesado (original y fotocopia centrada)",
+        "2 fotografías 3×4 cm, fondo blanco, cara al 80%"
+      ],
+      "progenitor_espanol": [
+        "Original y fotocopia de la literal",
+        "Original y fotocopia del pasaporte español (páginas 2 y 7)",
+        "Cédula de identidad venezolana (original y fotocopia)",
+        "Si es naturalizado venezolano: fotocopia de la Gaceta Oficial o datos filiatorios"
+      ],
+      "progenitor_extranjero": [
+        "Original y fotocopia de la cédula venezolana",
+        "Acta de nacimiento (fotocopia certificada)"
+      ],
+      "otros_documentos": ["Libro de Familia o Acta de Matrimonio (si existe matrimonio entre los padres)"],
+      "nota": "Trámite GRATUITO. Documentos deben tener máximo 5 años de emitidos. Excepción: literales inscritas en el Consulado de Caracas no vencen. Debe acudir el interesado personalmente.",
+      "opciones_select_cita": ["Inscripción de nacimiento"],
+      "enlaces": [
+        { "texto": "Hoja declaratoria (PDF MAEC)", "url": "https://www.exteriores.gob.es/DocumentosAuxiliaresSC/Venezuela/CARACAS%20(C)/Hoja%20declaratoria%20inscripci%C3%B3n%20nacimiento.pdf" },
+        { "texto": "Formulario solicitud inscripción residente", "url": "https://www.exteriores.gob.es/Documents/DocumentosSC/Inscripci%C3%B3n%20Consular/20240812%20SOLICITUD%20DE%20INSCRIPCION%20COMO%20RESIDENTE.pdf" },
+        { "texto": "Requisitos PDF local", "url": "documentos/Requisitos inscripcion de nacimiento.pdf" }
+      ]
+    },
+    {
+      "id": "matrimonio",
+      "nombre": "Inscripción de Matrimonio",
+      "badge": "MAT",
+      "subtitulo": "Registro Civil",
+      "competencia": "viceconsulado_recibe_caracas_registra",
+      "con_cita": true,
+      "gratuito": true,
+      "presencial_obligatorio_ambos_contrayentes": true,
+      "requisitos": [
+        "Hoja declaratoria de datos para matrimonio",
+        "Acta de matrimonio venezolana apostillada (La Haya)",
+        "Declaración jurada o afirmación de estado civil"
+      ],
+      "contrayente_espanol": [
+        "Original y fotocopia de la literal de nacimiento",
+        "Original y fotocopia del pasaporte (páginas 2 y 7)",
+        "Cédula de identidad venezolana (original y fotocopia)"
+      ],
+      "contrayente_extranjero": [
+        "Cédula de identidad venezolana (original y fotocopia)",
+        "Pasaporte (original y fotocopia)",
+        "Acta de nacimiento (fotocopia certificada)"
+      ],
+      "si_matrimonio_anterior": ["Acta de ese matrimonio", "Sentencia de divorcio"],
+      "entrega": "Se expide Libro de Familia.",
+      "nota": "Trámite GRATUITO. La cita la obtiene el ciudadano español.",
+      "opciones_select_cita": ["Inscripción de matrimonio"],
+      "enlaces": [
+        { "texto": "Hoja declaratoria (PDF MAEC)", "url": "https://www.exteriores.gob.es/DocumentosAuxiliaresSC/Venezuela/CARACAS%20(C)/Hoja%20declaratoria%20inscripci%C3%B3n%20matrimonio.pdf" },
+        { "texto": "Requisitos PDF local", "url": "documentos/Requisitos inscripcion de matrimonio.pdf" }
+      ]
+    },
+    {
+      "id": "defuncion",
+      "nombre": "Inscripción de Defunción",
+      "badge": "DEF",
+      "subtitulo": "Registro Civil",
+      "competencia": "viceconsulado_recibe_caracas_registra",
+      "con_cita": true,
+      "gratuito": true,
+      "presencial_obligatorio_familiar_directo": true,
+      "requisitos": [
+        "Hoja declaratoria de datos para defunción",
+        "Acta de defunción venezolana (original)",
+        "Literal de nacimiento española (original y fotocopia)",
+        "Pasaporte español del difunto (original)",
+        "Cédula si era venezolano o residente",
+        "Gaceta de naturalización (si aplicaba)"
+      ],
+      "nota": "El trámite debe ser realizado por un familiar directo.",
+      "opciones_select_cita": ["Inscripción de defunción"],
+      "enlaces": [
+        { "texto": "Hoja declaratoria (PDF MAEC)", "url": "https://www.exteriores.gob.es/DocumentosAuxiliaresSC/Venezuela/CARACAS%20(C)/Hoja%20declaratoria%20inscripci%C3%B3n%20defunci%C3%B3n.pdf" }
+      ]
+    },
+    {
+      "id": "fevida",
+      "nombre": "Fe de Vida",
+      "badge": "FEV",
+      "subtitulo": "Certificado de existencia",
+      "competencia": "viceconsulado",
+      "con_cita": true,
+      "gratuito": true,
+      "presencial_obligatorio": true,
+      "requisitos": [
+        "Certificado médico no mayor a 3 meses",
+        "Pasaporte español (original y fotocopia, páginas 2, 3, 6 y 7)",
+        "Cédula de identidad (original y fotocopia)"
+      ],
+      "nota": "Requiere cita previa.",
+      "opciones_select_cita": ["Fe de vida"]
+    },
+    {
+      "id": "otros",
+      "nombre": "Otros Trámites",
+      "badge": "OTR",
+      "subtitulo": "Alta/Baja consular, NIF, NIE, Poderes, Residencia",
+      "con_cita": true,
+      "gratuito_mayoria": true,
+      "items": [
+        { "id": "alta_consular", "nombre": "Alta consular como residente", "competencia": "viceconsulado" },
+        { "id": "baja_consular", "nombre": "Baja consular", "competencia": "viceconsulado", "anticipacion": "Solicitar 1 mes antes del viaje" },
+        { "id": "cert_residencia", "nombre": "Certificado de residencia", "competencia": "viceconsulado" },
+        { "id": "cert_no_residente", "nombre": "Certificado de No Residente", "competencia": "viceconsulado" },
+        { "id": "cert_antecedentes_penales", "nombre": "Certificado de Antecedentes Penales", "competencia": "viceconsulado_solicita_min_justicia_es_retira", "nota": "La solicitud se tramita aquí; el retiro es en el Ministerio de Justicia en España." },
+        { "id": "nif", "nombre": "NIF — Número de Identificación Fiscal", "competencia": "viceconsulado" },
+        { "id": "nie", "nombre": "NIE — Número de Identidad de Extranjero", "competencia": "viceconsulado" },
+        { "id": "poder_notarial", "nombre": "Poderes notariales", "competencia": "viceconsulado_inicia_caracas_firma", "nota": "Se inician aquí pero deben firmarse obligatoriamente en el Consulado General en Caracas." },
+        { "id": "conservacion_nacionalidad", "nombre": "Conservación / Recuperación de nacionalidad", "competencia": "viceconsulado" },
+        { "id": "cambio_censo", "nombre": "Cambio de censo electoral", "competencia": "viceconsulado" },
+        { "id": "ley_memoria_democratica", "nombre": "Ley de Memoria Democrática (LMD)", "competencia": "viceconsulado" }
+      ],
+      "certificaciones_plurilingues": [
+        "Certificado de Matrimonio (extensión plurilingüe — válida en países del Convenio de Viena)",
+        "Certificado de Nacimiento (extensión plurilingüe)",
+        "Certificación literal para DNI"
+      ],
+      "opciones_select_cita": [
+        "Alta consular", "Baja consular", "Certificado de residencia", "Certificado de no residente",
+        "Poder notarial", "NIF — Identificación fiscal", "NIE — Identidad de extranjero",
+        "Conservación de nacionalidad", "Recuperación de nacionalidad",
+        "Ley de Memoria Democrática (LMD)", "Cambio de censo electoral", "Otro trámite"
+      ],
+      "enlaces": [
+        { "texto": "Web Consulado General Caracas", "url": "https://www.exteriores.gob.es/Consulados/caracas/es/ServiciosConsulares/Paginas/index.aspx" }
+      ]
+    }
+  ],
+  "no_se_realizan_aqui_competencia_caracas": [
+    "Visados (todos los tipos: turista, estudiante, trabajo, etc.)",
+    "Compulsas de documentos",
+    "Legalización y Apostilla",
+    "Homologaciones de títulos"
+  ]
+}
