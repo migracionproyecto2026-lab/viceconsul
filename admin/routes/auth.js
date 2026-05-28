@@ -116,6 +116,20 @@ router.post('/logout', async (req, res) => {
   res.json({ ok: true })
 })
 
+// Expande el permiso legacy 'reporteria' (sin sufijo) a los 4 finos.
+// Compatible hacia atrás con cuentas creadas antes de la segmentación.
+function expandirPermisos(permisos) {
+  if (!Array.isArray(permisos)) return []
+  const set = new Set(permisos)
+  if (set.has('reporteria')) {
+    set.add('reporteria_ciudadanos')
+    set.add('reporteria_citas')
+    set.add('reporteria_maestro')
+    set.add('reporteria_auditoria')
+  }
+  return [...set]
+}
+
 // GET /api/auth/me
 // Devuelve la sesión + los permisos actuales del admin desde la BD (no del JWT)
 // para que los cambios en permisos surtan efecto sin necesidad de re-login.
@@ -130,11 +144,10 @@ router.get('/me', async (req, res) => {
         select: { permisos: true, role: true, nombre: true, email: true, cargo: true },
       })
       if (!admin) return res.status(401).json({ error: 'Cuenta no existe' })
-      // El rol vigente lo toma de BD (en caso de que se haya cambiado)
       session.role = admin.role
       session.nombre = admin.nombre
       session.cargo = admin.cargo
-      permisos = admin.permisos || []
+      permisos = expandirPermisos(admin.permisos)
     } catch (err) { console.error('/me error:', err) }
   }
   res.json({ user: { ...session, permisos } })

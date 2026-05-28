@@ -10,18 +10,23 @@ const { auditar } = require('../lib/audit')
 
 // Acceso granular por permiso fino. Superadmin pasa siempre.
 // Cada reporte tiene su permiso específico: reporteria_<tipo>.
+// El permiso legacy 'reporteria' (genérico) sigue otorgando acceso a los 4
+// reportes (cuentas creadas antes de la segmentación).
+function tienePermiso(perms, permFino) {
+  if (!Array.isArray(perms)) return false
+  return perms.includes(permFino) || perms.includes('reporteria')
+}
+
 function requirePermiso(permFino) {
   return (req, res, next) => {
     const s = req.session
     if (!s) return res.status(401).json({ error: 'No autenticado' })
     if (s.role === 'superadmin') return next()
-    const permisos = Array.isArray(s.permisos) ? s.permisos : null
-    // Como el JWT no lleva permisos, los leemos de BD por sesión:
-    if (permisos && permisos.includes(permFino)) return next()
+    if (Array.isArray(s.permisos) && tienePermiso(s.permisos, permFino)) return next()
     prisma.adminUser.findUnique({ where: { id: s.sub }, select: { permisos: true, role: true } })
       .then(u => {
         if (!u) return res.status(401).json({ error: 'Cuenta no existe' })
-        if (u.role === 'superadmin' || (u.permisos || []).includes(permFino)) {
+        if (u.role === 'superadmin' || tienePermiso(u.permisos, permFino)) {
           req.session.permisos = u.permisos
           return next()
         }

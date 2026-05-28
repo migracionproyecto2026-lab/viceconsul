@@ -2681,7 +2681,19 @@
       }).join('')}</tbody></table>`
     }
 
-    function _setPermisos(lista) {
+    // Expande el permiso legacy 'reporteria' (sin sufijo) a los 4 finos.
+    function _expandirPermisos(arr) {
+      if (!Array.isArray(arr)) return []
+      const s = new Set(arr)
+      if (s.has('reporteria')) {
+        s.add('reporteria_ciudadanos'); s.add('reporteria_citas')
+        s.add('reporteria_maestro'); s.add('reporteria_auditoria')
+      }
+      return [...s]
+    }
+    function _setPermisos(listaIn) {
+      const lista = _expandirPermisos(listaIn)
+      void lista // mantiene el nombre original abajo, pero ya expandida
       const role = document.getElementById('u2-role').value
       const hint = document.getElementById('u2-perm-hint')
       const todos = [...document.querySelectorAll('.u2-perm')]
