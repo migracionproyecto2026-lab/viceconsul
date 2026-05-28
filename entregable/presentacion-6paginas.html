@@ -81,16 +81,17 @@
     <div style="font-size:9.5pt;color:#7a1216;margin-top:8px;"><b>Importante:</b> cambie la contraseña tras el primer ingreso desde el módulo correspondiente.</div>
   </div>
 
-  <h3 style="margin-top:12px;">Roles del sistema</h3>
+  <h3 style="margin-top:12px;">Roles y permisos</h3>
   <div class="rule" style="height:2px;"></div>
   <table>
-    <thead><tr><th style="width:25%;">Rol</th><th>Permisos típicos</th></tr></thead>
+    <thead><tr><th style="width:24%;">Rol</th><th>Permisos típicos</th></tr></thead>
     <tbody>
-      <tr><td><b>Superadministrador</b></td><td>Todos los módulos. Único rol que crea y elimina usuarios.</td></tr>
-      <tr><td><b>Cónsul</b></td><td>Toda la operación salvo gestión de usuarios.</td></tr>
-      <tr><td><b>Asistente</b></td><td>Acceso restringido a los módulos asignados nominalmente.</td></tr>
+      <tr><td><b>Superadministrador</b></td><td>Todos los módulos. Único rol que crea, edita y elimina usuarios. Único rol que puede borrar entradas de la bitácora (con meta-auditoría que registra el borrado).</td></tr>
+      <tr><td><b>Cónsul</b></td><td>Operación completa salvo gestión de usuarios. Acceso por defecto a reportes de ciudadanos, citas y catálogo.</td></tr>
+      <tr><td><b>Gestor</b></td><td>Acceso restringido a los módulos asignados expresamente por el superadministrador. La reportería se asigna por reporte (cuatro permisos finos independientes).</td></tr>
     </tbody>
   </table>
+  <p style="font-size:9.5pt;color:#6b6b6b;margin-top:4px;">Cada movimiento operativo o administrativo queda en bitácora inmutable. Las altas y bajas de personal con acceso al panel generan, además del registro general, una transacción específica destacada para reconciliación de accesos.</p>
 
   <div class="footer-page">Guía breve del Viceconsulado &middot; Página 2 de 6</div>
 </section>
@@ -211,7 +212,18 @@
     </ol>
   </div>
 
-  <div class="caja-dorada"><b>Bitácora:</b> toda acción mutativa queda registrada con autor, fecha y nota. El módulo <b>Buzón / Bitácora</b> centraliza la actividad reciente y muestra un contador de novedades sin leer.</div>
+  <div class="tarea">
+    <h4>3.9 Reportería institucional</h4>
+    Disponible para el superadministrador y para los roles habilitados expresamente. Cada exportación queda registrada en la bitácora con autor, filtros aplicados y nº de filas.
+    <ol>
+      <li><b>Ciudadanos</b> — padrón con verificación, origen y total de citas.</li>
+      <li><b>Citas por estatus</b> — flujo completo con Ticket, Folio, fecha de solicitud, estado y origen.</li>
+      <li><b>Maestro de trámites</b> — catálogo institucional con requisitos y volumetría.</li>
+      <li><b>Auditoría transaccional</b> — bitácora completa con sesiones, cambios de personal e historial de cambios (reporte sensible).</li>
+    </ol>
+  </div>
+
+  <div class="caja-dorada"><b>Bitácora operativa:</b> el <b>Buzón</b> centraliza solo los eventos del flujo del ciudadano (citas, ciudadanos, valija, avisos, fechas). Los eventos internos (sesiones, cambios de personal, exportaciones) se consultan desde el <b>Reporte de Auditoría</b>. Cada acción queda registrada con autor, fecha, IP y diferencias antes/después.</div>
 
   <div class="footer-page">Guía breve del Viceconsulado &middot; Página 5 de 6</div>
 </section>

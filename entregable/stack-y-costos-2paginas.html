@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Stack, seguridad y costos — Viceconsulado Honorario de España, Nueva Esparta</title>
+<style>
+  @page { size: A4 portrait; margin: 16mm 14mm 16mm 14mm; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; color: #2b2b2b; line-height: 1.5; font-size: 10.8pt; background: #fff; }
+  h1, h2, h3, h4 { font-family: Georgia, "Times New Roman", serif; margin: 0; color: #AA151B; }
+  .page { page-break-after: always; padding: 0; }
+  .page:last-child { page-break-after: auto; }
+  .rule { height: 3px; background: linear-gradient(90deg, #AA151B 0%, #C9A227 100%); border-radius: 2px; margin-bottom: 10px; }
+  .caja-dorada { border-left: 4px solid #C9A227; background: #fbf6ec; padding: 10px 14px; border-radius: 0 8px 8px 0; margin: 10px 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 10pt; margin: 6px 0; }
+  th, td { border: 1px solid #d8d5cf; padding: 5px 9px; text-align: left; vertical-align: top; }
+  th { background: #faf8f3; color: #AA151B; font-family: Georgia, serif; font-weight: 600; }
+  ul { margin: 4px 0 6px 18px; padding: 0; }
+  li { margin-bottom: 3px; }
+  code { font-family: Menlo, Consolas, monospace; background: #f4f4f5; padding: 1px 5px; border-radius: 3px; font-size: 9.5pt; color: #AA151B; }
+  .footer-page { margin-top: 8mm; font-family: Arial, sans-serif; font-size: 8pt; color: #888; text-align: center; border-top: 1px solid #eee; padding-top: 4mm; }
+  .head-pag { text-align: center; margin-bottom: 4mm; }
+  .head-pag h1 { font-size: 18pt; }
+  .head-pag .sub { color: #6b6b6b; font-size: 10pt; margin-top: 3mm; font-family: Georgia, serif; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .bloque { border: 1px solid #ece7db; background: #fff; border-radius: 8px; padding: 9px 12px; }
+  .bloque h4 { color: #AA151B; font-size: 11pt; margin-bottom: 3px; }
+  .bloque ul { font-size: 10pt; margin-top: 2px; }
+  .lema { background: #fff7f7; border: 2px solid #AA151B; border-radius: 10px; padding: 10px 14px; margin-top: 8px; }
+  .lema b { color: #AA151B; font-family: Georgia, serif; font-size: 11pt; }
+</style>
+</head>
+<body>
+
+<!-- ─────────────── PÁGINA 1 — STACK + SEGURIDAD ─────────────── -->
+<section class="page">
+  <div class="head-pag">
+    <h1>Stack tecnológico y medidas de seguridad</h1>
+    <div class="sub">Plataforma del Viceconsulado Honorario de España · Nueva Esparta — 2026</div>
+  </div>
+  <div class="rule"></div>
+
+  <h2 style="font-size:13pt;margin-top:4mm;">1. Arquitectura</h2>
+  <div class="rule" style="height:2px;"></div>
+  <p style="margin-top:4px;">La plataforma se compone de dos aplicaciones independientes que se comunican por canales cifrados:</p>
+  <table>
+    <thead><tr><th style="width:22%;">Componente</th><th style="width:35%;">Tecnología</th><th>Función</th></tr></thead>
+    <tbody>
+      <tr><td><b>Sitio público</b></td><td>HTML5 estático, sin framework. Servido por GitHub Pages bajo dominio propio.</td><td>Información oficial, solicitud de cita ciudadana, avisos.</td></tr>
+      <tr><td><b>Panel administrativo</b></td><td>Node.js (LTS) + Express 4.21 + Prisma 5.22 contra MongoDB. Frontend HTML/JS sin frameworks.</td><td>Operación interna: citas, ciudadanos, valija diplomática, reportería, bitácora.</td></tr>
+      <tr><td><b>Base de datos</b></td><td>MongoDB Atlas (cluster gestionado, copias automáticas, usuario dedicado).</td><td>Persistencia de ciudadanos, citas, valijas, bitácora y catálogo de trámites.</td></tr>
+      <tr><td><b>Mensajería</b></td><td>Resend (API HTTPS) con dominio propio verificado (SPF, DKIM, DMARC). Gmail API como alternativa.</td><td>Notificaciones transaccionales al ciudadano en cada hito de su trámite.</td></tr>
+      <tr><td><b>Identidad</b></td><td>JWT firmado en cookie <code>httpOnly + Secure + SameSite=Strict</code>; bcrypt cost 12 para contraseñas.</td><td>Autenticación robusta del personal y del ciudadano registrado.</td></tr>
+      <tr><td><b>Reportería</b></td><td>Generación XLSX server-side con ExcelJS. Acceso granular por reporte.</td><td>Exportación institucional de ciudadanos, citas, catálogo y auditoría.</td></tr>
+    </tbody>
+  </table>
+
+  <h2 style="font-size:13pt;margin-top:6mm;">2. Seguridad aplicada</h2>
+  <div class="rule" style="height:2px;"></div>
+  <div class="grid-2" style="margin-top:4px;">
+    <div class="bloque">
+      <h4>Transporte</h4>
+      <ul>
+        <li>TLS obligatorio (certificado Let's Encrypt vigente, renovación automática).</li>
+        <li>Redirección 301 de HTTP a HTTPS en el borde y a nivel de aplicación.</li>
+        <li>HSTS con <code>preload</code>, <code>max-age</code> de 180 días, incluye subdominios.</li>
+      </ul>
+    </div>
+    <div class="bloque">
+      <h4>Cabeceras HTTP</h4>
+      <ul>
+        <li>Content-Security-Policy estricta con allowlist explícita.</li>
+        <li><code>X-Content-Type-Options: nosniff</code>, <code>X-Frame-Options: SAMEORIGIN</code>.</li>
+        <li>Referrer-Policy estricta para no filtrar URLs internas.</li>
+      </ul>
+    </div>
+    <div class="bloque">
+      <h4>Acceso y sesión</h4>
+      <ul>
+        <li>JWT firmado, sesión en cookie <code>httpOnly + Secure + SameSite=Strict</code>.</li>
+        <li>bcrypt cost 12 — irrecuperable, solo restablecible.</li>
+        <li>Mensaje de error genérico en login (sin enumeración de cuentas).</li>
+      </ul>
+    </div>
+    <div class="bloque">
+      <h4>Anti-abuso</h4>
+      <ul>
+        <li>Límite por IP: login 10 intentos / 15 min; API general 120 / min; formulario público 30 / min.</li>
+        <li>Filtro de rutas de reconocimiento (<code>.env</code>, <code>.git</code>, <code>wp-</code>, traversal).</li>
+        <li>Validación estricta de campos (longitudes, formatos, lista blanca de trámites).</li>
+      </ul>
+    </div>
+    <div class="bloque">
+      <h4>Permisos</h4>
+      <ul>
+        <li>Tres roles: Superadmin, Cónsul, Gestor — con permisos por módulo.</li>
+        <li>Reportería con acceso granular (cuatro permisos finos independientes).</li>
+        <li>Backend protege cada endpoint; el frontend solo oculta lo que el usuario no debe ver.</li>
+      </ul>
+    </div>
+    <div class="bloque">
+      <h4>Auditoría 360°</h4>
+      <ul>
+        <li>Cada movimiento queda en bitácora inmutable con autor, IP, agente de usuario y diferencias antes/después.</li>
+        <li>Sesiones de personal (inicio, fallo, cierre) en tabla dedicada.</li>
+        <li>Sanitización: jamás se persisten contraseñas ni códigos de verificación en logs.</li>
+        <li>Borrado de bitácora controlado (solo superadmin) con meta-auditoría — no quedan huecos silenciosos.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="caja-dorada"><b>Cumplimiento.</b> Las medidas implementadas son coherentes con la dirección general del Esquema Nacional de Seguridad (ENS) y el Reglamento General de Protección de Datos (RGPD). La conformidad formal con el ENS requiere certificación por entidad acreditada — fuera del alcance del piloto actual, contemplada para una eventual integración a la red consular del MAEC.</div>
+
+  <div class="footer-page">Stack, seguridad y costos · Viceconsulado Honorario de España · Página 1 de 2</div>
+</section>
+
+<!-- ─────────────── PÁGINA 2 — COSTOS + DOMINIO + ESTADO ─────────────── -->
+<section class="page">
+  <div class="head-pag">
+    <h1>Dominio, infraestructura y costos</h1>
+    <div class="sub">Estado operativo actual — mayo de 2026</div>
+  </div>
+  <div class="rule"></div>
+
+  <h2 style="font-size:13pt;margin-top:4mm;">3. Dominio e infraestructura</h2>
+  <div class="rule" style="height:2px;"></div>
+  <table>
+    <thead><tr><th style="width:30%;">Recurso</th><th>Detalle actual</th></tr></thead>
+    <tbody>
+      <tr><td><b>Dominio raíz</b></td><td><code>viceconsulado-nuevaesparta.com</code> — registrado y operativo. Registros DNS gestionados centralmente.</td></tr>
+      <tr><td><b>Sitio público</b></td><td><code>www.viceconsulado-nuevaesparta.com</code> → publicado en GitHub Pages con CNAME. Alta disponibilidad, certificado TLS automático.</td></tr>
+      <tr><td><b>Panel administrativo</b></td><td><code>admin.viceconsulado-nuevaesparta.com</code> → desplegado en Railway. Certificado Let's Encrypt válido; redirección HTTPS forzada.</td></tr>
+      <tr><td><b>Correo institucional</b></td><td><code>ch.porlamar@maec.es</code> — solo recepción. Notificaciones automáticas remitidas desde dominio propio verificado.</td></tr>
+      <tr><td><b>Base de datos</b></td><td>MongoDB Atlas — cluster gestionado, copias de respaldo automáticas, conexión cifrada exclusiva del panel.</td></tr>
+      <tr><td><b>Mensajería</b></td><td>Resend — envío vía API HTTPS, sin abrir puertos SMTP.</td></tr>
+    </tbody>
+  </table>
+
+  <h2 style="font-size:13pt;margin-top:6mm;">4. Costos operativos vigentes</h2>
+  <div class="rule" style="height:2px;"></div>
+  <p style="margin-top:4px;">La plataforma opera hoy con un coste mensual mínimo, sostenido por niveles gratuitos o de bajo coste de cada proveedor. Los importes son aproximados y están sujetos a cambios de tarifa por parte del proveedor.</p>
+  <table>
+    <thead><tr><th style="width:28%;">Concepto</th><th style="width:18%;">Proveedor</th><th style="width:20%;">Coste actual</th><th>Observaciones</th></tr></thead>
+    <tbody>
+      <tr><td>Dominio (anual)</td><td>Registrador</td><td>≈ 15 USD / año</td><td>Renovación anual del dominio raíz.</td></tr>
+      <tr><td>Sitio público</td><td>GitHub Pages</td><td>0 USD / mes</td><td>Plan gratuito con dominio personalizado y TLS automático.</td></tr>
+      <tr><td>Panel administrativo</td><td>Railway</td><td>≈ 5 USD / mes</td><td>Crédito de uso. Migración a plan dedicado bajo demanda.</td></tr>
+      <tr><td>Base de datos</td><td>MongoDB Atlas</td><td>0 USD / mes</td><td>Tier gratuito (M0). Migración a tier dedicado cuando crezca el volumen.</td></tr>
+      <tr><td>Mensajería transaccional</td><td>Resend</td><td>0 USD / mes</td><td>Hasta 3 000 correos/mes en el tier gratuito.</td></tr>
+      <tr><td>Monitoreo de disponibilidad</td><td>UptimeRobot</td><td>0 USD / mes</td><td>Plan gratuito hasta 50 endpoints.</td></tr>
+    </tbody>
+  </table>
+  <p style="margin-top:6px;font-size:9.5pt;color:#6b6b6b;"><b>Costo total mensual recurrente actual:</b> alrededor de 5 USD. La operación es sostenible para el viceconsulado honorario con presupuesto institucional mínimo, y el dimensionamiento permite escalar gradualmente sin reescribir la plataforma.</p>
+
+  <h2 style="font-size:13pt;margin-top:6mm;">5. Situación actual y evolución prevista</h2>
+  <div class="rule" style="height:2px;"></div>
+  <ul style="margin-top:4px;">
+    <li>La plataforma <b>funciona hoy en producción</b> con el dimensionamiento descrito; es adecuada al volumen real de citas del Viceconsulado Honorario y a las necesidades del personal.</li>
+    <li>El esquema descrito es <b>provisional</b>: la presencia en Railway y MongoDB Atlas en planes accesibles está concebida como punto de partida del piloto. Una eventual integración con sistemas centrales del MAEC requeriría alojamiento certificado ENS o centro de proceso de datos del Estado, conforme a la guía CCN-STIC-823.</li>
+    <li>La replicabilidad a otros viceconsulados honorarios está prevista por diseño: identidad visual, dominio y configuración son parametrizables por instancia, manteniendo la base técnica común.</li>
+    <li>Cualquier escalado a infraestructura institucional puede acometerse <b>sin alterar el modelo de datos ni los flujos operativos</b> ya validados.</li>
+  </ul>
+
+  <div class="lema"><b>En síntesis.</b> Una plataforma institucional moderna, segura y trazable, operando hoy con costos mínimos y dimensionada para crecer sin fricción cuando el marco de la red consular del MAEC así lo determine.</div>
+
+  <div class="footer-page">Stack, seguridad y costos · Viceconsulado Honorario de España · Página 2 de 2</div>
+</section>
+
+</body>
+</html>
