@@ -1,0 +1,75 @@
+{
+  "fuente": "web/index.html (viceconsulado-nuevaesparta.com) — sección FAQ",
+  "faqs": [
+    {
+      "id": "anticipacion",
+      "pregunta": "¿Con cuánto tiempo de anticipación debo pedir la cita?",
+      "respuesta_corta": "Al menos 2 semanas antes. En periodos de alta demanda, más.",
+      "respuesta_larga": "Recomendamos solicitarla con al menos 2 semanas de anticipación. En períodos de alta demanda (antes de jornadas de pasaporte) puede necesitar más tiempo. Reserve lo antes posible.",
+      "intents": ["cuanto tiempo antes", "anticipacion cita", "cuando pido cita"]
+    },
+    {
+      "id": "varios_tramites_misma_cita",
+      "pregunta": "¿Puedo hacer más de un trámite en la misma cita?",
+      "respuesta_corta": "No. Cada cita es individual, personal e intransferible.",
+      "respuesta_larga": "No. Cada cita es individual, personal e intransferible. Si necesita realizar varios trámites, debe solicitar una cita independiente para cada uno. Indíquelo en las observaciones al solicitar.",
+      "intents": ["varios tramites", "mas de un tramite", "dos tramites mismo dia"]
+    },
+    {
+      "id": "documentacion_incompleta",
+      "pregunta": "¿Qué pasa si no tengo toda la documentación el día de la cita?",
+      "respuesta_corta": "Sin documentación completa no se realiza el trámite. La cita se pierde.",
+      "respuesta_larga": "Sin documentación completa no se realiza el trámite. La cita se pierde y debe solicitar una nueva. Consulte los requisitos de su trámite en la sección Trámites antes de venir.",
+      "intents": ["sin papeles", "no tengo documentos", "falta documentacion"]
+    },
+    {
+      "id": "pasaporte_mayor_12",
+      "pregunta": "¿Puedo renovar el pasaporte aquí si tengo más de 12 años?",
+      "respuesta_corta": "Se inicia aquí pero la toma de huellas solo en Caracas u operativos especiales en Margarita. Tarda ~2 meses tras la huella.",
+      "respuesta_larga": "El trámite se puede iniciar en el Viceconsulado, pero para mayores de 12 años la toma de huellas dactilares solo se realiza en Caracas o durante operativos especiales en Margarita. Una vez completada la toma de huellas, el pasaporte tarda aproximadamente 2 meses en llegar.",
+      "intents": ["pasaporte adulto", "huellas mayor de 12", "renovar pasaporte adulto"]
+    },
+    {
+      "id": "visados",
+      "pregunta": "¿Hacen visados aquí?",
+      "respuesta_corta": "No. Visados, compulsas, apostillas y legalizaciones son competencia exclusiva del Consulado General en Caracas.",
+      "respuesta_larga": "No. Los visados (turista, estudiante, trabajo, reagrupación familiar, etc.) son competencia exclusiva del Consulado General en Caracas. Tampoco realizamos compulsas, apostillas ni legalizaciones.",
+      "intents": ["visado", "visa", "schengen", "turista", "trabajo", "estudiante"]
+    },
+    {
+      "id": "sin_cita",
+      "pregunta": "¿Pueden atenderme sin cita?",
+      "respuesta_corta": "Sí, para información general (L-V 8:00-12:00). Los trámites SÍ requieren cita previa.",
+      "respuesta_larga": "Sí, para información general. La oficina atiende al público de lunes a viernes de 8:00 AM a 12:00 PM para consultas e información general sin necesidad de cita previa. Sin embargo, los trámites consulares (pasaportes, registro civil, certificados, etc.) requieren cita previa obligatoria. Para urgencias fuera de horario, contacte el número de emergencias del Consulado General: +58 424 209 0264.",
+      "intents": ["sin cita", "puedo ir directamente", "atencion sin cita"]
+    },
+    {
+      "id": "plazos_registro_civil",
+      "pregunta": "¿Cuánto tiempo tardan los trámites de Registro Civil?",
+      "respuesta_corta": "Entre 2 y 6 meses, según carga del Consulado General. Verifique en sutramiteconsular.maec.es.",
+      "respuesta_larga": "Los trámites de Registro Civil (nacimiento, matrimonio, defunción) se gestionan a través del Consulado General en Caracas tras la presentación de documentos aquí. Los plazos dependen de la carga del Consulado, generalmente entre 2 y 6 meses. Puede verificar el estado en sutramiteconsular.maec.es.",
+      "intents": ["cuanto tarda", "plazo registro civil", "tiempo nacimiento"]
+    },
+    {
+      "id": "estado_tramite",
+      "pregunta": "¿Cómo verifico el estado de mi trámite?",
+      "respuesta_corta": "En sutramiteconsular.maec.es con su número de expediente; o por WhatsApp/correo.",
+      "respuesta_larga": "Puede consultar en línea en sutramiteconsular.maec.es usando su número de expediente. También puede escribirnos por correo o WhatsApp con su nombre completo y trámite para que le informemos.",
+      "intents": ["estado tramite", "como va mi tramite", "expediente"]
+    },
+    {
+      "id": "diferencia_caracas",
+      "pregunta": "¿Cuál es la diferencia entre el Viceconsulado y el Consulado General en Caracas?",
+      "respuesta_corta": "El Viceconsulado atiende Nueva Esparta y trámites comunes. Caracas tiene competencia total en Venezuela e incluye visados, apostillas, etc.",
+      "respuesta_larga": "El Viceconsulado Honorario de Nueva Esparta es una representación auxiliar del Consulado General, con jurisdicción en el Estado Nueva Esparta (Margarita, Coche, Cubagua). Atendemos los trámites más comunes para residentes en estas islas. El Consulado General en Caracas tiene competencia sobre toda Venezuela y ofrece todos los servicios, incluidos visados, apostillas y trámites que no podemos gestionar aquí.",
+      "intents": ["diferencia consulado", "porque caracas", "jurisdiccion"]
+    },
+    {
+      "id": "envio_documentos",
+      "pregunta": "¿Puedo enviar documentos por correo o WhatsApp en lugar de ir personalmente?",
+      "respuesta_corta": "No para los trámites (requieren presencia personal). Sí para consultas y aclaraciones.",
+      "respuesta_larga": "No para los trámites. Todos los trámites consulares requieren presencia personal del interesado con los documentos originales. Sí puede contactarnos por correo o WhatsApp para consultas, aclaraciones sobre requisitos o para saber si su documentación está completa antes de venir.",
+      "intents": ["enviar documentos", "whatsapp documentos", "no ir presencialmente"]
+    }
+  ]
+}
