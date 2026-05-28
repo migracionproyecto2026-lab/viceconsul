@@ -39,6 +39,7 @@ model AdminUser {
 
 model Appointment {
   id                   String       @id @default(auto()) @map("_id") @db.ObjectId
+  serial               String?      @unique
   citizenId            String?      @db.ObjectId
   citizen              Citizen?     @relation(fields: [citizenId], references: [id])
   nombreExterno        String?
@@ -53,9 +54,29 @@ model Appointment {
   notas                String?
   documentosPendientes String?
   recordatorioEnviado  Boolean      @default(false)
+  valijaId             String?      @db.ObjectId
+  valija               Valija?      @relation(fields: [valijaId], references: [id])
   createdAt            DateTime     @default(now())
   updatedAt            DateTime     @updatedAt
   logs                 ActivityLog[]
+}
+
+model Valija {
+  id              String        @id @default(auto()) @map("_id") @db.ObjectId
+  serial          String        @unique
+  estado          String        @default("abierta")  // abierta | enviada | recibida
+  fechaEnvio      DateTime?
+  fechaRecepcion  DateTime?
+  notaInterna     String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  citas           Appointment[]
+}
+
+model Counter {
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  name  String @unique
+  value Int    @default(0)
 }
 
 model ActivityLog {

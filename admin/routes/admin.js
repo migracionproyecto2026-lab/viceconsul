@@ -2,7 +2,8 @@ const express = require('express')
 const router = express.Router()
 const { prisma } = require('../lib/db')
 const { requireAdmin } = require('../lib/auth')
-const { sendAppointmentReceived, sendAppointmentConfirmation, sendCancellationEmail, sendNoShowEmail, renderEmail } = require('../lib/email')
+const { sendAppointmentReceived, sendAppointmentConfirmation, sendCancellationEmail, sendNoShowEmail, sendInRevisionEmail, renderEmail } = require('../lib/email')
+const { nextSerial: __nextSerial } = require('../lib/serial')
 const bcrypt = require('bcryptjs')
 
 router.use(requireAdmin)
@@ -110,8 +111,11 @@ router.post('/citas', async (req, res) => {
       if (ocupada) return res.status(409).json({ error: `Ya existe una cita a las ${hora} el ${fecha}. Elige otra hora.` })
     }
 
+    const { nextSerial } = require('../lib/serial')
+    const serial = await nextSerial('VCNE')
     const cita = await prisma.appointment.create({
       data: {
+        serial,
         citizenId: citizenId || null,
         nombreExterno: nombreExterno || null,
         emailExterno: emailExterno || null,
@@ -506,6 +510,159 @@ router.delete('/usuarios/:id', requireSuperadmin, async (req, res) => {
     await prisma.adminUser.delete({ where: { id: req.params.id } })
     res.json({ ok: true })
   } catch (err) { res.status(500).json({ error: 'Error del servidor' }) }
+})
+
+// ── VALIJA DIPLOMÁTICA ─────────────────────────────────────────────────────
+// Una valija agrupa varias citas atendidas (status completada) listas para enviar al
+// Consulado General. Flujo: abierta → enviada → recibida (al recibir, los ciudadanos
+// reciben correo "en revisión").
+
+// Listado paginado
+router.get('/valijas', async (req, res) => {
+  try {
+    const page = Math.max(1, parseInt(req.query.page || '1'))
+    const limit = 20
+    const estado = req.query.estado || undefined
+    const where = estado ? { estado } : {}
+    const [valijas, total] = await Promise.all([
+      prisma.valija.findMany({
+        where,
+        include: { _count: { select: { citas: true } } },
+        orderBy: { createdAt: 'desc' },
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+      prisma.valija.count({ where }),
+    ])
+    res.json({ valijas, total, page, pages: Math.ceil(total / limit) })
+  } catch (err) { console.error(err); res.status(500).json({ error: 'Error del servidor' }) }
+})
+
+// Detalle con citas
+router.get('/valijas/:id', async (req, res) => {
+  try {
+    const valija = await prisma.valija.findUnique({
+      where: { id: req.params.id },
+      include: { citas: { include: { citizen: { select: { nombre: true, apellido: true, email: true } } }, orderBy: { fecha: 'asc' } } },
+    })
+    if (!valija) return res.status(404).json({ error: 'Valija no encontrada' })
+    res.json(valija)
+  } catch (err) { console.error(err); res.status(500).json({ error: 'Error del servidor' }) }
+})
+
+// Cierra el día: agrupa todas las citas COMPLETADAS sin valija en una nueva valija.
+// (Opcional ?fecha=YYYY-MM-DD para acotar a un día; por defecto, todas las que falten.)
+router.post('/valijas/cerrar-dia', async (req, res) => {
+  try {
+    const { fecha, notaInterna } = req.body || {}
+    const where = { status: 'completada', valijaId: null }
+    if (fecha) where.fecha = fecha
+    const pendientes = await prisma.appointment.findMany({ where, select: { id: true } })
+    if (!pendientes.length) return res.status(400).json({ error: 'No hay citas completadas sin valija para agrupar.' })
+
+    const serial = await __nextSerial('VAL')
+    const valija = await prisma.valija.create({
+      data: { serial, estado: 'abierta', notaInterna: notaInterna || null },
+    })
+    await prisma.appointment.updateMany({
+      where: { id: { in: pendientes.map(p => p.id) } },
+      data: { valijaId: valija.id },
+    })
+    await logActividad({
+      tipo: 'valija_creada', notaInterna: `Valija ${serial} creada con ${pendientes.length} trámite(s)${fecha ? ' del ' + fecha : ''}`,
+      realizadoPor: getNombreAdmin(req.session),
+    })
+    res.json({ ok: true, valija: { ...valija, totalCitas: pendientes.length } })
+  } catch (err) { console.error(err); res.status(500).json({ error: 'Error del servidor' }) }
+})
+
+// Marca la valija como ENVIADA (al Consulado General)
+router.post('/valijas/:id/enviar', async (req, res) => {
+  try {
+    const id = req.params.id
+    const v = await prisma.valija.findUnique({ where: { id } })
+    if (!v) return res.status(404).json({ error: 'Valija no encontrada' })
+    if (v.estado !== 'abierta') return res.status(400).json({ error: `La valija ya está en estado "${v.estado}"` })
+    const updated = await prisma.valija.update({ where: { id }, data: { estado: 'enviada', fechaEnvio: new Date() } })
+    await logActividad({ tipo: 'valija_enviada', notaInterna: `Valija ${v.serial} enviada al Consulado General`, realizadoPor: getNombreAdmin(req.session) })
+    res.json({ ok: true, valija: updated })
+  } catch (err) { console.error(err); res.status(500).json({ error: 'Error del servidor' }) }
+})
+
+// Marca la valija como RECIBIDA: dispara correo "en revisión" a cada ciudadano
+router.post('/valijas/:id/recibir', async (req, res) => {
+  try {
+    const id = req.params.id
+    const v = await prisma.valija.findUnique({
+      where: { id },
+      include: { citas: { include: { citizen: { select: { nombre: true, apellido: true, email: true } } } } },
+    })
+    if (!v) return res.status(404).json({ error: 'Valija no encontrada' })
+    if (v.estado === 'recibida') return res.status(400).json({ error: 'La valija ya está recibida' })
+    if (v.estado !== 'enviada') return res.status(400).json({ error: 'Solo se puede recibir una valija que ya fue enviada' })
+
+    const updated = await prisma.valija.update({ where: { id }, data: { estado: 'recibida', fechaRecepcion: new Date() } })
+    // Notificaciones a cada ciudadano (fire-and-forget)
+    for (const c of v.citas) {
+      const email = getCitaEmail(c)
+      if (email) sendInRevisionEmail(email, getCitaNombre(c), { tramite: c.tramite, fecha: c.fecha, hora: c.hora, serial: c.serial }, v.serial).catch(console.error)
+    }
+    await logActividad({ tipo: 'valija_recibida', notaInterna: `Valija ${v.serial} recibida en Consulado General — notificados ${v.citas.length} ciudadano(s)`, realizadoPor: getNombreAdmin(req.session) })
+    res.json({ ok: true, valija: updated, notificados: v.citas.filter(c => getCitaEmail(c)).length })
+  } catch (err) { console.error(err); res.status(500).json({ error: 'Error del servidor' }) }
+})
+
+// Ticket imprimible de la valija
+router.get('/valijas/:id/ticket', async (req, res) => {
+  try {
+    const v = await prisma.valija.findUnique({
+      where: { id: req.params.id },
+      include: { citas: { include: { citizen: { select: { nombre: true, apellido: true, email: true } } }, orderBy: { fecha: 'asc' } } },
+    })
+    if (!v) return res.status(404).send('Valija no encontrada')
+    const filas = v.citas.map((c, i) => `
+      <tr>
+        <td>${i + 1}</td><td>${c.serial || '—'}</td><td>${getCitaNombre(c)}</td>
+        <td>${c.tramite}</td><td>${c.fecha || '—'} ${c.hora || ''}</td>
+      </tr>`).join('')
+    const fmt = d => d ? new Date(d).toLocaleString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—'
+    res.set('Content-Type', 'text/html; charset=utf-8').send(`<!DOCTYPE html><html lang="es"><head><meta charset="utf-8">
+<title>Valija ${v.serial}</title>
+<style>
+body{font-family:Georgia,serif;color:#222;max-width:780px;margin:24px auto;padding:0 18px}
+.brand{border-bottom:4px solid #C9A227;padding-bottom:10px;margin-bottom:18px}
+.brand h1{color:#AA151B;margin:0;font-size:22px}
+.brand .sub{color:#666;font-size:13px;font-family:Arial,sans-serif}
+.meta{display:grid;grid-template-columns:1fr 1fr;gap:6px 16px;margin:18px 0;font-family:Arial,sans-serif;font-size:14px}
+.meta b{color:#AA151B}
+table{width:100%;border-collapse:collapse;margin-top:10px;font-family:Arial,sans-serif;font-size:13px}
+th,td{border:1px solid #ccc;padding:7px 9px;text-align:left}
+th{background:#faf8f3;color:#AA151B}
+.estado{display:inline-block;padding:3px 10px;border-radius:6px;font-size:13px;font-weight:bold;color:#fff}
+.e-abierta{background:#f59e0b}.e-enviada{background:#3b82f6}.e-recibida{background:#16a34a}
+button{background:#AA151B;color:#fff;border:0;padding:9px 18px;border-radius:6px;cursor:pointer;font-family:Georgia,serif}
+@media print { button{display:none} }
+</style></head><body>
+<button onclick="window.print()">Imprimir ticket</button>
+<div class="brand">
+  <h1>Valija Diplomática · ${v.serial}</h1>
+  <div class="sub">Viceconsulado Honorario de España · Porlamar, Nueva Esparta</div>
+</div>
+<div class="meta">
+  <div><b>Estado:</b> <span class="estado e-${v.estado}">${v.estado.toUpperCase()}</span></div>
+  <div><b>Trámites en valija:</b> ${v.citas.length}</div>
+  <div><b>Creada:</b> ${fmt(v.createdAt)}</div>
+  <div><b>Enviada:</b> ${fmt(v.fechaEnvio)}</div>
+  <div><b>Recibida:</b> ${fmt(v.fechaRecepcion)}</div>
+  <div><b>Nota interna:</b> ${v.notaInterna || '—'}</div>
+</div>
+<table>
+  <thead><tr><th>#</th><th>Folio</th><th>Ciudadano</th><th>Trámite</th><th>Cita</th></tr></thead>
+  <tbody>${filas || '<tr><td colspan="5" style="text-align:center;color:#999">Sin trámites</td></tr>'}</tbody>
+</table>
+<p style="margin-top:20px;font-family:Arial,sans-serif;font-size:11px;color:#888;text-align:center">Documento institucional generado automáticamente.</p>
+</body></html>`)
+  } catch (err) { console.error(err); res.status(500).send('Error del servidor') }
 })
 
 module.exports = router

@@ -895,6 +895,7 @@
           id="nb-buzon"></span></button>
       <div class="nav-sec">Registro</div>
       <button class="nav-link" onclick="showTab('ciudadanos')"><i class="bi bi-people"></i>Ciudadanos</button>
+      <button class="nav-link nav-rol-valijas" onclick="showTab('valijas')"><i class="bi bi-archive"></i>Valija Diplomática</button>
       <button class="nav-link nav-rol-crm" onclick="showTab('crm')"><i class="bi bi-person-exclamation"></i>Registro incompleto<span
           class="nav-badge" id="nb-crm"></span></button>
       <div class="nav-sec">Configuración</div>
@@ -1056,6 +1057,17 @@
       </div>
 
       <!-- REGISTRO INCOMPLETO: Citas con documentos pendientes -->
+      <div id="tab-valijas" class="tab-pane">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+          <p style="font-size:.82rem;color:var(--gris);margin:0;max-width:680px;">Agrupe trámites atendidos (status <em>completada</em>) en una valija para envío al Consulado General. Estados: <strong>abierta → enviada → recibida</strong>. Al recibirse, cada ciudadano queda notificado por correo de que su trámite está en revisión.</p>
+          <button class="btn-p" onclick="cerrarDiaValija()"><i class="bi bi-bag-plus"></i>Cerrar día — Crear valija</button>
+        </div>
+        <div class="card">
+          <div class="card-title"><i class="bi bi-archive"></i>Valijas</div>
+          <div class="tw" id="valijas-table"></div>
+        </div>
+      </div>
+
       <div id="tab-crm" class="tab-pane">
         <div class="card">
           <div class="card-title"><i class="bi bi-person-exclamation"></i>Registro incompleto — Documentos pendientes</div>
@@ -1625,7 +1637,7 @@
     function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('open') }
 
     // ── Tabs ───────────────────────────────────────────────────────────────────
-    const TITLES = { dashboard: 'Dashboard', citas: 'Gestión de Citas', buzon: 'Buzón / Bitácora', ciudadanos: 'Ciudadanos', banners: 'Avisos Web', fechas: 'Fechas Bloqueadas', crm: 'Registro Incompleto', usuarios: 'Gestión de Usuarios' }
+    const TITLES = { dashboard: 'Dashboard', citas: 'Gestión de Citas', buzon: 'Buzón / Bitácora', ciudadanos: 'Ciudadanos', banners: 'Avisos Web', fechas: 'Fechas Bloqueadas', crm: 'Registro Incompleto', valijas: 'Valija Diplomática', usuarios: 'Gestión de Usuarios' }
     let _activeTab = null
     function showTab(t) {
       document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'))
@@ -1645,6 +1657,7 @@
       if (t === 'banners') loadBanners()
       if (t === 'fechas') loadFechas()
       if (t === 'crm') loadCRM()
+      if (t === 'valijas') loadValijas()
       if (t === 'usuarios') loadUsuarios()
       _resetPoll()
     }
@@ -2309,6 +2322,49 @@
       loadCRM(); loadDashboard()
     }
 
+    // ── Valija Diplomática ─────────────────────────────────────────────────────
+    const VALIJA_COLOR = { abierta: '#f59e0b', enviada: '#3b82f6', recibida: '#16a34a' }
+    async function loadValijas(page = 1) {
+      const d = await api('GET', `/api/admin/valijas?page=${page}`)
+      const valijas = (d && d.valijas) || []
+      const el = document.getElementById('valijas-table')
+      if (!valijas.length) { el.innerHTML = '<p style="color:var(--gris-claro);font-size:.88rem;padding:16px 0;">No hay valijas todavía. Atienda citas (status <em>completada</em>) y use <strong>"Cerrar día"</strong>.</p>'; return }
+      el.innerHTML = `<table><thead><tr><th>Serial</th><th>Estado</th><th>Trámites</th><th>Creada</th><th>Enviada</th><th>Recibida</th><th>Acciones</th></tr></thead><tbody>${valijas.map(v => `
+        <tr>
+          <td><strong>${v.serial}</strong></td>
+          <td><span style="background:${VALIJA_COLOR[v.estado] || '#999'};color:#fff;padding:2px 10px;border-radius:6px;font-size:.78rem;font-weight:600;">${v.estado.toUpperCase()}</span></td>
+          <td>${v._count.citas}</td>
+          <td style="font-size:.82rem;">${new Date(v.createdAt).toLocaleDateString('es-ES')}</td>
+          <td style="font-size:.82rem;">${v.fechaEnvio ? new Date(v.fechaEnvio).toLocaleDateString('es-ES') : '—'}</td>
+          <td style="font-size:.82rem;">${v.fechaRecepcion ? new Date(v.fechaRecepcion).toLocaleDateString('es-ES') : '—'}</td>
+          <td style="white-space:nowrap;">
+            <button class="btn-ic" onclick="verValijaTicket('${v.id}')" title="Ver / imprimir ticket de la valija"><i class="bi bi-receipt"></i></button>
+            ${v.estado === 'abierta' ? `<button class="btn-ic" onclick="enviarValija('${v.id}')" title="Marcar como enviada" style="color:#1e40af;border-color:#bfdbfe;"><i class="bi bi-send"></i></button>` : ''}
+            ${v.estado === 'enviada' ? `<button class="btn-ic" onclick="recibirValija('${v.id}')" title="Marcar como recibida (notifica a ciudadanos)" style="color:#166534;border-color:#bbf7d0;"><i class="bi bi-check2-all"></i></button>` : ''}
+          </td>
+        </tr>`).join('')}</tbody></table>${pager(d.page, d.pages, d.total, 'loadValijas')}`
+    }
+    async function cerrarDiaValija() {
+      if (!confirm('¿Crear una nueva valija con todas las citas completadas que aún no están en una valija?')) return
+      const r = await api('POST', '/api/admin/valijas/cerrar-dia', {})
+      if (r?.error) return alert(r.error)
+      toast(`Valija ${r.valija.serial} creada con ${r.valija.totalCitas} trámite(s)`)
+      loadValijas(); loadDashboard()
+    }
+    async function enviarValija(id) {
+      if (!confirm('¿Marcar la valija como ENVIADA al Consulado General?')) return
+      const r = await api('POST', `/api/admin/valijas/${id}/enviar`, {})
+      if (r?.error) return alert(r.error)
+      toast('Valija enviada'); loadValijas()
+    }
+    async function recibirValija(id) {
+      if (!confirm('¿Marcar la valija como RECIBIDA?\nSe notificará por correo a cada ciudadano que su trámite está en revisión.')) return
+      const r = await api('POST', `/api/admin/valijas/${id}/recibir`, {})
+      if (r?.error) return alert(r.error)
+      toast(`Valija recibida — ${r.notificados} ciudadano(s) notificado(s)`); loadValijas()
+    }
+    function verValijaTicket(id) { window.open(`/api/admin/valijas/${id}/ticket`, '_blank', 'noopener') }
+
     // ── Usuarios ────────────────────────────────────────────────────────────────
     let _usuarios = []
     const MODULOS = ['dashboard', 'ciudadanos', 'banners', 'fechas_bloqueadas', 'citas', 'usuarios']
@@ -2508,7 +2564,7 @@
       // ── Permisos por rol ──
       // consul: solo Dashboard, Ciudadanos, Avisos web, Fechas bloqueadas
       if (role === 'consul') {
-        document.querySelectorAll('.nav-rol-citas, .nav-rol-buzon, .nav-rol-crm').forEach(el => el.style.display = 'none')
+        document.querySelectorAll('.nav-rol-citas, .nav-rol-buzon, .nav-rol-crm, .nav-rol-valijas').forEach(el => el.style.display = 'none')
       }
       // superadmin: mostrar gestión de usuarios
       if (role === 'superadmin') {

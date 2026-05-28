@@ -153,28 +153,42 @@ const TEMPLATES = {
 
   // Al solicitar la cita (status pendiente)
   recibida: ({ nombre, cita }) => ({
-    subject: `Solicitud de cita recibida: ${cita.tramite}`,
+    subject: `Solicitud recibida [${cita.serial || ''}]: ${cita.tramite}`,
     html: layout({
       titulo: 'Hemos recibido su solicitud',
-      preheader: `${cita.tramite} · ${cita.fecha} · ${cita.hora} — pendiente de confirmación`,
+      preheader: `${cita.serial || ''} · ${cita.tramite} · ${cita.fecha} · ${cita.hora}`,
       cuerpo: `
         <p style="margin:0 0 12px;">Estimado/a <strong>${nombre}</strong>,</p>
         <p style="margin:0;">Hemos recibido su solicitud de cita. Queda <strong>pendiente de confirmación</strong> por nuestro personal; recibirá un nuevo correo cuando sea confirmada.</p>
-        ${infoTable([['Trámite', cita.tramite], ['Fecha', cita.fecha], ['Hora', cita.hora]])}
-        ${aviso('Si necesita modificar o cancelar su solicitud, contáctenos por los medios indicados al pie.')}`,
+        ${infoTable([['Folio', cita.serial || '—'], ['Trámite', cita.tramite], ['Fecha', cita.fecha], ['Hora', cita.hora]])}
+        ${aviso('Conserve este folio para cualquier consulta sobre su trámite. Si necesita modificar o cancelar, contáctenos por los medios al pie.')}`,
+    }),
+  }),
+
+  // Cuando la valija con su trámite llega al Consulado General y queda en revisión
+  enRevision: ({ nombre, cita, valijaSerial }) => ({
+    subject: `Su trámite está en revisión: ${cita.tramite}`,
+    html: layout({
+      titulo: 'Su trámite ha llegado al Consulado General',
+      preheader: `${cita.tramite} — ${valijaSerial ? 'Valija ' + valijaSerial : ''} — en revisión`,
+      cuerpo: `
+        <p style="margin:0 0 12px;">Estimado/a <strong>${nombre}</strong>,</p>
+        <p style="margin:0;">Le informamos que su trámite ha sido <strong>recibido en el Consulado General</strong> y entra en proceso de revisión.</p>
+        ${infoTable([['Trámite', cita.tramite], ['Cita', cita.fecha + ' ' + cita.hora], ['Valija', valijaSerial || '—'], ['Estado', 'En revisión']])}
+        ${aviso('Le notificaremos por este medio cualquier novedad sobre su trámite. Si tiene consultas urgentes, use el WhatsApp del pie.')}`,
     }),
   }),
 
   // Cuando el personal confirma la cita
   confirmacion: ({ nombre, cita }) => ({
-    subject: `Cita confirmada: ${cita.tramite} — ${cita.fecha}`,
+    subject: `Cita confirmada [${cita.serial || ''}]: ${cita.tramite} — ${cita.fecha}`,
     html: layout({
       titulo: 'Su cita ha sido confirmada',
-      preheader: `${cita.tramite} · ${cita.fecha} · ${cita.hora}`,
+      preheader: `${cita.serial || ''} · ${cita.tramite} · ${cita.fecha} · ${cita.hora}`,
       cuerpo: `
         <p style="margin:0 0 12px;">Estimado/a <strong>${nombre}</strong>,</p>
         <p style="margin:0;">Su cita en el Viceconsulado Honorario de España ha sido <strong>confirmada</strong>:</p>
-        ${infoTable([['Trámite', cita.tramite], ['Fecha', cita.fecha], ['Hora', cita.hora]])}
+        ${infoTable([['Folio', cita.serial || '—'], ['Trámite', cita.tramite], ['Fecha', cita.fecha], ['Hora', cita.hora]])}
         ${aviso('Por favor llegue <strong>10 minutos antes</strong> con todos sus documentos.')}
         <p style="margin:0;color:${GRIS};font-size:13px;">Dirección: Porlamar, Nueva Esparta, Venezuela.</p>`,
     }),
@@ -188,34 +202,34 @@ const TEMPLATES = {
       cuerpo: `
         <p style="margin:0 0 12px;">Estimado/a <strong>${nombre}</strong>,</p>
         <p style="margin:0;">Le recordamos que tiene una cita programada para <strong>hoy</strong>:</p>
-        ${infoTable([['Trámite', cita.tramite], ['Hora', `<span style="font-size:16px;font-weight:bold;color:${ROJO};">${cita.hora}</span>`]])}
+        ${infoTable([['Folio', cita.serial || '—'], ['Trámite', cita.tramite], ['Hora', `<span style="font-size:16px;font-weight:bold;color:${ROJO};">${cita.hora}</span>`]])}
         ${aviso('Recuerde traer todos los documentos requeridos para su trámite.')}`,
     }),
   }),
 
   cancelacion: ({ nombre, cita, mensajeCiudadano }) => ({
-    subject: `Cancelación de cita: ${cita.tramite} — ${cita.fecha}`,
+    subject: `Cancelación [${cita.serial || ''}]: ${cita.tramite} — ${cita.fecha}`,
     html: layout({
       titulo: 'Cancelación de su cita',
-      preheader: `Su cita del ${cita.fecha} ha sido cancelada`,
+      preheader: `${cita.serial || ''} · Su cita del ${cita.fecha} ha sido cancelada`,
       cuerpo: `
         <p style="margin:0 0 12px;">Estimado/a <strong>${nombre}</strong>,</p>
         <p style="margin:0;">Le informamos que su cita ha sido cancelada:</p>
-        ${infoTable([['Trámite', cita.tramite], ['Fecha', cita.fecha], ['Hora', cita.hora]])}
+        ${infoTable([['Folio', cita.serial || '—'], ['Trámite', cita.tramite], ['Fecha', cita.fecha], ['Hora', cita.hora]])}
         ${mensajeCiudadano ? aviso(mensajeCiudadano, ROJO) : ''}
         <p style="margin:0;color:${GRIS};font-size:13px;">Si desea agendar una nueva cita, puede hacerlo en nuestra página web o contactándonos directamente.</p>`,
     }),
   }),
 
   inasistencia: ({ nombre, cita }) => ({
-    subject: `Inasistencia registrada — ${cita.tramite}`,
+    subject: `Inasistencia [${cita.serial || ''}] — ${cita.tramite}`,
     html: layout({
       titulo: 'Registro de inasistencia',
-      preheader: `Inasistencia registrada — ${cita.tramite}`,
+      preheader: `${cita.serial || ''} · Inasistencia registrada — ${cita.tramite}`,
       cuerpo: `
         <p style="margin:0 0 12px;">Estimado/a <strong>${nombre}</strong>,</p>
         <p style="margin:0;">Hemos registrado su inasistencia a la siguiente cita:</p>
-        ${infoTable([['Trámite', cita.tramite], ['Fecha', cita.fecha], ['Hora', cita.hora]])}
+        ${infoTable([['Folio', cita.serial || '—'], ['Trámite', cita.tramite], ['Fecha', cita.fecha], ['Hora', cita.hora]])}
         <p style="margin:0;color:${GRIS};font-size:13px;">Si esto fue un error o desea reagendar, contáctenos a la brevedad posible.</p>`,
     }),
   }),
@@ -331,6 +345,8 @@ const sendCancellationEmail = (to, nombre, cita, mensajeCiudadano) =>
   send('cancelacion', to, { nombre, cita, mensajeCiudadano }, 'Cancelación')
 const sendNoShowEmail = (to, nombre, cita) =>
   send('inasistencia', to, { nombre, cita }, 'Inasistencia')
+const sendInRevisionEmail = (to, nombre, cita, valijaSerial) =>
+  send('enRevision', to, { nombre, cita, valijaSerial }, 'En revisión (valija recibida)')
 
 module.exports = {
   sendVerificationEmail,
@@ -339,6 +355,7 @@ module.exports = {
   sendAppointmentReminder,
   sendCancellationEmail,
   sendNoShowEmail,
+  sendInRevisionEmail,
   renderEmail,
   verifyTransport,
   verifyGmailApi,

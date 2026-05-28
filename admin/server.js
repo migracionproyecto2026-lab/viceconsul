@@ -185,9 +185,12 @@ app.post('/api/public/cita', publicLimiter, async (req, res) => {
     }
 
     const notas = observaciones || null
+    const { nextSerial } = require('./lib/serial')
+    const serial = await nextSerial('VCNE')
 
     const cita = await prisma.appointment.create({
       data: {
+        serial,
         citizenId,
         nombreExterno: citizenId ? null : (nombreCompleto || null),
         emailExterno: citizenId ? null : (email || null),
