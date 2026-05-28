@@ -253,6 +253,13 @@ app.get('/api/health/smtp', publicLimiter, async (req, res) => {
     res.json({ smtp: 'ok', port: port || 'default' })
   } catch (e) { res.json({ smtp: 'error', port: port || 'default', code: e.code || null, message: e.message }) }
 })
+app.get('/api/health/gmailapi', publicLimiter, async (req, res) => {
+  try {
+    const { verifyGmailApi } = require('./lib/email')
+    const cuenta = await verifyGmailApi()
+    res.json({ gmailApi: 'ok', cuenta })
+  } catch (e) { res.json({ gmailApi: 'error', code: e.code || null, message: e.message }) }
+})
 
 // ── Fallback SPA ───────────────────────────────────────────────────────────
 app.get('/admin*', (req, res) => res.sendFile(path.join(__dirname, 'public/admin.html')))

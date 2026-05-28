@@ -1,4 +1,5 @@
 const nodemailer = require('nodemailer')
+const { google } = require('googleapis')
 
 const FROM = `"Viceconsulado Honorario de España" <${process.env.GMAIL_USER}>`
 
@@ -220,6 +221,37 @@ const TEMPLATES = {
   }),
 }
 
+// ── Gmail API (HTTPS, port 443) — funciona donde el SMTP está bloqueado (Railway) ─
+function gmailApi() {
+  const o = new google.auth.OAuth2(process.env.GOOGLE_CLIENT_ID, process.env.GOOGLE_CLIENT_SECRET, 'https://developers.google.com/oauthplayground')
+  o.setCredentials({ refresh_token: process.env.GOOGLE_REFRESH_TOKEN })
+  return google.gmail({ version: 'v1', auth: o })
+}
+function buildRaw({ from, to, bcc, replyTo, subject, html }) {
+  const msg = [
+    `From: ${from}`,
+    `To: ${to}`,
+    bcc ? `Bcc: ${bcc}` : null,
+    replyTo ? `Reply-To: ${replyTo}` : null,
+    `Subject: =?UTF-8?B?${Buffer.from(subject, 'utf8').toString('base64')}?=`,
+    'MIME-Version: 1.0',
+    'Content-Type: text/html; charset=UTF-8',
+    'Content-Transfer-Encoding: base64',
+    '',
+    Buffer.from(html, 'utf8').toString('base64'),
+  ].filter(Boolean).join('\r\n')
+  return Buffer.from(msg).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+}
+async function sendViaGmailApi({ to, subject, html, bcc, replyTo }) {
+  const raw = buildRaw({ from: FROM, to, bcc, replyTo, subject, html })
+  await gmailApi().users.messages.send({ userId: 'me', requestBody: { raw } })
+}
+// Verifica credenciales Gmail API sin enviar (devuelve el correo de la cuenta)
+async function verifyGmailApi() {
+  const r = await gmailApi().users.getProfile({ userId: 'me' })
+  return r.data.emailAddress
+}
+
 // Prueba la conexión/credenciales SMTP sin enviar correo (timeout corto para no colgar)
 async function verifyTransport(opts = {}) {
   const port = opts.port || Number(process.env.SMTP_PORT) || 465
@@ -240,18 +272,23 @@ function renderEmail(tipo, data) {
   return t(data)
 }
 
-// Envía un correo de un tipo dado; respeta el fallback a consola si no hay GMAIL_PASS
+// Envía un correo de un tipo dado.
+// Prioridad: Gmail API (HTTPS, funciona en Railway) → SMTP (local) → consola (dev).
 async function send(tipo, to, data, devMsg) {
-  if (!process.env.GMAIL_PASS) { console.log(`\n[DEV] ${devMsg || tipo} para ${to}`); return true }
   const { subject, html } = renderEmail(tipo, data)
-  await getTransporter().sendMail({
-    from: FROM,
-    to,
-    bcc: process.env.GMAIL_USER,   // respaldo en la cuenta del consulado
-    replyTo: CONTACTO_EMAIL,        // las respuestas van al correo oficial
-    subject,
-    html,
-  })
+  const bcc = process.env.GMAIL_USER  // respaldo en la cuenta del consulado
+  // 1) Gmail API por HTTPS (producción)
+  if (process.env.GOOGLE_REFRESH_TOKEN) {
+    await sendViaGmailApi({ to, subject, html, bcc, replyTo: CONTACTO_EMAIL })
+    return true
+  }
+  // 2) SMTP (entorno local donde no esté bloqueado)
+  if (process.env.GMAIL_PASS) {
+    await getTransporter().sendMail({ from: FROM, to, bcc, replyTo: CONTACTO_EMAIL, subject, html })
+    return true
+  }
+  // 3) Sin credenciales: fallback a consola
+  console.log(`\n[DEV] ${devMsg || tipo} para ${to}`)
   return true
 }
 
@@ -278,5 +315,6 @@ module.exports = {
   sendNoShowEmail,
   renderEmail,
   verifyTransport,
+  verifyGmailApi,
   TEMPLATES,
 }
