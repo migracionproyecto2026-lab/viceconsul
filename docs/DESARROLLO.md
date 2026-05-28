@@ -202,6 +202,29 @@ Razón: aislar en la bitácora los eventos delicados (entrada y salida de person
 
 `MODULOS_VALIDOS = ['dashboard', 'ciudadanos', 'banners', 'fechas_bloqueadas', 'citas', 'usuarios', 'valijas', 'crm', 'buzon', 'reporteria_ciudadanos', 'reporteria_citas', 'reporteria_maestro', 'reporteria_auditoria']`.
 
+### Disponibilidad de fechas (regla institucional)
+
+Implementada en `admin/lib/disponibilidad.js` (`evaluarFecha`) y replicada en frontend (`admin.html` → `evaluarDisponibilidad`, `web/index.html` → `evaluarDisponibilidadPub`).
+
+Reglas (todas deben cumplirse):
+
+1. Solo lunes a viernes.
+2. Fecha mínima: día siguiente al actual.
+3. No puede estar en `BlockedDate`.
+4. **Semana en curso** (lunes a viernes): siempre disponible.
+5. **Semana siguiente**: disponible solo de **martes a viernes** (los lunes no).
+6. Semanas posteriores: disponibles solo si el lunes correspondiente figura en `SemanaHabilitada`.
+
+Modelo `SemanaHabilitada` (Prisma/Mongo): `lunes` (`YYYY-MM-DD`, único), `motivo?`, `createdAt`. Endpoints `/api/admin/semanas-habilitadas` (CRUD, requireAdmin) y `/api/semanas-habilitadas` (lectura pública para el formulario web).
+
+UI: tab "Fechas bloqueadas" añade tercera ficha "Semanas habilitadas (extra)" con formulario de alta y lista de semanas vigentes.
+
+Backend valida la regla en `POST /api/admin/citas`, `POST /api/admin/citas/:id/reagendar` y `POST /api/public/cita` vía `validarFechaDisponible()`.
+
+### Disuasión de inspección
+
+Se añadió bloqueo de atajos de devtools (`F12`, `Ctrl+U`, `Ctrl+S`, `Ctrl+Shift+I/J/C/K`) y menú contextual en `admin.html`, `login.html` y `web/index.html`. **No es seguridad** (cualquier persona técnica lo salta desactivando JS, usando curl o navegador modificado), solo reduce manipulaciones improvisadas desde el navegador. La seguridad real sigue siendo responsabilidad del backend.
+
 ### Reportería — acceso granular por reporte
 
 Cada uno de los 4 reportes tiene su permiso fino independiente. Middleware `requirePermiso(perm)` por endpoint:

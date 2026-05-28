@@ -2013,7 +2013,7 @@ if (bioCarouselEl) {
 // ============================================
 // Tipos de documento — límites de caracteres y validación
 var DOC_CONFIG = {
-  'CI Venezuela': { min: 6, max: 9, hint: 'Solo números, sin letras. Ej: 27768642', numeric: true },
+  'CI Venezuela': { min: 6, max: 9, hint: 'Solo números, sin letras. Ej: 12345678', numeric: true },
   'Pasaporte':    { min: 6, max: 12, hint: 'Letras y números. Ej: AB1234567', numeric: false },
   'DNI España':   { min: 8, max: 9, hint: '8 dígitos + letra. Ej: 12345678Z', numeric: false },
   'NIE':          { min: 9, max: 10, hint: 'Letra + 7 dígitos + letra. Ej: X1234567Z', numeric: false },
@@ -2105,55 +2105,102 @@ function showToast() {
 }
 
 // ============================================
+// DISUASIÓN DE INSPECCIÓN (no es seguridad, solo reduce manipulaciones)
+// ============================================
+document.addEventListener('contextmenu', function(e){ e.preventDefault(); });
+document.addEventListener('keydown', function(e){
+  var k = e.key, c = e.ctrlKey, s = e.shiftKey;
+  if (k === 'F12') { e.preventDefault(); return; }
+  if (c && s && ['I','J','C','K'].indexOf(k.toUpperCase()) !== -1) { e.preventDefault(); return; }
+  if (c && ['u','U','s','S'].indexOf(k) !== -1) { e.preventDefault(); return; }
+});
+
+// ============================================
 // SELECTOR DE FECHA Y HORARIOS
 // ============================================
-// Obtener el próximo día hábil (lunes-viernes) desde mañana
-function proximoDiaHabil() {
-  var d = new Date();
-  d.setDate(d.getDate() + 1);
-  while (d.getDay() === 0 || d.getDay() === 6) { d.setDate(d.getDate() + 1); }
-  return d.toISOString().split('T')[0];
+// Regla institucional de disponibilidad:
+//  - Semana en curso: L-V completos (excepto el día presente).
+//  - Semana siguiente: martes a viernes (los lunes no están disponibles).
+//  - Semanas posteriores: solo si el viceconsulado las habilita expresamente.
+//  - Sábados y domingos: nunca disponibles.
+
+var _fechasBloqueadasPub = [];
+var _semanasHabilitadasPub = [];
+
+function _lunesDeSemanaPub(d) {
+  var x = new Date(d); x.setHours(12,0,0,0);
+  var dow = x.getDay();
+  x.setDate(x.getDate() + (dow === 0 ? -6 : 1 - dow));
+  return x.toISOString().split('T')[0];
 }
 
-var fechaInput = document.getElementById('fechaInput');
-if (fechaInput) {
-  fechaInput.min = proximoDiaHabil();
-
-  // Función para verificar si una fecha es fin de semana
-  function esFindeSemana(dateStr) {
-    var d = new Date(dateStr + 'T12:00:00');
-    return d.getDay() === 0 || d.getDay() === 6;
+function evaluarDisponibilidadPub(fechaStr) {
+  if (!fechaStr || !/^\d{4}-\d{2}-\d{2}$/.test(fechaStr)) return { ok: false, motivo: 'Formato inválido' };
+  var d = new Date(fechaStr + 'T12:00:00');
+  var dow = d.getDay();
+  if (dow === 0 || dow === 6) return { ok: false, motivo: 'Sábados y domingos no atendemos' };
+  var manana = new Date(); manana.setHours(0,0,0,0); manana.setDate(manana.getDate() + 1);
+  if (fechaStr < manana.toISOString().split('T')[0]) return { ok: false, motivo: 'Elija una fecha a partir de mañana' };
+  if (_fechasBloqueadasPub.indexOf(fechaStr) !== -1) return { ok: false, motivo: 'Esta fecha no está disponible' };
+  var lunesFecha = _lunesDeSemanaPub(d);
+  var lunesActual = _lunesDeSemanaPub(new Date());
+  var sa = Math.round((new Date(lunesFecha + 'T12:00:00') - new Date(lunesActual + 'T12:00:00')) / (7*24*60*60*1000));
+  if (sa < 0) return { ok: false, motivo: 'Semana ya transcurrida' };
+  if (sa === 0) return { ok: true };
+  if (sa === 1) {
+    if (dow === 1) return { ok: false, motivo: 'Los lunes de la semana entrante no atendemos' };
+    return { ok: true };
   }
+  if (_semanasHabilitadasPub.indexOf(lunesFecha) !== -1) return { ok: true };
+  return { ok: false, motivo: 'Esa semana no está abierta para citas todavía' };
+}
 
+function primerDiaDisponible() {
+  var cursor = new Date(); cursor.setHours(12,0,0,0);
+  for (var i = 0; i < 60; i++) {
+    cursor.setDate(cursor.getDate() + 1);
+    var iso = cursor.toISOString().split('T')[0];
+    if (evaluarDisponibilidadPub(iso).ok) return iso;
+  }
+  return null;
+}
+
+// Carga inicial de bloqueadas + semanas habilitadas, después aplica al input
+function _initFechaInput() {
+  var fechaInput = document.getElementById('fechaInput');
+  if (!fechaInput) return;
+  var primero = primerDiaDisponible();
+  if (primero) fechaInput.min = primero;
   fechaInput.addEventListener('input', function() {
     var horaGroup = document.getElementById('horaGroup');
     var horaInput = document.getElementById('horaInput');
-    if (!this.value) {
+    if (!this.value) { horaGroup.style.display = 'none'; horaInput.value = ''; resetSlots(); return; }
+    var r = evaluarDisponibilidadPub(this.value);
+    if (!r.ok) {
+      alert(r.motivo + '. Por favor elija otra fecha.');
+      this.value = '';
       horaGroup.style.display = 'none';
-      horaInput.value = '';
       resetSlots();
       return;
-    }
-    if (esFindeSemana(this.value)) {
-      // Buscar el próximo lunes
-      var d = new Date(this.value + 'T12:00:00');
-      while (d.getDay() === 0 || d.getDay() === 6) { d.setDate(d.getDate() + 1); }
-      this.value = d.toISOString().split('T')[0];
     }
     horaGroup.style.display = 'block';
     horaInput.value = '';
     resetSlots();
   });
-
-  // Bloquear escritura directa de fin de semana
-  fechaInput.addEventListener('blur', function() {
-    if (this.value && esFindeSemana(this.value)) {
-      var d = new Date(this.value + 'T12:00:00');
-      while (d.getDay() === 0 || d.getDay() === 6) { d.setDate(d.getDate() + 1); }
-      this.value = d.toISOString().split('T')[0];
-    }
-  });
 }
+
+(function cargarDatosCalendario() {
+  var apiBase = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? 'http://localhost:3000' : 'https://admin.viceconsulado-nuevaesparta.com';
+  Promise.all([
+    fetch(apiBase + '/api/fechas-bloqueadas').then(function(r){return r.json()}).catch(function(){return []}),
+    fetch(apiBase + '/api/semanas-habilitadas').then(function(r){return r.json()}).catch(function(){return []}),
+  ]).then(function(arr) {
+    _fechasBloqueadasPub = (arr[0] || []).map(function(x){return x.fecha});
+    _semanasHabilitadasPub = (arr[1] || []).map(function(x){return x.lunes});
+    _initFechaInput();
+  }).catch(function() { _initFechaInput(); });
+})();
 
 function selectSlot(btn) {
   document.querySelectorAll('.slot-btn').forEach(function(b) { b.classList.remove('selected'); });

@@ -5,7 +5,18 @@ const { requireAdmin } = require('../lib/auth')
 const { sendAppointmentReceived, sendAppointmentConfirmation, sendCancellationEmail, sendNoShowEmail, sendInRevisionEmail, sendValijaSentEmail, sendReagendamiento, renderEmail } = require('../lib/email')
 const { nextSerial: __nextSerial } = require('../lib/serial')
 const { auditar } = require('../lib/audit')
+const { evaluarFecha } = require('../lib/disponibilidad')
 const bcrypt = require('bcryptjs')
+
+async function validarFechaDisponible(fecha) {
+  if (!fecha) return null
+  const [bloqueadas, semanas] = await Promise.all([
+    prisma.blockedDate.findMany({ select: { fecha: true } }),
+    prisma.semanaHabilitada.findMany({ select: { lunes: true } }),
+  ])
+  const r = evaluarFecha(fecha, bloqueadas.map(b => b.fecha), semanas.map(s => s.lunes))
+  return r.ok ? null : r.motivo
+}
 
 router.use(requireAdmin)
 
@@ -129,11 +140,8 @@ router.post('/citas', async (req, res) => {
     if (!hora || !tramite) return res.status(400).json({ error: 'Hora y trámite son obligatorios' })
 
     if (fecha) {
-      const fd = new Date(fecha + 'T12:00:00')
-      const hoy = new Date(); hoy.setHours(12, 0, 0, 0)
-      if (fd <= hoy) return res.status(400).json({ error: 'La fecha debe ser posterior al día de hoy.' })
-      const dia = fd.getDay()
-      if (dia === 0 || dia === 6) return res.status(400).json({ error: 'Solo se pueden agendar citas de lunes a viernes.' })
+      const err = await validarFechaDisponible(fecha)
+      if (err) return res.status(400).json({ error: err })
     }
 
     if (fecha && hora) {
@@ -275,11 +283,8 @@ router.post('/citas/:id/reagendar', async (req, res) => {
     const id = req.params.id
 
     if (!nuevaFecha || !nuevaHora) return res.status(400).json({ error: 'Nueva fecha y nueva hora son obligatorias.' })
-    const fd = new Date(nuevaFecha + 'T12:00:00')
-    const hoyDt = new Date(); hoyDt.setHours(12, 0, 0, 0)
-    if (fd <= hoyDt) return res.status(400).json({ error: 'La nueva fecha debe ser posterior al día de hoy.' })
-    const dia = fd.getDay()
-    if (dia === 0 || dia === 6) return res.status(400).json({ error: 'Solo se pueden agendar citas de lunes a viernes.' })
+    const errFecha = await validarFechaDisponible(nuevaFecha)
+    if (errFecha) return res.status(400).json({ error: errFecha })
 
     const cita = await prisma.appointment.findUnique({
       where: { id },
@@ -623,6 +628,48 @@ router.post('/fechas-bloqueadas', async (req, res) => {
     res.json(fb)
   } catch (err) { res.status(500).json({ error: 'Error del servidor' }) }
 })
+// ── SEMANAS HABILITADAS (extra) ─────────────────────────────────────────────
+// La semana en curso y la siguiente (de martes a viernes) están siempre
+// disponibles. Para habilitar semanas más allá, se registran aquí por el
+// lunes de la semana correspondiente.
+router.get('/semanas-habilitadas', async (req, res) => {
+  try { res.json(await prisma.semanaHabilitada.findMany({ orderBy: { lunes: 'asc' } })) }
+  catch (err) { res.status(500).json({ error: 'Error del servidor' }) }
+})
+
+router.post('/semanas-habilitadas', async (req, res) => {
+  try {
+    const { lunes, motivo } = req.body
+    if (!lunes || !/^\d{4}-\d{2}-\d{2}$/.test(lunes)) return res.status(400).json({ error: 'Lunes (formato YYYY-MM-DD) requerido.' })
+    // Validar que la fecha sea efectivamente un lunes
+    const d = new Date(lunes + 'T12:00:00')
+    if (d.getDay() !== 1) return res.status(400).json({ error: 'La fecha indicada no es un lunes.' })
+    const sh = await prisma.semanaHabilitada.upsert({
+      where: { lunes }, update: { motivo: motivo || null }, create: { lunes, motivo: motivo || null },
+    })
+    await logActividad({
+      tipo: 'semana_habilitada', entidad: 'fecha_bloqueada', entidadId: sh.id, accion: 'crear',
+      despues: sh, notaInterna: `Semana extra habilitada: ${lunes}${motivo ? ' (' + motivo + ')' : ''}`,
+      realizadoPor: getNombreAdmin(req.session),
+    })
+    res.json(sh)
+  } catch (err) { console.error(err); res.status(500).json({ error: 'Error del servidor' }) }
+})
+
+router.delete('/semanas-habilitadas/:id', async (req, res) => {
+  try {
+    const prev = await prisma.semanaHabilitada.findUnique({ where: { id: req.params.id } })
+    if (!prev) return res.status(404).json({ error: 'Semana no encontrada' })
+    await prisma.semanaHabilitada.delete({ where: { id: req.params.id } })
+    await logActividad({
+      tipo: 'semana_deshabilitada', entidad: 'fecha_bloqueada', entidadId: prev.id, accion: 'eliminar',
+      antes: prev, notaInterna: `Semana extra retirada: ${prev.lunes}`,
+      realizadoPor: getNombreAdmin(req.session),
+    })
+    res.json({ ok: true })
+  } catch (err) { console.error(err); res.status(500).json({ error: 'Error del servidor' }) }
+})
+
 router.delete('/fechas-bloqueadas', async (req, res) => {
   try {
     const prev = await prisma.blockedDate.findUnique({ where: { fecha: req.body.fecha } })

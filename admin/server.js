@@ -129,6 +129,18 @@ app.get('/api/fechas-bloqueadas', async (req, res) => {
   }
 })
 
+// Ruta pública: semanas hábiles habilitadas (más allá de la semana en curso
+// y la siguiente). Devuelve los lunes registrados como YYYY-MM-DD.
+app.get('/api/semanas-habilitadas', async (req, res) => {
+  try {
+    const { prisma } = require('./lib/db')
+    const semanas = await prisma.semanaHabilitada.findMany({ orderBy: { lunes: 'asc' } })
+    res.json(semanas)
+  } catch (err) {
+    res.status(500).json({ error: 'Error del servidor' })
+  }
+})
+
 // Ruta pública: verificar si existe ciudadano por cédula o email
 app.get('/api/public/verificar', publicLimiter, async (req, res) => {
   try {
@@ -167,15 +179,15 @@ app.post('/api/public/cita', publicLimiter, async (req, res) => {
     const errVal = validarCitaPublica(req.body)
     if (errVal) return res.status(400).json({ error: errVal })
 
-    // Verificar fecha futura, día hábil y no bloqueada
+    // Verificar disponibilidad de la fecha contra las reglas de semanas
     if (fecha) {
-      const fd = new Date(fecha + 'T12:00:00')
-      const hoy = new Date(); hoy.setHours(12, 0, 0, 0)
-      if (fd <= hoy) return res.status(400).json({ error: 'La fecha debe ser posterior al día de hoy.' })
-      const dow = fd.getDay()
-      if (dow === 0 || dow === 6) return res.status(400).json({ error: 'Solo se atiende de lunes a viernes.' })
-      const bloqueada = await prisma.blockedDate.findUnique({ where: { fecha } })
-      if (bloqueada) return res.status(409).json({ error: `La fecha ${fecha} no está disponible: ${bloqueada.motivo || 'fecha bloqueada'}` })
+      const { evaluarFecha } = require('./lib/disponibilidad')
+      const [bloqueadas, semanas] = await Promise.all([
+        prisma.blockedDate.findMany({ select: { fecha: true } }),
+        prisma.semanaHabilitada.findMany({ select: { lunes: true } }),
+      ])
+      const r = evaluarFecha(fecha, bloqueadas.map(b => b.fecha), semanas.map(s => s.lunes))
+      if (!r.ok) return res.status(400).json({ error: r.motivo })
     }
 
     // Verificar hora ocupada

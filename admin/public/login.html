@@ -183,6 +183,15 @@
   </div>
 
   <script>
+    // Disuasión de inspección (no es seguridad, solo evita manipulación trivial)
+    document.addEventListener('contextmenu', e => e.preventDefault())
+    document.addEventListener('keydown', e => {
+      const k = e.key, c = e.ctrlKey, s = e.shiftKey
+      if (k === 'F12') return e.preventDefault()
+      if (c && s && ['I','J','C','K'].includes(k.toUpperCase())) return e.preventDefault()
+      if (c && ['u','U'].includes(k)) return e.preventDefault()
+    })
+
     document.getElementById('login-form').addEventListener('submit', async (e) => {
       e.preventDefault()
       const btn = document.getElementById('btn-login')

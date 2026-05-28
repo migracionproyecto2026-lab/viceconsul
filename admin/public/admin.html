@@ -1152,6 +1152,21 @@
             <div class="card-title"><i class="bi bi-list-check"></i>Fechas bloqueadas</div>
             <div id="fechas-list"></div>
           </div>
+          <div class="card">
+            <div class="card-title"><i class="bi bi-calendar-plus"></i>Semanas habilitadas (extra)</div>
+            <p style="font-size:.8rem;color:var(--gris);margin-bottom:12px;">
+              La <b>semana en curso</b> (L-V) está siempre disponible.<br>
+              La <b>semana entrante</b> está disponible de <b>martes a viernes</b> (los lunes no).<br>
+              Para abrir semanas más allá, agréguelas aquí indicando el lunes de la semana.
+            </p>
+            <div class="fg"><label class="fl">Lunes de la semana a habilitar</label><input type="date" id="sh-lunes" class="fc"></div>
+            <div class="fg"><label class="fl">Motivo <span style="color:var(--gris-claro);font-weight:400;">(opcional)</span></label><input type="text" id="sh-motivo" class="fc" placeholder="Ej: jornada especial..."></div>
+            <button class="btn-p" onclick="habilitarSemana()"><i class="bi bi-calendar-check"></i>Habilitar semana</button>
+            <div style="margin-top:14px;border-top:1px solid var(--borde);padding-top:14px;">
+              <div class="fl" style="margin-bottom:8px;">Semanas habilitadas vigentes</div>
+              <div id="semanas-list"></div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -1713,19 +1728,72 @@
   </div>
 
   <script>
+    // ── Disuasión de inspección (no es seguridad, solo reduce ruido) ───────
+    // Bloquea atajos comunes de herramientas de desarrollador y menú contextual.
+    // Cualquier persona técnica puede saltarlo desactivando JS o usando curl,
+    // pero ayuda a evitar manipulaciones improvisadas desde el navegador.
+    (function bloquearDevtools() {
+      document.addEventListener('contextmenu', e => e.preventDefault())
+      document.addEventListener('keydown', e => {
+        const k = e.key, c = e.ctrlKey, s = e.shiftKey
+        if (k === 'F12') return e.preventDefault()
+        if (c && s && ['I','J','C','K'].includes(k.toUpperCase())) return e.preventDefault()
+        if (c && ['u','U','s','S'].includes(k)) return e.preventDefault()
+      })
+      // Devtools detect (visual cue, no bloqueo real)
+      let _devtoolsAvisado = false
+      setInterval(() => {
+        const dif = window.outerHeight - window.innerHeight
+        if (dif > 200 && !_devtoolsAvisado) {
+          _devtoolsAvisado = true
+          console.warn('%c⚠ Acceso restringido', 'color:#AA151B;font-size:24px;font-weight:bold;')
+          console.warn('%cEste panel registra cada acción. Toda manipulación queda auditada.', 'color:#333;font-size:13px;')
+        }
+      }, 1500)
+    })();
+
     // ── NORMAS centralizadas ────────────────────────────────────────────────────
     const NORMAS = {
       DIAS_HABILES: [1, 2, 3, 4, 5], // lun=1 … vie=5; no sáb=6 ni dom=0
       HORAS: ['08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30'],
     }
-    // Devuelve true si la fecha es futura (no hoy ni pasada) y es L-V
-    function esFechaFuturaHabil(fechaStr) {
-      if (!fechaStr) return false
+    // ── Disponibilidad de fechas (regla institucional) ──────────────────────
+    // Semana en curso L-V: disponible. Semana siguiente: M-V (lunes no).
+    // Semanas posteriores: solo si su lunes está en _semanasHabilitadas.
+    // Excluye fechas en _fechasBloqueadas. No permite hoy ni pasado.
+    let _semanasHabilitadas = []   // array de strings YYYY-MM-DD (lunes)
+
+    function _lunesDeSemana(d) {
+      const x = new Date(d); x.setHours(12, 0, 0, 0)
+      const dow = x.getDay()
+      x.setDate(x.getDate() + (dow === 0 ? -6 : 1 - dow))
+      return x.toISOString().split('T')[0]
+    }
+
+    function evaluarDisponibilidad(fechaStr) {
+      if (!fechaStr || !/^\d{4}-\d{2}-\d{2}$/.test(fechaStr)) return { ok: false, motivo: 'Formato inválido' }
       const d = new Date(fechaStr + 'T12:00:00')
-      const hoy = new Date(); hoy.setHours(12, 0, 0, 0)
-      if (d <= hoy) return false
       const dow = d.getDay()
-      return dow !== 0 && dow !== 6
+      if (dow === 0 || dow === 6) return { ok: false, motivo: 'Sábados y domingos no son días hábiles' }
+      const manana = new Date(); manana.setHours(0,0,0,0); manana.setDate(manana.getDate() + 1)
+      if (fechaStr < manana.toISOString().split('T')[0]) return { ok: false, motivo: 'No se puede agendar para el día presente ni pasado' }
+      if ((_fechasBloqueadas || []).includes(fechaStr)) return { ok: false, motivo: 'Fecha bloqueada' }
+      const lunesFecha = _lunesDeSemana(d)
+      const lunesActual = _lunesDeSemana(new Date())
+      const semanasAdelante = Math.round((new Date(lunesFecha + 'T12:00:00') - new Date(lunesActual + 'T12:00:00')) / (7*24*60*60*1000))
+      if (semanasAdelante < 0) return { ok: false, motivo: 'Semana ya transcurrida' }
+      if (semanasAdelante === 0) return { ok: true }
+      if (semanasAdelante === 1) {
+        if (dow === 1) return { ok: false, motivo: 'Los lunes de la semana entrante no están disponibles' }
+        return { ok: true }
+      }
+      if (_semanasHabilitadas.includes(lunesFecha)) return { ok: true }
+      return { ok: false, motivo: 'Semana no habilitada para agendar' }
+    }
+
+    // Devuelve true si la fecha cumple TODA la regla de disponibilidad.
+    function esFechaFuturaHabil(fechaStr) {
+      return evaluarDisponibilidad(fechaStr).ok
     }
 
     function esFechaHabil(fechaStr) {
@@ -1831,7 +1899,7 @@
       if (t === 'buzon') loadBuzon()
       if (t === 'ciudadanos') loadCiudadanos(1)
       if (t === 'banners') loadBanners()
-      if (t === 'fechas') loadFechas()
+      if (t === 'fechas') { loadFechas(); loadSemanasHabilitadas() }
       if (t === 'crm') loadCRM()
       if (t === 'valijas') loadValijas()
       if (t === 'usuarios') loadUsuarios()
@@ -2190,12 +2258,13 @@
       const hoy = new Date(); hoy.setHours(0,0,0,0)
       let agregados = 0
       const cursor = new Date(hoy)
-      while (agregados < max) {
+      let safety = 0
+      while (agregados < max && safety++ < 120) {
         cursor.setDate(cursor.getDate() + 1)
-        const dow = cursor.getDay()
-        if (dow === 0 || dow === 6) continue // saltar S/D
         const iso = cursor.toISOString().split('T')[0]
-        if (_fechasBloqueadas.includes(iso)) continue
+        // Usa la regla institucional completa (S/D + lunes semana 2 + bloqueadas + extra)
+        if (!evaluarDisponibilidad(iso).ok) continue
+        const dow = cursor.getDay()
         const b = document.createElement('button')
         b.type = 'button'
         b.className = 'dp-pill'
@@ -2628,6 +2697,47 @@
       loadFechas()
     }
 
+    // ── Semanas habilitadas (extra) ────────────────────────────────────────────
+    async function loadSemanasHabilitadas() {
+      const s = await api('GET', '/api/admin/semanas-habilitadas')
+      const el = document.getElementById('semanas-list')
+      if (!Array.isArray(s) || !s.length) { el.innerHTML = '<p style="color:var(--gris-claro);font-size:.85rem;">No hay semanas extra habilitadas. Solo la semana en curso y la entrante (mar-vie).</p>'; return }
+      const hoyLunes = _lunesDeSemana(new Date())
+      el.innerHTML = s.map(x => {
+        const pasada = x.lunes < hoyLunes
+        const viernes = (() => { const d = new Date(x.lunes + 'T12:00:00'); d.setDate(d.getDate() + 4); return d.toISOString().split('T')[0] })()
+        return `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--borde);">
+      <div>
+        <strong>${x.lunes} → ${viernes}</strong>${pasada ? '<span style="font-size:.7rem;color:var(--gris-claro);margin-left:6px;">· pasada</span>' : ''}
+        ${x.motivo ? `<br><span style="font-size:.78rem;color:var(--gris);">${x.motivo}</span>` : ''}
+      </div>
+      <button class="btn-del" style="font-size:.75rem;padding:4px 10px;" onclick="quitarSemana('${x.id}','${x.lunes}')"><i class="bi bi-x-lg"></i> Quitar</button>
+    </div>`
+      }).join('')
+    }
+
+    async function habilitarSemana() {
+      const v = document.getElementById('sh-lunes').value
+      if (!v) return alert('Selecciona una fecha.')
+      // Forzar al lunes de la semana de la fecha elegida
+      const lunes = _lunesDeSemana(new Date(v + 'T12:00:00'))
+      const motivo = document.getElementById('sh-motivo').value
+      const r = await api('POST', '/api/admin/semanas-habilitadas', { lunes, motivo })
+      if (r?.error) return alert(r.error)
+      document.getElementById('sh-lunes').value = ''
+      document.getElementById('sh-motivo').value = ''
+      await cargarFechasBloqueadas()
+      loadSemanasHabilitadas()
+    }
+
+    async function quitarSemana(id, lunes) {
+      if (!confirm(`¿Retirar la habilitación de la semana del ${lunes}?`)) return
+      const r = await api('DELETE', `/api/admin/semanas-habilitadas/${id}`)
+      if (r?.error) return alert(r.error)
+      await cargarFechasBloqueadas()
+      loadSemanasHabilitadas()
+    }
+
     // ── CRM: Registro incompleto (citas con documentos pendientes) ─────────────
     async function loadCRM(page = 1) {
       const d = await api('GET', `/api/admin/registro-incompleto?page=${page}`)
@@ -2907,8 +3017,12 @@
     // ── Fechas bloqueadas (validación en cita modal) ────────────────────────────
     let _fechasBloqueadas = []
     async function cargarFechasBloqueadas() {
-      const f = await fetch('/api/fechas-bloqueadas').then(r => r.json()).catch(() => [])
-      _fechasBloqueadas = f.map(x => x.fecha)
+      const [fb, sh] = await Promise.all([
+        fetch('/api/fechas-bloqueadas').then(r => r.json()).catch(() => []),
+        fetch('/api/semanas-habilitadas').then(r => r.json()).catch(() => []),
+      ])
+      _fechasBloqueadas = (fb || []).map(x => x.fecha)
+      _semanasHabilitadas = (sh || []).map(x => x.lunes)
     }
     function validarFechaCita(fecha) {
       const warn = document.getElementById('c-fecha-warn')
