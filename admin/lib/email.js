@@ -26,7 +26,7 @@ function whatsappUrl(msg) {
 // Mensaje de preámbulo por tipo de correo: nombre + folio + contexto.
 function preambulo(tipo, nombre, cita) {
   const primer = (nombre || '').split(' ')[0] || 'Ciudadano'
-  const folio = cita?.serial ? ` (folio ${cita.serial})` : ''
+  const folio = cita?.serial ? ` (ticket ${cita.serial})` : ''
   const tramite = cita?.tramite ? ` para el trámite "${cita.tramite}"` : ''
   switch (tipo) {
     case 'recibida':       return `Hola, mi nombre es ${primer}. Acabo de recibir el correo de solicitud recibida${folio}${tramite}. Quiero consultar sobre mi trámite.`
@@ -187,8 +187,8 @@ const TEMPLATES = {
       cuerpo: `
         <p style="margin:0 0 12px;">Estimado/a <strong>${nombre}</strong>,</p>
         <p style="margin:0;">Hemos recibido su solicitud de cita. Queda <strong>pendiente de confirmación</strong> por nuestro personal; recibirá un nuevo correo cuando sea confirmada.</p>
-        ${infoTable([['Folio', cita.serial || '—'], ['Trámite', cita.tramite], ['Fecha', cita.fecha], ['Hora', cita.hora]])}
-        ${aviso('Conserve este folio para cualquier consulta sobre su trámite. Si necesita modificar o cancelar, contáctenos por los medios al pie.')}`,
+        ${infoTable([['Ticket', cita.serial || '—'], ['Trámite', cita.tramite], ['Fecha', cita.fecha], ['Hora', cita.hora]])}
+        ${aviso('Conserve este ticket para cualquier consulta sobre su trámite. Si necesita modificar o cancelar, contáctenos por los medios al pie.')}`,
     }),
   }),
 
@@ -202,7 +202,7 @@ const TEMPLATES = {
       cuerpo: `
         <p style="margin:0 0 12px;">Estimado/a <strong>${nombre}</strong>,</p>
         <p style="margin:0;">Le informamos que su trámite ha sido <strong>enviado al Consulado General de España en Caracas</strong> dentro de la valija diplomática del Viceconsulado.</p>
-        ${infoTable([['Folio', cita.serial || '—'], ['Trámite', cita.tramite], ['Valija', valijaSerial || '—'], ['Estado', 'Enviada']])}
+        ${infoTable([['Ticket', cita.serial || '—'], ['Trámite', cita.tramite], ['Folio (valija)', valijaSerial || '—'], ['Estado', 'Enviada']])}
         ${aviso('Le notificaremos nuevamente cuando el Consulado General confirme la recepción de la valija.')}`,
     }),
   }),
@@ -217,7 +217,7 @@ const TEMPLATES = {
       cuerpo: `
         <p style="margin:0 0 12px;">Estimado/a <strong>${nombre}</strong>,</p>
         <p style="margin:0;">Le informamos que su trámite ha sido <strong>recibido en el Consulado General</strong> y entra en proceso de revisión.</p>
-        ${infoTable([['Folio', cita.serial || '—'], ['Trámite', cita.tramite], ['Cita', (cita.fecha || '') + ' ' + (cita.hora || '')], ['Valija', valijaSerial || '—'], ['Estado', 'En revisión']])}
+        ${infoTable([['Ticket', cita.serial || '—'], ['Trámite', cita.tramite], ['Cita', (cita.fecha || '') + ' ' + (cita.hora || '')], ['Folio (valija)', valijaSerial || '—'], ['Estado', 'En revisión']])}
         ${aviso('Le notificaremos por este medio cualquier novedad sobre su trámite. Si tiene consultas urgentes, use el WhatsApp del pie.')}`,
     }),
   }),
@@ -232,7 +232,7 @@ const TEMPLATES = {
       cuerpo: `
         <p style="margin:0 0 12px;">Estimado/a <strong>${nombre}</strong>,</p>
         <p style="margin:0;">Su cita en el Viceconsulado Honorario de España ha sido <strong>confirmada</strong>:</p>
-        ${infoTable([['Folio', cita.serial || '—'], ['Trámite', cita.tramite], ['Fecha', cita.fecha], ['Hora', cita.hora]])}
+        ${infoTable([['Ticket', cita.serial || '—'], ['Trámite', cita.tramite], ['Fecha', cita.fecha], ['Hora', cita.hora]])}
         ${aviso('Por favor llegue <strong>10 minutos antes</strong> con todos sus documentos.')}
         <p style="margin:0;color:${GRIS};font-size:13px;">Dirección: Porlamar, Nueva Esparta, Venezuela.</p>`,
     }),
@@ -249,7 +249,7 @@ const TEMPLATES = {
         <p style="margin:0 0 12px;">Estimado/a <strong>${nombre}</strong>,</p>
         <p style="margin:0;">Le informamos que su cita en el Viceconsulado Honorario de España ha sido <strong>reagendada</strong>.</p>
         ${infoTable([
-          ['Folio', cita.serial || '—'],
+          ['Ticket', cita.serial || '—'],
           ['Trámite', cita.tramite],
           ['Fecha anterior', (fechaAnterior || '—') + (horaAnterior ? ' a las ' + horaAnterior : '')],
           ['Nueva fecha', cita.fecha + ' a las ' + cita.hora],
@@ -268,7 +268,7 @@ const TEMPLATES = {
       cuerpo: `
         <p style="margin:0 0 12px;">Estimado/a <strong>${nombre}</strong>,</p>
         <p style="margin:0;">Le recordamos que tiene una cita programada para <strong>hoy</strong>:</p>
-        ${infoTable([['Folio', cita.serial || '—'], ['Trámite', cita.tramite], ['Hora', `<span style="font-size:16px;font-weight:bold;color:${ROJO};">${cita.hora}</span>`]])}
+        ${infoTable([['Ticket', cita.serial || '—'], ['Trámite', cita.tramite], ['Hora', `<span style="font-size:16px;font-weight:bold;color:${ROJO};">${cita.hora}</span>`]])}
         ${aviso('Recuerde traer todos los documentos requeridos para su trámite.')}`,
     }),
   }),
@@ -282,7 +282,7 @@ const TEMPLATES = {
       cuerpo: `
         <p style="margin:0 0 12px;">Estimado/a <strong>${nombre}</strong>,</p>
         <p style="margin:0;">Le informamos que su cita ha sido cancelada:</p>
-        ${infoTable([['Folio', cita.serial || '—'], ['Trámite', cita.tramite], ['Fecha', cita.fecha], ['Hora', cita.hora]])}
+        ${infoTable([['Ticket', cita.serial || '—'], ['Trámite', cita.tramite], ['Fecha', cita.fecha], ['Hora', cita.hora]])}
         ${mensajeCiudadano ? aviso(mensajeCiudadano, ROJO) : ''}
         <p style="margin:0;color:${GRIS};font-size:13px;">Si desea agendar una nueva cita, puede hacerlo en nuestra página web o contactándonos directamente.</p>`,
     }),
@@ -297,7 +297,7 @@ const TEMPLATES = {
       cuerpo: `
         <p style="margin:0 0 12px;">Estimado/a <strong>${nombre}</strong>,</p>
         <p style="margin:0;">Hemos registrado su inasistencia a la siguiente cita:</p>
-        ${infoTable([['Folio', cita.serial || '—'], ['Trámite', cita.tramite], ['Fecha', cita.fecha], ['Hora', cita.hora]])}
+        ${infoTable([['Ticket', cita.serial || '—'], ['Trámite', cita.tramite], ['Fecha', cita.fecha], ['Hora', cita.hora]])}
         <p style="margin:0;color:${GRIS};font-size:13px;">Si esto fue un error o desea reagendar, contáctenos a la brevedad posible.</p>`,
     }),
   }),

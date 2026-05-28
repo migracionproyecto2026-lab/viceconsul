@@ -83,7 +83,7 @@ router.get('/citas', async (req, res) => {
     const [citas, total] = await Promise.all([
       prisma.appointment.findMany({
         where,
-        include: { citizen: { select: { id: true, nombre: true, apellido: true, email: true, telefono: true } } },
+        include: { citizen: { select: { id: true, nombre: true, apellido: true, email: true, telefono: true } }, valija: { select: { id: true, serial: true, estado: true } } },
         orderBy: { createdAt: 'desc' },
         skip: (page - 1) * limit,
         take: limit,
@@ -403,7 +403,7 @@ router.get('/ciudadanos/buscar', async (req, res) => {
 
 router.get('/ciudadanos/:id', async (req, res) => {
   try {
-    const citizen = await prisma.citizen.findUnique({ where: { id: req.params.id }, include: { citas: { orderBy: { createdAt: 'desc' }, take: 20 } } })
+    const citizen = await prisma.citizen.findUnique({ where: { id: req.params.id }, include: { citas: { include: { valija: { select: { serial: true, estado: true } } }, orderBy: { createdAt: 'desc' }, take: 20 } } })
     if (!citizen) return res.status(404).json({ error: 'Ciudadano no encontrado' })
     const { password, verifyCode, verifyExpiry, ...safe } = citizen
     res.json(safe)

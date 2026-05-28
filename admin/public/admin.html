@@ -1768,12 +1768,13 @@
       _citas = (d && d.citas) || []
       const el = document.getElementById('citas-table')
       if (!_citas.length) { el.innerHTML = '<p style="color:var(--gris-claro);font-size:.88rem;padding:20px 0;text-align:center;">No hay citas con estos filtros.</p>'; return }
-      el.innerHTML = `<table><thead><tr><th>Folio</th><th>Fecha cita</th><th>Hora</th><th>Ciudadano</th><th>Trámite</th><th>Estado</th><th>Solicitud</th><th>Acciones</th></tr></thead><tbody>${_citas.map(c => {
+      el.innerHTML = `<table><thead><tr><th title="Identificador único del trámite (se genera al crear la cita y se envía al ciudadano)">Ticket</th><th title="Identificador de la valija diplomática que contiene este trámite (se asigna al cerrar el día)">Folio</th><th>Fecha cita</th><th>Hora</th><th>Ciudadano</th><th>Trámite</th><th>Estado</th><th>Solicitud</th><th>Acciones</th></tr></thead><tbody>${_citas.map(c => {
         const i = getCitaInfo(c)
         const activa = !['cancelada', 'completada', 'inasistencia'].includes(c.status)
         const docPend = c.documentosPendientes ? `<span title="Documentos pendientes" style="color:#7e22ce;margin-left:4px;"><i class="bi bi-file-earmark-x"></i></span>` : ''
         return `<tr>
         <td style="font-family:Menlo,Consolas,monospace;font-size:.78rem;color:var(--rojo);white-space:nowrap;">${c.serial || '—'}</td>
+        <td style="font-family:Menlo,Consolas,monospace;font-size:.78rem;color:${c.valija ? '#1e40af' : 'var(--gris-claro)'};white-space:nowrap;">${c.valija?.serial || '—'}</td>
         <td>${c.fecha || '<span style="color:var(--gris-claro)">Sin fecha</span>'}</td><td><strong>${c.hora}</strong></td>
         <td>${i.nombre}${i.email ? `<br><span style="font-size:.75rem;color:var(--gris-claro);">${i.email}</span>` : ''}</td>
         <td style="font-size:.82rem;">${c.tramite}${docPend}</td>
@@ -2101,8 +2102,8 @@
           </div>
           <div class="fl" style="margin-bottom:8px;">Historial de citas (${(c.citas || []).length})</div>
           ${!c.citas?.length ? '<p style="color:var(--gris-claro);font-size:.85rem;">Sin citas registradas.</p>' : `
-          <div class="tw"><table><thead><tr><th>Folio</th><th>Fecha</th><th>Hora</th><th>Trámite</th><th>Estado</th></tr></thead><tbody>
-            ${c.citas.map(x => `<tr><td style="font-family:Menlo,Consolas,monospace;font-size:.78rem;color:var(--rojo);white-space:nowrap;">${x.serial || '—'}</td><td>${x.fecha || '—'}</td><td>${x.hora}</td><td style="font-size:.82rem;">${x.tramite}</td><td>${badge(x.status)}</td></tr>`).join('')}
+          <div class="tw"><table><thead><tr><th>Ticket</th><th>Folio</th><th>Fecha</th><th>Hora</th><th>Trámite</th><th>Estado</th></tr></thead><tbody>
+            ${c.citas.map(x => `<tr><td style="font-family:Menlo,Consolas,monospace;font-size:.78rem;color:var(--rojo);white-space:nowrap;">${x.serial || '—'}</td><td style="font-family:Menlo,Consolas,monospace;font-size:.78rem;color:${x.valija ? '#1e40af' : 'var(--gris-claro)'};white-space:nowrap;">${x.valija?.serial || '—'}</td><td>${x.fecha || '—'}</td><td>${x.hora}</td><td style="font-size:.82rem;">${x.tramite}</td><td>${badge(x.status)}</td></tr>`).join('')}
           </tbody></table></div>`}
           <hr style="margin:16px 0;">
           <div style="display:flex;gap:8px;">
