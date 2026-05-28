@@ -260,6 +260,13 @@ app.get('/api/health/gmailapi', publicLimiter, async (req, res) => {
     res.json({ gmailApi: 'ok', cuenta })
   } catch (e) { res.json({ gmailApi: 'error', code: e.code || null, message: e.message }) }
 })
+app.get('/api/health/resend', publicLimiter, async (req, res) => {
+  try {
+    const { verifyResend } = require('./lib/email')
+    const dominios = await verifyResend()
+    res.json({ resend: 'ok', keyPresent: !!process.env.RESEND_API_KEY, dominios })
+  } catch (e) { res.json({ resend: 'error', keyPresent: !!process.env.RESEND_API_KEY, message: e.message }) }
+})
 
 // ── Fallback SPA ───────────────────────────────────────────────────────────
 app.get('/admin*', (req, res) => res.sendFile(path.join(__dirname, 'public/admin.html')))

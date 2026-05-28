@@ -252,6 +252,25 @@ async function verifyGmailApi() {
   return r.data.emailAddress
 }
 
+// ── Resend (API HTTP, port 443) — vía principal en Railway ──────────────────
+const RESEND_FROM = process.env.RESEND_FROM || 'Viceconsulado Honorario de España <citas@viceconsulado-nuevaesparta.com>'
+async function sendViaResend({ to, subject, html, bcc, replyTo }) {
+  const r = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ from: RESEND_FROM, to, bcc: bcc ? [bcc] : undefined, reply_to: replyTo, subject, html }),
+  })
+  if (!r.ok) throw new Error(`Resend ${r.status}: ${await r.text()}`)
+  return true
+}
+// Verifica que el API key de Resend funciona (lista dominios)
+async function verifyResend() {
+  const r = await fetch('https://api.resend.com/domains', { headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}` } })
+  if (!r.ok) throw new Error(`Resend ${r.status}: ${await r.text()}`)
+  const d = await r.json()
+  return (d.data || []).map(x => `${x.name}:${x.status}`)
+}
+
 // Prueba la conexión/credenciales SMTP sin enviar correo (timeout corto para no colgar)
 async function verifyTransport(opts = {}) {
   const port = opts.port || Number(process.env.SMTP_PORT) || 465
@@ -277,17 +296,22 @@ function renderEmail(tipo, data) {
 async function send(tipo, to, data, devMsg) {
   const { subject, html } = renderEmail(tipo, data)
   const bcc = process.env.GMAIL_USER  // respaldo en la cuenta del consulado
-  // 1) Gmail API por HTTPS (producción)
+  // 1) Resend por HTTPS (vía principal, funciona en Railway)
+  if (process.env.RESEND_API_KEY) {
+    await sendViaResend({ to, subject, html, bcc, replyTo: CONTACTO_EMAIL })
+    return true
+  }
+  // 2) Gmail API por HTTPS (alternativa)
   if (process.env.GOOGLE_REFRESH_TOKEN) {
     await sendViaGmailApi({ to, subject, html, bcc, replyTo: CONTACTO_EMAIL })
     return true
   }
-  // 2) SMTP (entorno local donde no esté bloqueado)
+  // 3) SMTP (entorno local donde no esté bloqueado)
   if (process.env.GMAIL_PASS) {
     await getTransporter().sendMail({ from: FROM, to, bcc, replyTo: CONTACTO_EMAIL, subject, html })
     return true
   }
-  // 3) Sin credenciales: fallback a consola
+  // 4) Sin credenciales: fallback a consola
   console.log(`\n[DEV] ${devMsg || tipo} para ${to}`)
   return true
 }
@@ -316,5 +340,6 @@ module.exports = {
   renderEmail,
   verifyTransport,
   verifyGmailApi,
+  verifyResend,
   TEMPLATES,
 }
