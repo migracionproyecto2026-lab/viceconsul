@@ -1075,10 +1075,38 @@
           <div class="filtros" style="margin-bottom:12px;">
             <select id="f-log-tipo" class="fc" onchange="loadBuzon()" style="width:auto;">
               <option value="">Toda la actividad</option>
-              <option value="cancelacion">Cancelaciones</option>
-              <option value="reagendamiento">Reagendamientos</option>
-              <option value="creacion">Nuevas citas</option>
-              <option value="inasistencia">Inasistencias</option>
+              <optgroup label="Citas">
+                <option value="creacion">Nuevas citas (panel)</option>
+                <option value="nueva_cita_web">Nuevas citas (web)</option>
+                <option value="status_confirmada">Confirmaciones</option>
+                <option value="cancelacion">Cancelaciones</option>
+                <option value="reagendamiento">Reagendamientos</option>
+                <option value="inasistencia">Inasistencias</option>
+                <option value="status_completada">Citas completadas</option>
+                <option value="cita_eliminada">Citas eliminadas</option>
+              </optgroup>
+              <optgroup label="Registro incompleto">
+                <option value="documento_recibido">Documento recibido</option>
+                <option value="registro_finalizado">Registro finalizado</option>
+              </optgroup>
+              <optgroup label="Ciudadanos">
+                <option value="ciudadano_editado">Ciudadano editado</option>
+                <option value="ciudadano_eliminado">Ciudadano eliminado</option>
+              </optgroup>
+              <optgroup label="Valija diplomática">
+                <option value="valija_creada">Valija creada</option>
+                <option value="valija_enviada">Valija enviada</option>
+                <option value="valija_recibida">Valija recibida</option>
+              </optgroup>
+              <optgroup label="Avisos web">
+                <option value="banner_creado">Aviso creado</option>
+                <option value="banner_editado">Aviso editado</option>
+                <option value="banner_eliminado">Aviso eliminado</option>
+              </optgroup>
+              <optgroup label="Fechas bloqueadas">
+                <option value="fecha_bloqueada">Fecha bloqueada</option>
+                <option value="fecha_desbloqueada">Fecha desbloqueada</option>
+              </optgroup>
             </select>
           </div>
           <div id="buzon-list"></div>

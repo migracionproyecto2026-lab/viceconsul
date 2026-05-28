@@ -9,6 +9,29 @@ const bcrypt = require('bcryptjs')
 
 router.use(requireAdmin)
 
+// Tipos visibles en el buzón operativo. Excluye eventos transaccionales
+// internos (sesiones, usuarios admin, gestor, bitácora, exports, settings).
+// Cubre: citas, ciudadanos, valija, registro incompleto, avisos web (banners),
+// fechas bloqueadas.
+const BUZON_TIPOS = [
+  // Citas
+  'creacion', 'nueva_cita_web',
+  'status_confirmada', 'status_completada', 'status_en_proceso',
+  'status_asistencia_tarde', 'status_cancelada', 'status_inasistencia',
+  'cancelacion', 'reagendamiento', 'inasistencia', 'confirmacion',
+  'cita_eliminada',
+  // Registro incompleto (citas con docs pendientes)
+  'documento_recibido', 'registro_finalizado',
+  // Ciudadanos
+  'ciudadano_editado', 'ciudadano_eliminado',
+  // Valija diplomática
+  'valija_creada', 'valija_enviada', 'valija_recibida',
+  // Avisos web (banners)
+  'banner_creado', 'banner_editado', 'banner_eliminado',
+  // Fechas bloqueadas
+  'fecha_bloqueada', 'fecha_desbloqueada',
+]
+
 // ── Helpers ────────────────────────────────────────────────────────────────
 function getCitaEmail(cita) {
   return cita.citizen?.email || cita.emailExterno || null
@@ -63,7 +86,7 @@ router.get('/stats', async (req, res) => {
         prisma.appointment.count({ where: { fecha: today } }),
         prisma.appointment.count({ where: { fecha: { gte: weekStartStr } } }),
         prisma.appointment.count({ where: { NOT: { documentosPendientes: null }, status: { notIn: ['cancelada', 'completada'] } } }),
-        prisma.activityLog.count({ where: { createdAt: { gt: lastRead } } }),
+        prisma.activityLog.count({ where: { createdAt: { gt: lastRead }, tipo: { in: BUZON_TIPOS } } }),
         prisma.appointment.count({ where: { citizenId: null, status: { notIn: ['cancelada', 'completada'] } } }),
       ])
 
@@ -379,7 +402,11 @@ router.get('/bitacora', async (req, res) => {
     const { tipo } = req.query
     const page = Math.max(1, parseInt(req.query.page || '1'))
     const limit = 20
-    const where = tipo ? { tipo } : {}
+    // Si el cliente pasa un tipo específico Y está en la lista permitida, úsalo.
+    // De lo contrario, filtra por el conjunto completo de tipos operativos.
+    const where = (tipo && BUZON_TIPOS.includes(tipo))
+      ? { tipo }
+      : { tipo: { in: BUZON_TIPOS } }
     const [logs, total] = await Promise.all([
       prisma.activityLog.findMany({
         where,
