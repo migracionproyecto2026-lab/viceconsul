@@ -90,7 +90,53 @@ model ActivityLog {
   notaInterna      String?
   datos            String?
   realizadoPor     String
+  // ── Auditoría extendida (reportería 360°) ──────────────────────────────
+  realizadoPorId   String?      @db.ObjectId
+  entidad          String?      // 'cita' | 'ciudadano' | 'usuario_admin' | 'banner' | 'valija' | 'fecha_bloqueada' | 'sesion' | 'reporte' | 'setting'
+  entidadId        String?
+  accion           String?      // 'crear' | 'editar' | 'eliminar' | 'cambio_estado' | 'login_ok' | 'login_fail' | 'logout' | 'cambio_permisos' | 'exportar'
+  ip               String?
+  userAgent        String?
+  antes            String?      // JSON snapshot pre-cambio (sin password / verifyCode)
+  despues          String?      // JSON snapshot post-cambio
   createdAt        DateTime     @default(now())
+
+  @@index([createdAt(sort: Desc)])
+  @@index([entidad, createdAt(sort: Desc)])
+  @@index([realizadoPorId, createdAt(sort: Desc)])
+  @@index([ciudadanoEmail])
+}
+
+model SessionLog {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  adminUserId   String?  @db.ObjectId
+  email         String
+  nombre        String?
+  role          String?
+  tipo          String   // 'login_ok' | 'login_fail' | 'logout' | 'expirado'
+  ip            String?
+  userAgent     String?
+  createdAt     DateTime @default(now())
+
+  @@index([createdAt(sort: Desc)])
+  @@index([email, createdAt(sort: Desc)])
+  @@index([adminUserId, createdAt(sort: Desc)])
+  @@index([tipo, createdAt(sort: Desc)])
+}
+
+model TramiteMaestro {
+  id                 String   @id @default(auto()) @map("_id") @db.ObjectId
+  codigo             String   @unique
+  nombre             String
+  categoria          String?
+  descripcion        String?
+  requisitos         String[]
+  duracionEstimada   Int?     // minutos
+  activo             Boolean  @default(true)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@index([activo, categoria])
 }
 
 model Banner {
