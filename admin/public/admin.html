@@ -1638,20 +1638,24 @@
         <div class="fg">
           <label class="fl">Rol</label>
           <select id="u2-role" class="fc">
-            <option value="asistente">Gestor (asistente) — Acceso operativo</option>
+            <option value="asistente">Gestor — Acceso operativo</option>
             <option value="consul">Cónsul — Acceso de supervisión</option>
             <option value="superadmin">Superadmin — Control total</option>
           </select>
         </div>
         <div class="fg">
-          <label class="fl" style="margin-bottom:8px;">Permisos de módulos</label>
+          <label class="fl" style="margin-bottom:8px;">Permisos de módulos <span id="u2-perm-hint" style="font-weight:400;color:var(--gris-claro);"></span></label>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 16px;">
             <label style="display:flex;align-items:center;gap:7px;font-size:.85rem;cursor:pointer;"><input type="checkbox" class="u2-perm" value="dashboard" style="accent-color:var(--rojo);"> Dashboard</label>
             <label style="display:flex;align-items:center;gap:7px;font-size:.85rem;cursor:pointer;"><input type="checkbox" class="u2-perm" value="citas" style="accent-color:var(--rojo);"> Citas</label>
             <label style="display:flex;align-items:center;gap:7px;font-size:.85rem;cursor:pointer;"><input type="checkbox" class="u2-perm" value="ciudadanos" style="accent-color:var(--rojo);"> Ciudadanos</label>
             <label style="display:flex;align-items:center;gap:7px;font-size:.85rem;cursor:pointer;"><input type="checkbox" class="u2-perm" value="banners" style="accent-color:var(--rojo);"> Avisos web</label>
             <label style="display:flex;align-items:center;gap:7px;font-size:.85rem;cursor:pointer;"><input type="checkbox" class="u2-perm" value="fechas_bloqueadas" style="accent-color:var(--rojo);"> Fechas bloqueadas</label>
+            <label style="display:flex;align-items:center;gap:7px;font-size:.85rem;cursor:pointer;"><input type="checkbox" class="u2-perm" value="valijas" style="accent-color:var(--rojo);"> Valija diplomática</label>
+            <label style="display:flex;align-items:center;gap:7px;font-size:.85rem;cursor:pointer;"><input type="checkbox" class="u2-perm" value="crm" style="accent-color:var(--rojo);"> Registro incompleto</label>
+            <label style="display:flex;align-items:center;gap:7px;font-size:.85rem;cursor:pointer;"><input type="checkbox" class="u2-perm" value="buzon" style="accent-color:var(--rojo);"> Buzón / Bitácora</label>
             <label style="display:flex;align-items:center;gap:7px;font-size:.85rem;cursor:pointer;"><input type="checkbox" class="u2-perm" value="usuarios" style="accent-color:var(--rojo);"> Usuarios</label>
+            <label style="display:flex;align-items:center;gap:7px;font-size:.85rem;cursor:pointer;"><input type="checkbox" class="u2-perm" value="reporteria" style="accent-color:var(--rojo);"> Reportería</label>
           </div>
         </div>
         <div class="fg"><label class="fl">Contraseña <span id="u2-pass-hint" style="font-weight:400;color:var(--gris-claro);">(dejar vacío para no cambiar)</span></label><input type="password" id="u2-password" class="fc" placeholder="Mínimo 8 caracteres"></div>
@@ -2612,11 +2616,31 @@
     }
 
     function _setPermisos(lista) {
-      document.querySelectorAll('.u2-perm').forEach(cb => { cb.checked = (lista || []).includes(cb.value) })
+      const role = document.getElementById('u2-role').value
+      const hint = document.getElementById('u2-perm-hint')
+      const todos = [...document.querySelectorAll('.u2-perm')]
+      if (role === 'superadmin') {
+        todos.forEach(cb => { cb.checked = true; cb.disabled = true })
+        if (hint) hint.textContent = '(Superadmin tiene acceso total — no editable)'
+      } else if (role === 'consul') {
+        const sinUsuariosNiReporteria = ['dashboard','citas','ciudadanos','banners','fechas_bloqueadas','valijas','crm','buzon']
+        todos.forEach(cb => { cb.checked = sinUsuariosNiReporteria.includes(cb.value); cb.disabled = true })
+        if (hint) hint.textContent = '(Cónsul: supervisión sin gestión de usuarios ni reportería)'
+      } else {
+        // asistente: usar la lista del usuario; si está vacía, marcar el set operativo por defecto
+        const arr = (lista && lista.length) ? lista : ['dashboard','citas','ciudadanos','banners','fechas_bloqueadas']
+        todos.forEach(cb => { cb.checked = arr.includes(cb.value); cb.disabled = false })
+        if (hint) hint.textContent = '(Marca cada módulo que el gestor debe ver)'
+      }
     }
     function _getPermisos() {
       return [...document.querySelectorAll('.u2-perm:checked')].map(cb => cb.value)
     }
+    // Si cambia el rol en el dropdown, re-sincronizar checkboxes
+    document.addEventListener('DOMContentLoaded', () => {
+      const sel = document.getElementById('u2-role')
+      if (sel) sel.addEventListener('change', () => _setPermisos(_getPermisos()))
+    })
 
     function openModalUsuario() {
       document.getElementById('u2-id').value = ''
