@@ -2358,6 +2358,7 @@
       ciudadano_editado: 'dot-reagendamiento',
       usuario_admin_creado: 'dot-creacion', usuario_admin_editado: 'dot-reagendamiento',
       usuario_admin_eliminado: 'dot-cancelacion', usuario_admin_permisos: 'dot-reagendamiento',
+      gestor_alta: 'dot-creacion', gestor_baja: 'dot-cancelacion',
       banner_creado: 'dot-creacion', banner_editado: 'dot-reagendamiento', banner_eliminado: 'dot-cancelacion',
       fecha_bloqueada: 'dot-reagendamiento', fecha_desbloqueada: 'dot-creacion',
       login_ok: 'dot-confirmacion', login_fail: 'dot-cancelacion', logout: 'dot-reagendamiento',
@@ -2377,6 +2378,7 @@
       ciudadano_editado: 'Ciudadano editado',
       usuario_admin_creado: 'Usuario admin creado', usuario_admin_editado: 'Usuario admin editado',
       usuario_admin_eliminado: 'Usuario admin eliminado', usuario_admin_permisos: 'Cambio de permisos',
+      gestor_alta: '⚠ Alta de gestor', gestor_baja: '⚠ Baja de gestor',
       banner_creado: 'Aviso creado', banner_editado: 'Aviso editado', banner_eliminado: 'Aviso eliminado',
       fecha_bloqueada: 'Fecha bloqueada', fecha_desbloqueada: 'Fecha desbloqueada',
       login_ok: 'Inicio de sesión', login_fail: 'Login fallido', logout: 'Cierre de sesión',
@@ -2676,14 +2678,20 @@
       const hint = document.getElementById('u2-perm-hint')
       const todos = [...document.querySelectorAll('.u2-perm')]
       if (role === 'superadmin') {
+        // Superadmin tiene acceso total por definición — no se editan permisos
         todos.forEach(cb => { cb.checked = true; cb.disabled = true })
         if (hint) hint.textContent = '(Superadmin tiene acceso total — no editable)'
       } else if (role === 'consul') {
-        const sinUsuariosNiReporteria = ['dashboard','citas','ciudadanos','banners','fechas_bloqueadas','valijas','crm','buzon']
-        todos.forEach(cb => { cb.checked = sinUsuariosNiReporteria.includes(cb.value); cb.disabled = true })
-        if (hint) hint.textContent = '(Cónsul: supervisión sin gestión de usuarios ni reportería)'
+        // Cónsul: sugerencia por defecto (todo salvo Usuarios y Reportería),
+        // PERO el superadmin puede ajustar caso por caso si así lo desea.
+        const defaultConsul = ['dashboard','citas','ciudadanos','banners','fechas_bloqueadas','valijas','crm','buzon']
+        const arr = (lista && lista.length) ? lista : defaultConsul
+        todos.forEach(cb => { cb.checked = arr.includes(cb.value); cb.disabled = false })
+        if (hint) hint.textContent = '(Cónsul — ajusta los módulos visibles si es necesario)'
       } else {
-        // asistente: usar la lista del usuario; si está vacía, marcar el set operativo por defecto
+        // Gestor (asistente): editable. Si la cuenta no tenía permisos guardados,
+        // se pre-marca el set operativo por defecto para que el superadmin vea
+        // un estado coherente.
         const arr = (lista && lista.length) ? lista : ['dashboard','citas','ciudadanos','banners','fechas_bloqueadas']
         todos.forEach(cb => { cb.checked = arr.includes(cb.value); cb.disabled = false })
         if (hint) hint.textContent = '(Marca cada módulo que el gestor debe ver)'

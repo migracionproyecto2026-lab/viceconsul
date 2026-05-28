@@ -193,6 +193,15 @@ Campos nuevos sobre la base existente: `realizadoPorId?`, `entidad?` (`cita` | `
 
 **Usuarios admin** (solo superadmin): CRUD con validación de módulos permitidos. Cada operación se audita con `entidad='usuario_admin'`, captura `antes`/`despues` (sin password) y diferencia `accion='cambio_permisos'` cuando varían `role` o `permisos[]`.
 
+**Transaccionales específicas para gestor** — además del log general, las altas y bajas de personal con rol `asistente` (acceso operativo) emiten una entrada dedicada:
+
+- `tipo='gestor_alta'`, `accion='alta_gestor'`: al crear un usuario con role=asistente o al cambiar el rol de un usuario existente a asistente.
+- `tipo='gestor_baja'`, `accion='baja_gestor'`: al eliminar un usuario con role=asistente o al cambiar su rol fuera de asistente.
+
+Razón: aislar en la bitácora los eventos delicados (entrada y salida de personal con acceso al panel) para reporting institucional y reconciliación de accesos.
+
+`MODULOS_VALIDOS = ['dashboard', 'ciudadanos', 'banners', 'fechas_bloqueadas', 'citas', 'usuarios', 'valijas', 'crm', 'buzon', 'reporteria']`.
+
 ### Reportería (`/api/admin/reportes/*`, **solo superadmin**)
 
 | Endpoint | Función |

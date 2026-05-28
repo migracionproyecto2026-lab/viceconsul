@@ -593,6 +593,7 @@ router.post('/usuarios', requireSuperadmin, async (req, res) => {
     const user = await prisma.adminUser.create({
       data: { nombre, email, password: hashed, role: role || 'asistente', cargo: cargo || null, permisos: permisosLimpios },
     })
+    // Transacción general (auditoría 360°)
     await logActividad({
       tipo: 'usuario_admin_creado', entidad: 'usuario_admin', entidadId: user.id, accion: 'crear',
       despues: user,
@@ -600,6 +601,16 @@ router.post('/usuarios', requireSuperadmin, async (req, res) => {
       notaInterna: `Usuario admin creado: ${user.email} (${user.role})`,
       realizadoPor: getNombreAdmin(req.session),
     })
+    // Transacción específica para alta de gestor (dato delicado: acceso operativo)
+    if (user.role === 'asistente') {
+      await logActividad({
+        tipo: 'gestor_alta', entidad: 'usuario_admin', entidadId: user.id, accion: 'alta_gestor',
+        despues: { email: user.email, nombre: user.nombre, cargo: user.cargo, permisos: user.permisos },
+        ciudadanoEmail: user.email,
+        notaInterna: `ALTA DE GESTOR: ${user.nombre} (${user.email}) — ${user.cargo || 'sin cargo'} — Módulos: [${(user.permisos || []).join(', ') || 'ninguno'}]`,
+        realizadoPor: getNombreAdmin(req.session),
+      })
+    }
     res.json({ id: user.id, nombre: user.nombre, email: user.email, role: user.role, cargo: user.cargo, permisos: user.permisos, createdAt: user.createdAt })
   } catch (err) { res.status(500).json({ error: 'Error del servidor' }) }
 })
@@ -636,6 +647,24 @@ router.put('/usuarios/:id', requireSuperadmin, async (req, res) => {
         : `Usuario admin editado: ${user.email}${password ? ' (nueva contraseña)' : ''}`,
       realizadoPor: getNombreAdmin(req.session),
     })
+    // Transacciones específicas si cruzaron el umbral de "gestor"
+    if (prev.role !== 'asistente' && user.role === 'asistente') {
+      await logActividad({
+        tipo: 'gestor_alta', entidad: 'usuario_admin', entidadId: targetId, accion: 'alta_gestor',
+        antes: { role: prev.role }, despues: { role: user.role, permisos: user.permisos },
+        ciudadanoEmail: user.email,
+        notaInterna: `ALTA DE GESTOR (por cambio de rol): ${user.nombre} (${user.email}) — ${prev.role}→asistente — Módulos: [${(user.permisos || []).join(', ')}]`,
+        realizadoPor: getNombreAdmin(req.session),
+      })
+    } else if (prev.role === 'asistente' && user.role !== 'asistente') {
+      await logActividad({
+        tipo: 'gestor_baja', entidad: 'usuario_admin', entidadId: targetId, accion: 'baja_gestor',
+        antes: { role: prev.role, permisos: prev.permisos }, despues: { role: user.role },
+        ciudadanoEmail: user.email,
+        notaInterna: `BAJA DE GESTOR (por cambio de rol): ${user.nombre} (${user.email}) — asistente→${user.role}`,
+        realizadoPor: getNombreAdmin(req.session),
+      })
+    }
     res.json({ id: user.id, nombre: user.nombre, email: user.email, role: user.role, cargo: user.cargo, permisos: user.permisos })
   } catch (err) { res.status(500).json({ error: 'Error del servidor' }) }
 })
@@ -646,6 +675,7 @@ router.delete('/usuarios/:id', requireSuperadmin, async (req, res) => {
     const prev = await prisma.adminUser.findUnique({ where: { id: req.params.id } })
     if (!prev) return res.status(404).json({ error: 'Usuario no encontrado' })
     await prisma.adminUser.delete({ where: { id: req.params.id } })
+    // Transacción general (auditoría 360°)
     await logActividad({
       tipo: 'usuario_admin_eliminado', entidad: 'usuario_admin', entidadId: req.params.id, accion: 'eliminar',
       antes: prev,
@@ -653,6 +683,16 @@ router.delete('/usuarios/:id', requireSuperadmin, async (req, res) => {
       notaInterna: `Usuario admin eliminado: ${prev.email} (${prev.role})`,
       realizadoPor: getNombreAdmin(req.session),
     })
+    // Transacción específica para baja de gestor (cierre de acceso operativo)
+    if (prev.role === 'asistente') {
+      await logActividad({
+        tipo: 'gestor_baja', entidad: 'usuario_admin', entidadId: req.params.id, accion: 'baja_gestor',
+        antes: { email: prev.email, nombre: prev.nombre, cargo: prev.cargo, permisos: prev.permisos },
+        ciudadanoEmail: prev.email,
+        notaInterna: `BAJA DE GESTOR: ${prev.nombre} (${prev.email}) — Módulos al momento de la baja: [${(prev.permisos || []).join(', ') || 'ninguno'}]`,
+        realizadoPor: getNombreAdmin(req.session),
+      })
+    }
     res.json({ ok: true })
   } catch (err) { res.status(500).json({ error: 'Error del servidor' }) }
 })
