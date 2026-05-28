@@ -295,7 +295,9 @@ function renderEmail(tipo, data) {
 // Prioridad: Gmail API (HTTPS, funciona en Railway) → SMTP (local) → consola (dev).
 async function send(tipo, to, data, devMsg) {
   const { subject, html } = renderEmail(tipo, data)
-  const bcc = process.env.GMAIL_USER  // respaldo en la cuenta del consulado
+  // BCC opcional: si se quiere copia interna, setear MAIL_BCC. Por defecto NO se manda copia
+  // (Resend ya guarda el log oficial de cada envío en su dashboard).
+  const bcc = process.env.MAIL_BCC || undefined
   // 1) Resend por HTTPS (vía principal, funciona en Railway)
   if (process.env.RESEND_API_KEY) {
     await sendViaResend({ to, subject, html, bcc, replyTo: CONTACTO_EMAIL })
