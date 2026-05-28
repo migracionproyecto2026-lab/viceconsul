@@ -140,7 +140,7 @@ Catálogo institucional de trámites. Campos: `codigo` (unique, ej. `PAS-PRIM`),
 ### `ActivityLog` — extendido para auditoría 360°
 Campos nuevos sobre la base existente: `realizadoPorId?`, `entidad?` (`cita` | `ciudadano` | `usuario_admin` | `banner` | `valija` | `fecha_bloqueada` | `sesion` | `reporte` | `setting`), `entidadId?`, `accion?` (`crear` | `editar` | `eliminar` | `cambio_estado` | `login_ok` | `login_fail` | `logout` | `cambio_permisos` | `exportar`), `ip?`, `userAgent?`, `antes?` (JSON snapshot pre-cambio), `despues?` (JSON snapshot post-cambio). Índices: `(createdAt desc)`, `(entidad, createdAt)`, `(realizadoPorId, createdAt)`, `(ciudadanoEmail)`.
 
-**Inmutabilidad operativa**: no se expone borrado de `ActivityLog` desde el panel — solo cascadas técnicas al borrar la entidad principal.
+**Borrado de `ActivityLog`** (solo superadmin): `DELETE /api/admin/bitacora/:id` para entradas individuales y `DELETE /api/admin/bitacora?tipo=X&antesDe=YYYY-MM-DD` para purga masiva por filtro. Antes de cada borrado se registra una meta-entrada (`tipo='bitacora_eliminada'` o `'bitacora_purga'`) con snapshot de lo borrado, autor, IP y filtros, para evitar huecos silenciosos en la auditoría. La purga masiva exige al menos un filtro (`tipo` y/o `antesDe`) — no permite barrido total accidental. Los borrados por cascada técnica (eliminar cita o ciudadano) siguen pasando sin meta-auditoría individual.
 
 **Política de sanitización**: el helper `lib/audit.js` aplica allowlist por entidad antes de serializar `antes`/`despues`. Campos `password`, `verifyCode`, `verifyExpiry`, `buzonLastRead` jamás se persisten en logs.
 

@@ -2367,6 +2367,7 @@
       usuario_admin_creado: 'dot-creacion', usuario_admin_editado: 'dot-reagendamiento',
       usuario_admin_eliminado: 'dot-cancelacion', usuario_admin_permisos: 'dot-reagendamiento',
       gestor_alta: 'dot-creacion', gestor_baja: 'dot-cancelacion',
+      bitacora_eliminada: 'dot-cancelacion', bitacora_purga: 'dot-cancelacion',
       banner_creado: 'dot-creacion', banner_editado: 'dot-reagendamiento', banner_eliminado: 'dot-cancelacion',
       fecha_bloqueada: 'dot-reagendamiento', fecha_desbloqueada: 'dot-creacion',
       login_ok: 'dot-confirmacion', login_fail: 'dot-cancelacion', logout: 'dot-reagendamiento',
@@ -2387,6 +2388,7 @@
       usuario_admin_creado: 'Usuario admin creado', usuario_admin_editado: 'Usuario admin editado',
       usuario_admin_eliminado: 'Usuario admin eliminado', usuario_admin_permisos: 'Cambio de permisos',
       gestor_alta: '⚠ Alta de gestor', gestor_baja: '⚠ Baja de gestor',
+      bitacora_eliminada: '🗑 Entrada de bitácora eliminada', bitacora_purga: '🗑 Purga de bitácora',
       banner_creado: 'Aviso creado', banner_editado: 'Aviso editado', banner_eliminado: 'Aviso eliminado',
       fecha_bloqueada: 'Fecha bloqueada', fecha_desbloqueada: 'Fecha desbloqueada',
       login_ok: 'Inicio de sesión', login_fail: 'Login fallido', logout: 'Cierre de sesión',
@@ -2406,7 +2408,9 @@
         return
       }
 
-      el.innerHTML = `<div style="display:flex;justify-content:flex-end;margin-bottom:10px;">
+      const esSuperBuzon = window._userRole === 'superadmin'
+      el.innerHTML = `<div style="display:flex;justify-content:flex-end;gap:8px;margin-bottom:10px;">
+    ${esSuperBuzon ? '<button class="btn-del" onclick="purgarBuzon()" style="font-size:.78rem;padding:5px 10px;background:#fee;color:#991b1b;border-color:#fecaca;"><i class="bi bi-eraser"></i> Purgar por filtro</button>' : ''}
     <button class="btn-o" onclick="marcarTodoLeido()" style="font-size:.78rem;padding:5px 10px;"><i class="bi bi-check2-all"></i> Marcar todo como leído</button>
   </div>`+ logs.map(l => {
         const col = LOG_COLORS[l.tipo] || 'dot-creacion'
@@ -2416,9 +2420,10 @@
         let desc = l.notaInterna || ''
         if (l.cita) desc = `${l.cita.tramite} · ${l.cita.fecha} ${l.cita.hora}`
         if (l.mensajeCiudadano) desc += ` — Msg: "${l.mensajeCiudadano.slice(0, 55)}..."`
-        return `<div class="log-item" style="${esNuevo ? 'background:#fffbeb;border-radius:8px;padding:10px 8px;margin:-2px -8px;' : ''}">
+        const accionBorrar = esSuperBuzon ? `<button class="btn-ic" onclick="eliminarLog('${l.id}')" title="Eliminar entrada de bitácora (irreversible)" style="margin-left:8px;background:#fee;color:#991b1b;border-color:#fecaca;font-size:.7rem;padding:2px 6px;"><i class="bi bi-trash"></i></button>` : ''
+        return `<div class="log-item" style="${esNuevo ? 'background:#fffbeb;border-radius:8px;padding:10px 8px;margin:-2px -8px;' : ''};display:flex;align-items:flex-start;">
       <div class="log-dot ${col}"></div>
-      <div class="log-body">
+      <div class="log-body" style="flex:1;">
         <div style="display:flex;align-items:center;gap:6px;">
           <span class="log-tipo" style="color:${l.tipo === 'cancelacion' ? 'var(--rojo)' : l.tipo === 'inasistencia' ? '#7e22ce' : 'var(--gris)'}">${lbl}</span>
           ${esNuevo ? '<span style="background:#f59e0b;color:#fff;font-size:.65rem;font-weight:700;padding:1px 6px;border-radius:10px;">NUEVO</span>' : ''}
@@ -2426,6 +2431,7 @@
         <div class="log-desc">${desc || '—'}</div>
         <div class="log-meta">${fecha} · ${l.realizadoPor}${l.ciudadanoEmail ? ` · ${l.ciudadanoEmail}` : ''}</div>
       </div>
+      ${accionBorrar}
     </div>`
       }).join('') + pager(d.page, d.pages, d.total, 'loadBuzon')
     }
@@ -2436,6 +2442,30 @@
       api('POST', '/api/admin/bitacora/leer-todo', {}).catch(() => { })
       const nb = document.getElementById('nb-buzon'); nb.textContent = ''; nb.style.display = 'none'
       loadBuzon()
+    }
+
+    // Eliminar una entrada del buzón (irreversible). Solo superadmin.
+    // Antes de borrar, el backend deja meta-auditoría (tipo=bitacora_eliminada)
+    // para que no haya huecos silenciosos.
+    async function eliminarLog(id) {
+      if (!confirm('¿Eliminar definitivamente esta entrada de la bitácora?\n\nLa operación queda registrada como bitacora_eliminada para no perder el rastro.')) return
+      const r = await api('DELETE', `/api/admin/bitacora/${id}`)
+      if (r?.error) return toast(r.error, false)
+      toast('Entrada eliminada'); loadBuzon(); refreshStats()
+    }
+
+    // Purga masiva por filtro (solo superadmin). Pide tipo y/o antesDe.
+    async function purgarBuzon() {
+      const tipo = prompt('Tipo a purgar (ej. login_fail) o dejar vacío:')
+      const antesDe = prompt('Borrar entradas anteriores a (YYYY-MM-DD) o vacío:')
+      if (!tipo && !antesDe) return toast('Indica al menos un filtro.', false)
+      if (!confirm(`¿Purgar entradas de la bitácora con filtro tipo="${tipo || '(todos)'}" antesDe="${antesDe || '(sin límite)'}"? Acción irreversible.`)) return
+      const qs = new URLSearchParams()
+      if (tipo) qs.set('tipo', tipo)
+      if (antesDe) qs.set('antesDe', antesDe)
+      const r = await api('DELETE', `/api/admin/bitacora?${qs.toString()}`)
+      if (r?.error) return toast(r.error, false)
+      toast(`${r.borradas} entrada(s) eliminada(s)`); loadBuzon(); refreshStats()
     }
 
     // ── Ciudadanos ─────────────────────────────────────────────────────────────

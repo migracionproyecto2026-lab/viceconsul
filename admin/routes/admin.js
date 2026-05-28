@@ -401,6 +401,50 @@ router.post('/bitacora/leer-todo', async (req, res) => {
   } catch (err) { res.status(500).json({ error: 'Error del servidor' }) }
 })
 
+// Borrado de entradas del buzón / bitácora (solo superadmin).
+// Antes de borrar registra una meta-entrada para no perder el rastro de
+// QUIÉN borró QUÉ (evita huecos silenciosos en la auditoría).
+router.delete('/bitacora/:id', async (req, res) => {
+  try {
+    if (req.session?.role !== 'superadmin') return res.status(403).json({ error: 'Solo el superadministrador puede eliminar entradas del buzón.' })
+    const id = req.params.id
+    const log = await prisma.activityLog.findUnique({ where: { id } })
+    if (!log) return res.status(404).json({ error: 'Entrada no encontrada' })
+    // Meta-auditoría: la entrada que borra queda registrada antes de la operación
+    await logActividad({
+      tipo: 'bitacora_eliminada', entidad: 'bitacora', entidadId: id, accion: 'eliminar',
+      antes: { tipo: log.tipo, entidad: log.entidad, accion: log.accion, realizadoPor: log.realizadoPor, ciudadanoEmail: log.ciudadanoEmail, notaInterna: log.notaInterna, createdAt: log.createdAt },
+      notaInterna: `Entrada de bitácora eliminada (${log.tipo || 'sin tipo'}) — original por ${log.realizadoPor || 'desconocido'} el ${new Date(log.createdAt).toISOString()}`,
+      realizadoPor: getNombreAdmin(req.session),
+    })
+    await prisma.activityLog.delete({ where: { id } })
+    res.json({ ok: true })
+  } catch (err) { console.error(err); res.status(500).json({ error: 'Error del servidor' }) }
+})
+
+// Borrado masivo por filtro (solo superadmin). Soporta query ?tipo=X o ?antesDe=YYYY-MM-DD
+// para limpiar lotes antiguos. Siempre deja meta-auditoría con el resumen.
+router.delete('/bitacora', async (req, res) => {
+  try {
+    if (req.session?.role !== 'superadmin') return res.status(403).json({ error: 'Solo el superadministrador puede eliminar entradas del buzón.' })
+    const { tipo, antesDe } = req.query
+    if (!tipo && !antesDe) return res.status(400).json({ error: 'Indique tipo y/o antesDe para evitar borrado total accidental.' })
+    const where = {}
+    if (tipo) where.tipo = String(tipo)
+    if (antesDe) where.createdAt = { lt: new Date(String(antesDe) + 'T23:59:59') }
+    const count = await prisma.activityLog.count({ where })
+    if (count === 0) return res.json({ ok: true, borradas: 0 })
+    await prisma.activityLog.deleteMany({ where })
+    await logActividad({
+      tipo: 'bitacora_purga', entidad: 'bitacora', accion: 'eliminar',
+      datos: JSON.stringify({ filtro: { tipo, antesDe }, borradas: count }),
+      notaInterna: `Purga de bitácora — ${count} entrada(s) eliminada(s) (filtro: ${JSON.stringify({ tipo, antesDe })})`,
+      realizadoPor: getNombreAdmin(req.session),
+    })
+    res.json({ ok: true, borradas: count })
+  } catch (err) { console.error(err); res.status(500).json({ error: 'Error del servidor' }) }
+})
+
 // ── CIUDADANOS ─────────────────────────────────────────────────────────────
 router.get('/ciudadanos', async (req, res) => {
   try {
