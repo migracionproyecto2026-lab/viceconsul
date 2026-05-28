@@ -360,26 +360,28 @@ router.get('/ciudadanos', async (req, res) => {
 
 router.get('/ciudadanos/buscar', async (req, res) => {
   try {
-    const { q } = req.query
+    const q = (req.query.q || '').trim()
     if (!q) return res.json(null)
+    // Coincidencia exacta por correo si parece email; si no, búsqueda parcial en cédula/correo/nombre/apellido.
     let citizen = null
     if (q.includes('@')) {
       citizen = await prisma.citizen.findUnique({ where: { email: q } })
-    } else if (/^\d+$/.test(q)) {
-      // número: busca por cédula primero, luego por ID
-      citizen = await prisma.citizen.findFirst({ where: { cedula: q } })
-        || await prisma.citizen.findUnique({ where: { id: parseInt(q) } }).catch(() => null)
+        || await prisma.citizen.findFirst({ where: { email: { contains: q } } })
     } else {
-      // texto: busca por nombre o apellido
       citizen = await prisma.citizen.findFirst({
-        where: { OR: [{ nombre: { contains: q } }, { apellido: { contains: q } }] },
+        where: { OR: [
+          { cedula: { contains: q } },
+          { nombre: { contains: q } },
+          { apellido: { contains: q } },
+          { email: { contains: q } },
+        ] },
         orderBy: { createdAt: 'desc' },
       })
     }
     if (!citizen) return res.json(null)
     const { password, verifyCode, verifyExpiry, ...safe } = citizen
     res.json(safe)
-  } catch (err) { res.status(500).json({ error: 'Error del servidor' }) }
+  } catch (err) { console.error(err); res.status(500).json({ error: 'Error del servidor' }) }
 })
 
 router.get('/ciudadanos/:id', async (req, res) => {
