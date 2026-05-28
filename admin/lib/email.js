@@ -220,6 +220,11 @@ const TEMPLATES = {
   }),
 }
 
+// Prueba la conexión/credenciales SMTP sin enviar correo
+async function verifyTransport() {
+  return getTransporter().verify()
+}
+
 // Render sin enviar (para previews/tests)
 function renderEmail(tipo, data) {
   const t = TEMPLATES[tipo]
@@ -264,5 +269,6 @@ module.exports = {
   sendCancellationEmail,
   sendNoShowEmail,
   renderEmail,
+  verifyTransport,
   TEMPLATES,
 }

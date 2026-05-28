@@ -233,6 +233,26 @@ app.post('/api/setup', async (req, res) => {
   }
 })
 
+// ── Diagnóstico (temporal): estado de config de correo, sin exponer secretos ─
+app.get('/api/health', (req, res) => {
+  res.json({
+    ok: true,
+    gmailUser: process.env.GMAIL_USER || null,
+    gmailPassPresent: !!process.env.GMAIL_PASS,
+    gmailPassLen: process.env.GMAIL_PASS ? process.env.GMAIL_PASS.length : 0,
+    smtpHost: process.env.SMTP_HOST || 'smtp.gmail.com',
+    smtpPort: Number(process.env.SMTP_PORT) || 465,
+    node: process.version,
+  })
+})
+app.get('/api/health/smtp', publicLimiter, async (req, res) => {
+  try {
+    const { verifyTransport } = require('./lib/email')
+    await verifyTransport()
+    res.json({ smtp: 'ok' })
+  } catch (e) { res.json({ smtp: 'error', message: e.message }) }
+})
+
 // ── Fallback SPA ───────────────────────────────────────────────────────────
 app.get('/admin*', (req, res) => res.sendFile(path.join(__dirname, 'public/admin.html')))
 app.get('*', (req, res) => res.sendFile(path.join(__dirname, 'public/login.html')))
