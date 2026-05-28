@@ -120,11 +120,26 @@ app.get('/api/public/verificar', publicLimiter, async (req, res) => {
 })
 
 // Ruta pública: solicitud de cita desde la web estática
+// Validación de inputs comunes
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+function validarCitaPublica(b) {
+  if (!b.tramite || typeof b.tramite !== 'string') return 'El trámite es obligatorio'
+  if (b.tramite.length > 200) return 'Trámite demasiado largo'
+  if (b.email && (!EMAIL_RE.test(b.email) || b.email.length > 120)) return 'Correo no válido'
+  for (const [k, max] of [['nombres', 100], ['apellidos', 100], ['cedula', 30], ['telefono', 30], ['codigoPais', 8], ['tipoDocumento', 40], ['observaciones', 1000]]) {
+    if (b[k] && (typeof b[k] !== 'string' || b[k].length > max)) return `Campo ${k} no válido`
+  }
+  if (b.fecha && !/^\d{4}-\d{2}-\d{2}$/.test(b.fecha)) return 'Fecha con formato inválido'
+  if (b.hora && !/^\d{2}:\d{2}$/.test(b.hora)) return 'Hora con formato inválido'
+  return null
+}
+
 app.post('/api/public/cita', publicLimiter, async (req, res) => {
   try {
     const { prisma } = require('./lib/db')
     const { nombres, apellidos, tipoDocumento, cedula, codigoPais, telefono, email, tramite, fecha, hora, observaciones } = req.body
-    if (!tramite) return res.status(400).json({ error: 'El trámite es obligatorio' })
+    const errVal = validarCitaPublica(req.body)
+    if (errVal) return res.status(400).json({ error: errVal })
 
     // Verificar fecha bloqueada
     if (fecha) {
@@ -231,41 +246,6 @@ app.post('/api/setup', async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: 'Error del servidor' })
   }
-})
-
-// ── Diagnóstico (temporal): estado de config de correo, sin exponer secretos ─
-app.get('/api/health', (req, res) => {
-  res.json({
-    ok: true,
-    gmailUser: process.env.GMAIL_USER || null,
-    gmailPassPresent: !!process.env.GMAIL_PASS,
-    gmailPassLen: process.env.GMAIL_PASS ? process.env.GMAIL_PASS.length : 0,
-    smtpHost: process.env.SMTP_HOST || 'smtp.gmail.com',
-    smtpPort: Number(process.env.SMTP_PORT) || 465,
-    node: process.version,
-  })
-})
-app.get('/api/health/smtp', publicLimiter, async (req, res) => {
-  const port = req.query.port ? Number(req.query.port) : undefined
-  try {
-    const { verifyTransport } = require('./lib/email')
-    await verifyTransport({ port })
-    res.json({ smtp: 'ok', port: port || 'default' })
-  } catch (e) { res.json({ smtp: 'error', port: port || 'default', code: e.code || null, message: e.message }) }
-})
-app.get('/api/health/gmailapi', publicLimiter, async (req, res) => {
-  try {
-    const { verifyGmailApi } = require('./lib/email')
-    const cuenta = await verifyGmailApi()
-    res.json({ gmailApi: 'ok', cuenta })
-  } catch (e) { res.json({ gmailApi: 'error', code: e.code || null, message: e.message }) }
-})
-app.get('/api/health/resend', publicLimiter, async (req, res) => {
-  try {
-    const { verifyResend } = require('./lib/email')
-    const dominios = await verifyResend()
-    res.json({ resend: 'ok', keyPresent: !!process.env.RESEND_API_KEY, dominios })
-  } catch (e) { res.json({ resend: 'error', keyPresent: !!process.env.RESEND_API_KEY, message: e.message }) }
 })
 
 // ── Fallback SPA ───────────────────────────────────────────────────────────

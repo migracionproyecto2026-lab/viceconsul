@@ -1559,6 +1559,23 @@
       } catch { return { error: 'Error de conexión. Verifica que el servidor esté activo.' } }
     }
 
+    // ── Restricción de fechas: no permite pasadas (y opcionalmente fin de semana) ─
+    function aplicarRestriccionFecha(id, opts) {
+      const el = document.getElementById(id); if (!el) return
+      const hoy = new Date(); hoy.setHours(0, 0, 0, 0)
+      el.min = hoy.toISOString().split('T')[0]
+      if (opts && opts.sinFindes) {
+        el.addEventListener('change', function () {
+          if (!this.value) return
+          const d = new Date(this.value + 'T12:00:00')
+          if (d.getDay() === 0 || d.getDay() === 6) {
+            alert('Solo se atiende de lunes a viernes. Selecciona un día hábil.')
+            this.value = ''
+          }
+        })
+      }
+    }
+
     // ── Paginación (Anterior / Siguiente + Página X de Y) ───────────────────────
     function pager(page, pages, total, fn) {
       if (!total) return ''
@@ -2497,6 +2514,10 @@
       if (role === 'superadmin') {
         document.querySelectorAll('.nav-rol-superadmin').forEach(el => el.style.display = '')
       }
+
+      // Bloquear fechas pasadas + fin de semana en los date inputs operativos
+      ;['c-fecha', 're-fecha'].forEach(id => aplicarRestriccionFecha(id, { sinFindes: true }))
+      aplicarRestriccionFecha('nf', { sinFindes: false })  // bloqueadas: cualquier día futuro
 
       cargarFechasBloqueadas()
       loadDashboard()

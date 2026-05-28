@@ -43,18 +43,20 @@ router.post('/login', async (req, res) => {
     const { email, password } = req.body
     if (!email || !password) return res.status(400).json({ error: 'Correo y contraseña requeridos' })
 
+    // Mensaje genérico para no permitir enumeración de cuentas
+    const GENERIC = { status: 401, error: 'Correo o contraseña incorrectos' }
     const admin = await prisma.adminUser.findUnique({ where: { email } })
     if (admin) {
       const valid = await bcrypt.compare(password, admin.password)
-      if (!valid) return res.status(401).json({ error: 'Contraseña incorrecta' })
+      if (!valid) return res.status(GENERIC.status).json({ error: GENERIC.error })
       setAuthCookie(res, { sub: admin.id, role: admin.role, email: admin.email, nombre: admin.nombre })
       return res.json({ user: { id: admin.id, nombre: admin.nombre, email: admin.email, role: admin.role }, redirect: '/admin' })
     }
 
     const citizen = await prisma.citizen.findUnique({ where: { email } })
-    if (!citizen) return res.status(404).json({ error: 'No existe cuenta con ese correo' })
+    if (!citizen) return res.status(GENERIC.status).json({ error: GENERIC.error })
     const valid = await bcrypt.compare(password, citizen.password)
-    if (!valid) return res.status(401).json({ error: 'Contraseña incorrecta' })
+    if (!valid) return res.status(GENERIC.status).json({ error: GENERIC.error })
     if (!citizen.verified) return res.status(403).json({ error: 'Cuenta no verificada. Revisa tu correo.', needsVerify: true, email })
 
     setAuthCookie(res, { sub: citizen.id, role: 'citizen', email: citizen.email, nombre: citizen.nombre })

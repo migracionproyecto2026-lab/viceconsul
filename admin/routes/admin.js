@@ -164,14 +164,16 @@ router.put('/citas/:id', async (req, res) => {
       include: { citizen: { select: { nombre: true, apellido: true, email: true } } },
     })
 
-    // Correos automáticos según cambio de status (fire-and-forget, no bloquean la respuesta)
+    // Auditoría + correos según cambio de status (fire-and-forget en correos, no bloquean)
     if (status && status !== prev.status) {
       const email = getCitaEmail(cita)
+      await logActividad({
+        tipo: `status_${status}`, citaId: cita.id, ciudadanoEmail: email,
+        notaInterna: `Estado: ${prev.status} → ${status}`,
+        realizadoPor: getNombreAdmin(req.session),
+      })
       if (email && status === 'confirmada') sendAppointmentConfirmation(email, getCitaNombre(cita), cita).catch(console.error)
-      if (status === 'inasistencia') {
-        if (email) sendNoShowEmail(email, getCitaNombre(cita), cita).catch(console.error)
-        await logActividad({ tipo: 'inasistencia', citaId: cita.id, ciudadanoEmail: email, notaInterna: 'Inasistencia registrada', realizadoPor: getNombreAdmin(req.session) })
-      }
+      if (status === 'inasistencia' && email) sendNoShowEmail(email, getCitaNombre(cita), cita).catch(console.error)
     }
 
     res.json(cita)
