@@ -73,6 +73,10 @@ app.use((req, res, next) => {
 // ── Middleware ─────────────────────────────────────────────────────────────
 app.use(express.json({ limit: '100kb' }))
 app.use(cookieParser())
+// Captura el req actual en AsyncLocalStorage para que la auditoría pueda
+// acceder a IP / User-Agent / sesión sin tener que pasar req explícitamente.
+const { withRequestContext } = require('./lib/audit')
+app.use(withRequestContext)
 app.use(express.static(path.join(__dirname, 'public')))
 // Servir imágenes
 app.use('/images', express.static(path.join(__dirname, 'public/images')))
@@ -86,6 +90,8 @@ const publicLimiter = rateLimit({ windowMs: 60 * 1000, max: 30, message: { error
 // ── Rutas API ──────────────────────────────────────────────────────────────
 app.use('/api/auth', loginLimiter, require('./routes/auth'))
 app.use('/api/admin', apiLimiter, require('./routes/admin'))
+const { requireAdmin } = require('./lib/auth')
+app.use('/api/admin/reportes', apiLimiter, requireAdmin, require('./routes/reportes'))
 
 // Ruta pública: configuración centralizada (desde la base de datos)
 app.get('/api/config', async (req, res) => {
@@ -230,15 +236,16 @@ app.post('/api/public/cita', publicLimiter, async (req, res) => {
       }
     })
 
-    // Registrar en ActivityLog (Buzón del admin)
-    await prisma.activityLog.create({
-      data: {
-        tipo: 'nueva_cita_web',
-        citaId: cita.id,
-        ciudadanoEmail: email || null,
-        notaInterna: `Cita solicitada desde la web pública: ${tramite}${fecha ? ` para el ${fecha} a las ${hora || '08:30'}` : ''}`,
-        realizadoPor: 'sistema_web',
-      }
+    // Registrar en ActivityLog (Buzón del admin + auditoría 360°)
+    const { auditar } = require('./lib/audit')
+    await auditar(req, {
+      tipo: 'nueva_cita_web',
+      entidad: 'cita', entidadId: cita.id, accion: 'crear',
+      despues: cita,
+      citaId: cita.id,
+      ciudadanoEmail: email || null,
+      notaInterna: `Cita solicitada desde la web pública: ${tramite}${fecha ? ` para el ${fecha} a las ${hora || '08:30'}` : ''}`,
+      autorOverride: { id: null, nombre: 'sistema_web', role: 'web' },
     })
 
     // Enviar correo de confirmación si hay email

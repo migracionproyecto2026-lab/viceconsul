@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs')
 const { prisma } = require('../lib/db')
 const { setAuthCookie, clearAuthCookie, getSession } = require('../lib/auth')
 const { sendVerificationEmail } = require('../lib/email')
+const { auditar, auditarSesion } = require('../lib/audit')
 
 function generateCode() {
   return Math.floor(100000 + Math.random() * 900000).toString()
@@ -48,15 +49,31 @@ router.post('/login', async (req, res) => {
     const admin = await prisma.adminUser.findUnique({ where: { email } })
     if (admin) {
       const valid = await bcrypt.compare(password, admin.password)
-      if (!valid) return res.status(GENERIC.status).json({ error: GENERIC.error })
+      if (!valid) {
+        await auditarSesion(req, { adminUserId: admin.id, email, nombre: admin.nombre, role: admin.role, tipo: 'login_fail' })
+        await auditar(req, { entidad: 'sesion', accion: 'login_fail', ciudadanoEmail: email, notaInterna: 'Login fallido (admin)', autorOverride: { id: null, nombre: 'sistema', role: null } })
+        return res.status(GENERIC.status).json({ error: GENERIC.error })
+      }
       setAuthCookie(res, { sub: admin.id, role: admin.role, email: admin.email, nombre: admin.nombre }, req)
+      await auditarSesion(req, { adminUserId: admin.id, email: admin.email, nombre: admin.nombre, role: admin.role, tipo: 'login_ok' })
+      await auditar(req, {
+        entidad: 'sesion', entidadId: admin.id, accion: 'login_ok',
+        ciudadanoEmail: admin.email, notaInterna: `Login admin: ${admin.email} (${admin.role})`,
+        autorOverride: { id: admin.id, nombre: admin.nombre || admin.email, role: admin.role },
+      })
       return res.json({ user: { id: admin.id, nombre: admin.nombre, email: admin.email, role: admin.role }, redirect: '/admin' })
     }
 
     const citizen = await prisma.citizen.findUnique({ where: { email } })
-    if (!citizen) return res.status(GENERIC.status).json({ error: GENERIC.error })
+    if (!citizen) {
+      await auditarSesion(req, { email, tipo: 'login_fail' })
+      return res.status(GENERIC.status).json({ error: GENERIC.error })
+    }
     const valid = await bcrypt.compare(password, citizen.password)
-    if (!valid) return res.status(GENERIC.status).json({ error: GENERIC.error })
+    if (!valid) {
+      await auditarSesion(req, { email, tipo: 'login_fail' })
+      return res.status(GENERIC.status).json({ error: GENERIC.error })
+    }
     if (!citizen.verified) return res.status(403).json({ error: 'Cuenta no verificada. Revisa tu correo.', needsVerify: true, email })
 
     setAuthCookie(res, { sub: citizen.id, role: 'citizen', email: citizen.email, nombre: citizen.nombre }, req)
@@ -86,7 +103,15 @@ router.post('/verify', async (req, res) => {
 })
 
 // POST /api/auth/logout
-router.post('/logout', (req, res) => {
+router.post('/logout', async (req, res) => {
+  const session = getSession(req)
+  if (session) {
+    await auditarSesion(req, { adminUserId: session.sub, email: session.email, nombre: session.nombre, role: session.role, tipo: 'logout' })
+    await auditar(req, {
+      entidad: 'sesion', entidadId: session.sub, accion: 'logout',
+      ciudadanoEmail: session.email, notaInterna: `Logout: ${session.email}`,
+    })
+  }
   clearAuthCookie(res)
   res.json({ ok: true })
 })

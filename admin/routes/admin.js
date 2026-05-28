@@ -4,6 +4,7 @@ const { prisma } = require('../lib/db')
 const { requireAdmin } = require('../lib/auth')
 const { sendAppointmentReceived, sendAppointmentConfirmation, sendCancellationEmail, sendNoShowEmail, sendInRevisionEmail, sendValijaSentEmail, sendReagendamiento, renderEmail } = require('../lib/email')
 const { nextSerial: __nextSerial } = require('../lib/serial')
+const { auditar } = require('../lib/audit')
 const bcrypt = require('bcryptjs')
 
 router.use(requireAdmin)
@@ -17,9 +18,13 @@ function getCitaNombre(cita) {
   return cita.nombreExterno || 'Ciudadano'
 }
 
-async function logActividad({ tipo, citaId, ciudadanoEmail, mensajeCiudadano, notaInterna, datos, realizadoPor }) {
-  return prisma.activityLog.create({
-    data: { tipo, citaId, ciudadanoEmail, mensajeCiudadano, notaInterna, datos, realizadoPor },
+// Wrapper compatible con las llamadas antiguas; usa auditar() por debajo
+// para llenar también entidad/accion/ip/userAgent/antes/despues.
+async function logActividad({ tipo, citaId, ciudadanoEmail, mensajeCiudadano, notaInterna, datos, realizadoPor, entidad, entidadId, accion, antes, despues }) {
+  return auditar(null, {
+    tipo, citaId, ciudadanoEmail, mensajeCiudadano, notaInterna, datos,
+    entidad, entidadId, accion, antes, despues,
+    autorOverride: realizadoPor ? { id: null, nombre: realizadoPor, role: null } : undefined,
   })
 }
 
@@ -131,7 +136,7 @@ router.post('/citas', async (req, res) => {
       include: { citizen: { select: { nombre: true, apellido: true, email: true } } },
     })
 
-    await logActividad({ tipo: 'creacion', citaId: cita.id, ciudadanoEmail: getCitaEmail(cita), notaInterna: `Cita creada: ${tramite}${fecha ? ' el ' + fecha + ' a las ' + hora : ''}`, realizadoPor: getNombreAdmin(req.session) })
+    await logActividad({ tipo: 'creacion', entidad: 'cita', entidadId: cita.id, accion: 'crear', despues: cita, citaId: cita.id, ciudadanoEmail: getCitaEmail(cita), notaInterna: `Cita creada: ${tramite}${fecha ? ' el ' + fecha + ' a las ' + hora : ''}`, realizadoPor: getNombreAdmin(req.session) })
 
     const email = getCitaEmail(cita)
     if (email) sendAppointmentReceived(email, getCitaNombre(cita), cita).catch(console.error) // fire-and-forget
@@ -177,7 +182,9 @@ router.put('/citas/:id', async (req, res) => {
     if (status && status !== prev.status) {
       const email = getCitaEmail(cita)
       await logActividad({
-        tipo: `status_${status}`, citaId: cita.id, ciudadanoEmail: email,
+        tipo: `status_${status}`, entidad: 'cita', entidadId: cita.id, accion: 'cambio_estado',
+        antes: { status: prev.status }, despues: { status },
+        citaId: cita.id, ciudadanoEmail: email,
         notaInterna: `Estado: ${prev.status} → ${status}`,
         realizadoPor: getNombreAdmin(req.session),
       })
@@ -229,7 +236,9 @@ router.post('/citas/:id/cancelar', async (req, res) => {
     if (email) sendCancellationEmail(email, getCitaNombre(cita), cita, mensajeCiudadano).catch(console.error) // fire-and-forget
 
     const log = await logActividad({
-      tipo: 'cancelacion', citaId: id, ciudadanoEmail: email, mensajeCiudadano, notaInterna,
+      tipo: 'cancelacion', entidad: 'cita', entidadId: id, accion: 'cambio_estado',
+      antes: { status: cita.status }, despues: { status: 'cancelada' },
+      citaId: id, ciudadanoEmail: email, mensajeCiudadano, notaInterna,
       datos: JSON.stringify({ tramite: cita.tramite, fecha: cita.fecha, hora: cita.hora }),
       realizadoPor: getNombreAdmin(req.session),
     })
@@ -276,7 +285,10 @@ router.post('/citas/:id/reagendar', async (req, res) => {
     })
 
     await logActividad({
-      tipo: 'reagendamiento', citaId: id, ciudadanoEmail: getCitaEmail(cita), notaInterna,
+      tipo: 'reagendamiento', entidad: 'cita', entidadId: id, accion: 'editar',
+      antes: { fecha: cita.fecha, hora: cita.hora, status: cita.status },
+      despues: { fecha: nuevaFecha, hora: nuevaHora, status: 'pendiente' },
+      citaId: id, ciudadanoEmail: getCitaEmail(cita), notaInterna,
       datos: JSON.stringify({ de: { fecha: cita.fecha, hora: cita.hora }, a: { fecha: nuevaFecha, hora: nuevaHora }, liberarPlaza, motivoNoLiberar }),
       realizadoPor: getNombreAdmin(req.session),
     })
@@ -300,13 +312,12 @@ router.delete('/citas/:id', async (req, res) => {
     await prisma.activityLog.deleteMany({ where: { citaId: id } })
     await prisma.appointment.delete({ where: { id } })
     // Log fuera de la relación (citaId ya no existe): se registra como nota suelta
-    await prisma.activityLog.create({
-      data: {
-        tipo: 'cita_eliminada',
-        ciudadanoEmail: cita.citizen?.email || cita.emailExterno || null,
-        notaInterna: `Cita eliminada (${cita.serial || 'sin ticket'}) — ${cita.tramite}${cita.fecha ? ' del ' + cita.fecha + ' ' + cita.hora : ''}`,
-        realizadoPor: getNombreAdmin(req.session),
-      },
+    await logActividad({
+      tipo: 'cita_eliminada', entidad: 'cita', entidadId: id, accion: 'eliminar',
+      antes: cita,
+      ciudadanoEmail: cita.citizen?.email || cita.emailExterno || null,
+      notaInterna: `Cita eliminada (${cita.serial || 'sin ticket'}) — ${cita.tramite}${cita.fecha ? ' del ' + cita.fecha + ' ' + cita.hora : ''}`,
+      realizadoPor: getNombreAdmin(req.session),
     })
     res.json({ ok: true })
   } catch (err) { console.error(err); res.status(500).json({ error: 'Error del servidor' }) }
@@ -345,7 +356,7 @@ router.patch('/registro-incompleto/:id/doc', async (req, res) => {
     docs.splice(parseInt(docIdx), 1)
     const newDocs = docs.length ? JSON.stringify(docs) : null
     await prisma.appointment.update({ where: { id: req.params.id }, data: { documentosPendientes: newDocs } })
-    await logActividad({ tipo: 'documento_recibido', citaId: req.params.id, notaInterna: `Documento recibido: ${docNombre}`, realizadoPor: getNombreAdmin(req.session) })
+    await logActividad({ tipo: 'documento_recibido', entidad: 'cita', entidadId: req.params.id, accion: 'editar', citaId: req.params.id, notaInterna: `Documento recibido: ${docNombre}`, realizadoPor: getNombreAdmin(req.session) })
     res.json({ ok: true, docsRestantes: docs })
   } catch (err) { console.error(err); res.status(500).json({ error: 'Error del servidor' }) }
 })
@@ -357,7 +368,7 @@ router.post('/registro-incompleto/:id/finalizar', async (req, res) => {
     const cita = await prisma.appointment.findUnique({ where: { id } })
     if (!cita) return res.status(404).json({ error: 'Cita no encontrada' })
     await prisma.appointment.update({ where: { id }, data: { status: 'completada' } })
-    await logActividad({ tipo: 'registro_finalizado', citaId: id, notaInterna: 'Cita finalizada desde Registro Incompleto', realizadoPor: getNombreAdmin(req.session) })
+    await logActividad({ tipo: 'registro_finalizado', entidad: 'cita', entidadId: id, accion: 'cambio_estado', antes: { status: cita.status }, despues: { status: 'completada' }, citaId: id, notaInterna: 'Cita finalizada desde Registro Incompleto', realizadoPor: getNombreAdmin(req.session) })
     res.json({ ok: true })
   } catch (err) { console.error(err); res.status(500).json({ error: 'Error del servidor' }) }
 })
@@ -445,7 +456,16 @@ router.get('/ciudadanos/:id', async (req, res) => {
 router.put('/ciudadanos/:id', async (req, res) => {
   try {
     const { nombre, apellido, telefono, cedula, tipoDocumento, verified } = req.body
+    const prev = await prisma.citizen.findUnique({ where: { id: req.params.id } })
+    if (!prev) return res.status(404).json({ error: 'Ciudadano no encontrado' })
     const citizen = await prisma.citizen.update({ where: { id: req.params.id }, data: { nombre, apellido, telefono, cedula, tipoDocumento, verified } })
+    await logActividad({
+      tipo: 'ciudadano_editado', entidad: 'ciudadano', entidadId: req.params.id, accion: 'editar',
+      antes: prev, despues: citizen,
+      ciudadanoEmail: citizen.email,
+      notaInterna: `Ciudadano editado: ${citizen.nombre} ${citizen.apellido}`,
+      realizadoPor: getNombreAdmin(req.session),
+    })
     const { password, verifyCode, verifyExpiry, ...safe } = citizen
     res.json(safe)
   } catch (err) { res.status(500).json({ error: 'Error del servidor' }) }
@@ -473,7 +493,8 @@ router.delete('/ciudadanos/:id', async (req, res) => {
     }
     await prisma.citizen.delete({ where: { id } })
     await logActividad({
-      tipo: 'ciudadano_eliminado',
+      tipo: 'ciudadano_eliminado', entidad: 'ciudadano', entidadId: id, accion: 'eliminar',
+      antes: { nombre: citizen.nombre, apellido: citizen.apellido, email: citizen.email },
       ciudadanoEmail: citizen.email,
       notaInterna: `Ciudadano eliminado: ${citizen.nombre} ${citizen.apellido} (${citizen.email})${totalCitas ? ' — con ' + totalCitas + ' cita(s) en cascada' : ''}`,
       realizadoPor: getNombreAdmin(req.session),
@@ -491,17 +512,29 @@ router.post('/banners', async (req, res) => {
   try {
     const { categoria, titulo, cuerpo, activo, orden } = req.body
     if (!titulo || !cuerpo) return res.status(400).json({ error: 'Título y cuerpo son obligatorios' })
-    res.json(await prisma.banner.create({ data: { categoria: categoria || null, titulo, cuerpo, activo: activo ?? true, orden: orden ?? 0 } }))
+    const banner = await prisma.banner.create({ data: { categoria: categoria || null, titulo, cuerpo, activo: activo ?? true, orden: orden ?? 0 } })
+    await logActividad({ tipo: 'banner_creado', entidad: 'banner', entidadId: banner.id, accion: 'crear', despues: banner, notaInterna: `Banner creado: ${titulo}`, realizadoPor: getNombreAdmin(req.session) })
+    res.json(banner)
   } catch (err) { res.status(500).json({ error: 'Error del servidor' }) }
 })
 router.put('/banners/:id', async (req, res) => {
   try {
     const { categoria, titulo, cuerpo, activo, orden } = req.body
-    res.json(await prisma.banner.update({ where: { id: req.params.id }, data: { categoria: categoria ?? undefined, titulo, cuerpo, activo, orden } }))
+    const prev = await prisma.banner.findUnique({ where: { id: req.params.id } })
+    if (!prev) return res.status(404).json({ error: 'Banner no encontrado' })
+    const banner = await prisma.banner.update({ where: { id: req.params.id }, data: { categoria: categoria ?? undefined, titulo, cuerpo, activo, orden } })
+    await logActividad({ tipo: 'banner_editado', entidad: 'banner', entidadId: banner.id, accion: 'editar', antes: prev, despues: banner, notaInterna: `Banner editado: ${banner.titulo}`, realizadoPor: getNombreAdmin(req.session) })
+    res.json(banner)
   } catch (err) { res.status(500).json({ error: 'Error del servidor' }) }
 })
 router.delete('/banners/:id', async (req, res) => {
-  try { await prisma.banner.delete({ where: { id: req.params.id } }); res.json({ ok: true }) }
+  try {
+    const prev = await prisma.banner.findUnique({ where: { id: req.params.id } })
+    if (!prev) return res.status(404).json({ error: 'Banner no encontrado' })
+    await prisma.banner.delete({ where: { id: req.params.id } })
+    await logActividad({ tipo: 'banner_eliminado', entidad: 'banner', entidadId: req.params.id, accion: 'eliminar', antes: prev, notaInterna: `Banner eliminado: ${prev.titulo}`, realizadoPor: getNombreAdmin(req.session) })
+    res.json({ ok: true })
+  }
   catch (err) { res.status(500).json({ error: 'Error del servidor' }) }
 })
 
@@ -514,11 +547,19 @@ router.post('/fechas-bloqueadas', async (req, res) => {
   try {
     const { fecha, motivo } = req.body
     if (!fecha) return res.status(400).json({ error: 'Fecha requerida' })
-    res.json(await prisma.blockedDate.upsert({ where: { fecha }, update: { motivo }, create: { fecha, motivo } }))
+    const fb = await prisma.blockedDate.upsert({ where: { fecha }, update: { motivo }, create: { fecha, motivo } })
+    await logActividad({ tipo: 'fecha_bloqueada', entidad: 'fecha_bloqueada', entidadId: fb.id, accion: 'crear', despues: fb, notaInterna: `Fecha bloqueada: ${fecha}${motivo ? ' (' + motivo + ')' : ''}`, realizadoPor: getNombreAdmin(req.session) })
+    res.json(fb)
   } catch (err) { res.status(500).json({ error: 'Error del servidor' }) }
 })
 router.delete('/fechas-bloqueadas', async (req, res) => {
-  try { await prisma.blockedDate.delete({ where: { fecha: req.body.fecha } }); res.json({ ok: true }) }
+  try {
+    const prev = await prisma.blockedDate.findUnique({ where: { fecha: req.body.fecha } })
+    if (!prev) return res.status(404).json({ error: 'Fecha no encontrada' })
+    await prisma.blockedDate.delete({ where: { fecha: req.body.fecha } })
+    await logActividad({ tipo: 'fecha_desbloqueada', entidad: 'fecha_bloqueada', entidadId: prev.id, accion: 'eliminar', antes: prev, notaInterna: `Fecha desbloqueada: ${prev.fecha}`, realizadoPor: getNombreAdmin(req.session) })
+    res.json({ ok: true })
+  }
   catch (err) { res.status(500).json({ error: 'Error del servidor' }) }
 })
 
@@ -552,6 +593,13 @@ router.post('/usuarios', requireSuperadmin, async (req, res) => {
     const user = await prisma.adminUser.create({
       data: { nombre, email, password: hashed, role: role || 'asistente', cargo: cargo || null, permisos: permisosLimpios },
     })
+    await logActividad({
+      tipo: 'usuario_admin_creado', entidad: 'usuario_admin', entidadId: user.id, accion: 'crear',
+      despues: user,
+      ciudadanoEmail: user.email,
+      notaInterna: `Usuario admin creado: ${user.email} (${user.role})`,
+      realizadoPor: getNombreAdmin(req.session),
+    })
     res.json({ id: user.id, nombre: user.nombre, email: user.email, role: user.role, cargo: user.cargo, permisos: user.permisos, createdAt: user.createdAt })
   } catch (err) { res.status(500).json({ error: 'Error del servidor' }) }
 })
@@ -560,6 +608,8 @@ router.put('/usuarios/:id', requireSuperadmin, async (req, res) => {
   try {
     const { nombre, email, role, cargo, permisos, password } = req.body
     const targetId = req.params.id
+    const prev = await prisma.adminUser.findUnique({ where: { id: targetId } })
+    if (!prev) return res.status(404).json({ error: 'Usuario no encontrado' })
     const data = {}
     if (nombre) data.nombre = nombre
     if (email) data.email = email
@@ -574,6 +624,18 @@ router.put('/usuarios/:id', requireSuperadmin, async (req, res) => {
       data.password = await bcrypt.hash(password, 12)
     }
     const user = await prisma.adminUser.update({ where: { id: targetId }, data })
+    const cambioPermisos = (role && role !== prev.role) || (Array.isArray(permisos) && JSON.stringify(prev.permisos) !== JSON.stringify(user.permisos))
+    await logActividad({
+      tipo: cambioPermisos ? 'usuario_admin_permisos' : 'usuario_admin_editado',
+      entidad: 'usuario_admin', entidadId: targetId,
+      accion: cambioPermisos ? 'cambio_permisos' : 'editar',
+      antes: prev, despues: user,
+      ciudadanoEmail: user.email,
+      notaInterna: cambioPermisos
+        ? `Permisos/rol modificados para ${user.email}: ${prev.role}→${user.role}; permisos [${prev.permisos.join(',')}]→[${user.permisos.join(',')}]${password ? ' + nueva contraseña' : ''}`
+        : `Usuario admin editado: ${user.email}${password ? ' (nueva contraseña)' : ''}`,
+      realizadoPor: getNombreAdmin(req.session),
+    })
     res.json({ id: user.id, nombre: user.nombre, email: user.email, role: user.role, cargo: user.cargo, permisos: user.permisos })
   } catch (err) { res.status(500).json({ error: 'Error del servidor' }) }
 })
@@ -581,7 +643,16 @@ router.put('/usuarios/:id', requireSuperadmin, async (req, res) => {
 router.delete('/usuarios/:id', requireSuperadmin, async (req, res) => {
   try {
     if (req.params.id === req.session.sub) return res.status(400).json({ error: 'No puedes eliminarte a ti mismo' })
+    const prev = await prisma.adminUser.findUnique({ where: { id: req.params.id } })
+    if (!prev) return res.status(404).json({ error: 'Usuario no encontrado' })
     await prisma.adminUser.delete({ where: { id: req.params.id } })
+    await logActividad({
+      tipo: 'usuario_admin_eliminado', entidad: 'usuario_admin', entidadId: req.params.id, accion: 'eliminar',
+      antes: prev,
+      ciudadanoEmail: prev.email,
+      notaInterna: `Usuario admin eliminado: ${prev.email} (${prev.role})`,
+      realizadoPor: getNombreAdmin(req.session),
+    })
     res.json({ ok: true })
   } catch (err) { res.status(500).json({ error: 'Error del servidor' }) }
 })
@@ -643,7 +714,9 @@ router.post('/valijas/cerrar-dia', async (req, res) => {
       data: { valijaId: valija.id },
     })
     await logActividad({
-      tipo: 'valija_creada', notaInterna: `Valija ${serial} creada con ${pendientes.length} trámite(s)${fecha ? ' del ' + fecha : ''}`,
+      tipo: 'valija_creada', entidad: 'valija', entidadId: valija.id, accion: 'crear',
+      despues: { serial, estado: 'abierta', totalCitas: pendientes.length },
+      notaInterna: `Valija ${serial} creada con ${pendientes.length} trámite(s)${fecha ? ' del ' + fecha : ''}`,
       realizadoPor: getNombreAdmin(req.session),
     })
     res.json({ ok: true, valija: { ...valija, totalCitas: pendientes.length } })
@@ -670,7 +743,7 @@ router.post('/valijas/:id/enviar', async (req, res) => {
     }
     const notificados = v.citas.filter(c => getCitaEmail(c)).length
 
-    await logActividad({ tipo: 'valija_enviada', notaInterna: `Valija ${v.serial} enviada al Consulado General — notificados ${notificados} ciudadano(s)`, realizadoPor: getNombreAdmin(req.session) })
+    await logActividad({ tipo: 'valija_enviada', entidad: 'valija', entidadId: id, accion: 'cambio_estado', antes: { estado: 'abierta' }, despues: { estado: 'enviada' }, notaInterna: `Valija ${v.serial} enviada al Consulado General — notificados ${notificados} ciudadano(s)`, realizadoPor: getNombreAdmin(req.session) })
     res.json({ ok: true, valija: updated, notificados })
   } catch (err) { console.error(err); res.status(500).json({ error: 'Error del servidor' }) }
 })
@@ -693,7 +766,7 @@ router.post('/valijas/:id/recibir', async (req, res) => {
       const email = getCitaEmail(c)
       if (email) sendInRevisionEmail(email, getCitaNombre(c), { tramite: c.tramite, fecha: c.fecha, hora: c.hora, serial: c.serial }, v.serial).catch(console.error)
     }
-    await logActividad({ tipo: 'valija_recibida', notaInterna: `Valija ${v.serial} recibida en Consulado General — notificados ${v.citas.length} ciudadano(s)`, realizadoPor: getNombreAdmin(req.session) })
+    await logActividad({ tipo: 'valija_recibida', entidad: 'valija', entidadId: id, accion: 'cambio_estado', antes: { estado: 'enviada' }, despues: { estado: 'recibida' }, notaInterna: `Valija ${v.serial} recibida en Consulado General — notificados ${v.citas.length} ciudadano(s)`, realizadoPor: getNombreAdmin(req.session) })
     res.json({ ok: true, valija: updated, notificados: v.citas.filter(c => getCitaEmail(c)).length })
   } catch (err) { console.error(err); res.status(500).json({ error: 'Error del servidor' }) }
 })
