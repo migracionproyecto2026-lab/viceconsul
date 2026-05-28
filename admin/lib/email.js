@@ -12,7 +12,7 @@ const GRIS = '#6b6b6b'
 const FONDO = '#f1efe9'
 const LOGO_URL = 'https://www.viceconsulado-nuevaesparta.com/images/LogoPng.png'
 const SITIO_URL = 'https://www.viceconsulado-nuevaesparta.com'
-const CONTACTO_EMAIL = 'ch.porlamar@maec.es'          // correo oficial de respuesta (recibe)
+const CONTACTO_EMAIL = process.env.GMAIL_USER || 'viceconsuladomargarita@gmail.com'  // contacto/respuesta: solo gmail
 const WHATSAPP_TEL = '584248429665'
 const WHATSAPP_URL = `https://wa.me/${WHATSAPP_TEL}?text=Hola%2C%20necesito%20informaci%C3%B3n%20sobre%20mi%20tr%C3%A1mite`
 const WHATSAPP_LOGO = 'https://admin.viceconsulado-nuevaesparta.com/images/whatsapp.png'
