@@ -8,11 +8,28 @@ const ExcelJS = require('exceljs')
 const { prisma } = require('../lib/db')
 const { auditar } = require('../lib/audit')
 
-function requireSuperadmin(req, res, next) {
-  if (req.session?.role !== 'superadmin') return res.status(403).json({ error: 'Acceso restringido al superadministrador.' })
-  next()
+// Acceso granular por permiso fino. Superadmin pasa siempre.
+// Cada reporte tiene su permiso específico: reporteria_<tipo>.
+function requirePermiso(permFino) {
+  return (req, res, next) => {
+    const s = req.session
+    if (!s) return res.status(401).json({ error: 'No autenticado' })
+    if (s.role === 'superadmin') return next()
+    const permisos = Array.isArray(s.permisos) ? s.permisos : null
+    // Como el JWT no lleva permisos, los leemos de BD por sesión:
+    if (permisos && permisos.includes(permFino)) return next()
+    prisma.adminUser.findUnique({ where: { id: s.sub }, select: { permisos: true, role: true } })
+      .then(u => {
+        if (!u) return res.status(401).json({ error: 'Cuenta no existe' })
+        if (u.role === 'superadmin' || (u.permisos || []).includes(permFino)) {
+          req.session.permisos = u.permisos
+          return next()
+        }
+        return res.status(403).json({ error: `Acceso denegado. Falta el permiso "${permFino}".` })
+      })
+      .catch(err => { console.error(err); res.status(500).json({ error: 'Error del servidor' }) })
+  }
 }
-router.use(requireSuperadmin)
 
 // ── Helpers comunes ────────────────────────────────────────────────────────
 function parsePage(req, def = 50) {
@@ -68,7 +85,7 @@ function whereCiudadanos(q) {
   return where
 }
 
-router.get('/ciudadanos', async (req, res) => {
+router.get('/ciudadanos', requirePermiso('reporteria_ciudadanos'), async (req, res) => {
   try {
     const { page, limit, skip } = parsePage(req)
     const where = whereCiudadanos(req.query)
@@ -84,7 +101,7 @@ router.get('/ciudadanos', async (req, res) => {
   } catch (err) { console.error(err); res.status(500).json({ error: 'Error del servidor' }) }
 })
 
-router.get('/ciudadanos/export', async (req, res) => {
+router.get('/ciudadanos/export', requirePermiso('reporteria_ciudadanos'), async (req, res) => {
   try {
     const where = whereCiudadanos(req.query)
     const data = await prisma.citizen.findMany({
@@ -156,7 +173,7 @@ function whereCitas(q) {
   return where
 }
 
-router.get('/citas', async (req, res) => {
+router.get('/citas', requirePermiso('reporteria_citas'), async (req, res) => {
   try {
     const { page, limit, skip } = parsePage(req)
     const where = whereCitas(req.query)
@@ -175,7 +192,7 @@ router.get('/citas', async (req, res) => {
   } catch (err) { console.error(err); res.status(500).json({ error: 'Error del servidor' }) }
 })
 
-router.get('/citas/export', async (req, res) => {
+router.get('/citas/export', requirePermiso('reporteria_citas'), async (req, res) => {
   try {
     const where = whereCitas(req.query)
     const data = await prisma.appointment.findMany({
@@ -224,7 +241,7 @@ router.get('/citas/export', async (req, res) => {
 })
 
 // ── 3. REPORTE MAESTRO DE TRÁMITES ─────────────────────────────────────────
-router.get('/maestro', async (req, res) => {
+router.get('/maestro', requirePermiso('reporteria_maestro'), async (req, res) => {
   try {
     const where = {}
     if (req.query.activo === 'true') where.activo = true
@@ -251,7 +268,7 @@ router.get('/maestro', async (req, res) => {
   } catch (err) { console.error(err); res.status(500).json({ error: 'Error del servidor' }) }
 })
 
-router.get('/maestro/export', async (req, res) => {
+router.get('/maestro/export', requirePermiso('reporteria_maestro'), async (req, res) => {
   try {
     const tramites = await prisma.tramiteMaestro.findMany({ orderBy: [{ categoria: 'asc' }, { nombre: 'asc' }] })
     const inicioAno = new Date(new Date().getFullYear(), 0, 1)
@@ -317,7 +334,7 @@ function whereAuditoria(q) {
   return where
 }
 
-router.get('/auditoria', async (req, res) => {
+router.get('/auditoria', requirePermiso('reporteria_auditoria'), async (req, res) => {
   try {
     const { page, limit, skip } = parsePage(req)
     const where = whereAuditoria(req.query)
@@ -329,7 +346,7 @@ router.get('/auditoria', async (req, res) => {
   } catch (err) { console.error(err); res.status(500).json({ error: 'Error del servidor' }) }
 })
 
-router.get('/auditoria/export', async (req, res) => {
+router.get('/auditoria/export', requirePermiso('reporteria_auditoria'), async (req, res) => {
   try {
     const where = whereAuditoria(req.query)
     const data = await prisma.activityLog.findMany({ where, orderBy: { createdAt: 'desc' } })
@@ -383,7 +400,7 @@ router.get('/auditoria/export', async (req, res) => {
   } catch (err) { console.error(err); res.status(500).json({ error: 'Error del servidor' }) }
 })
 
-router.get('/auditoria/sesiones', async (req, res) => {
+router.get('/auditoria/sesiones', requirePermiso('reporteria_auditoria'), async (req, res) => {
   try {
     const { page, limit, skip } = parsePage(req)
     const where = {}

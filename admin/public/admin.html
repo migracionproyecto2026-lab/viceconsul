@@ -967,7 +967,7 @@
       <button class="nav-link" onclick="showTab('banners')"><i class="bi bi-megaphone"></i>Avisos web</button>
       <button class="nav-link" onclick="showTab('fechas')"><i class="bi bi-calendar-x"></i>Fechas bloqueadas</button>
       <button class="nav-link nav-rol-superadmin" style="display:none;" onclick="showTab('usuarios')"><i class="bi bi-shield-lock"></i>Usuarios</button>
-      <button class="nav-link nav-rol-superadmin" style="display:none;" onclick="showTab('reporteria')"><i class="bi bi-graph-up"></i>Reportería</button>
+      <button class="nav-link nav-rol-reporteria" style="display:none;" onclick="showTab('reporteria')"><i class="bi bi-graph-up"></i>Reportería</button>
     </nav>
     <div class="sidebar-footer">
       <div class="user-chip">
@@ -1655,7 +1655,15 @@
             <label style="display:flex;align-items:center;gap:7px;font-size:.85rem;cursor:pointer;"><input type="checkbox" class="u2-perm" value="crm" style="accent-color:var(--rojo);"> Registro incompleto</label>
             <label style="display:flex;align-items:center;gap:7px;font-size:.85rem;cursor:pointer;"><input type="checkbox" class="u2-perm" value="buzon" style="accent-color:var(--rojo);"> Buzón / Bitácora</label>
             <label style="display:flex;align-items:center;gap:7px;font-size:.85rem;cursor:pointer;"><input type="checkbox" class="u2-perm" value="usuarios" style="accent-color:var(--rojo);"> Usuarios</label>
-            <label style="display:flex;align-items:center;gap:7px;font-size:.85rem;cursor:pointer;"><input type="checkbox" class="u2-perm" value="reporteria" style="accent-color:var(--rojo);"> Reportería</label>
+          </div>
+          <div style="margin-top:14px;padding-top:14px;border-top:1px dashed var(--borde);">
+            <label class="fl" style="margin-bottom:6px;">Reportería <span style="font-weight:400;color:var(--gris-claro);">(marcar reportes individuales)</span></label>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 16px;">
+              <label style="display:flex;align-items:center;gap:7px;font-size:.85rem;cursor:pointer;"><input type="checkbox" class="u2-perm" value="reporteria_ciudadanos" style="accent-color:var(--rojo);"> Reporte Ciudadanos</label>
+              <label style="display:flex;align-items:center;gap:7px;font-size:.85rem;cursor:pointer;"><input type="checkbox" class="u2-perm" value="reporteria_citas" style="accent-color:var(--rojo);"> Reporte Citas</label>
+              <label style="display:flex;align-items:center;gap:7px;font-size:.85rem;cursor:pointer;"><input type="checkbox" class="u2-perm" value="reporteria_maestro" style="accent-color:var(--rojo);"> Reporte Maestro</label>
+              <label style="display:flex;align-items:center;gap:7px;font-size:.85rem;cursor:pointer;"><input type="checkbox" class="u2-perm" value="reporteria_auditoria" style="accent-color:var(--rojo);"> Reporte Auditoría <small style="color:#991b1b;">(sensible)</small></label>
+            </div>
           </div>
         </div>
         <div class="fg"><label class="fl">Contraseña <span id="u2-pass-hint" style="font-weight:400;color:var(--gris-claro);">(dejar vacío para no cambiar)</span></label><input type="password" id="u2-password" class="fc" placeholder="Mínimo 8 caracteres"></div>
@@ -2682,19 +2690,16 @@
         todos.forEach(cb => { cb.checked = true; cb.disabled = true })
         if (hint) hint.textContent = '(Superadmin tiene acceso total — no editable)'
       } else if (role === 'consul') {
-        // Cónsul: sugerencia por defecto (todo salvo Usuarios y Reportería),
-        // PERO el superadmin puede ajustar caso por caso si así lo desea.
-        const defaultConsul = ['dashboard','citas','ciudadanos','banners','fechas_bloqueadas','valijas','crm','buzon']
+        // Cónsul: sugerencia por defecto (todo operativo + reportes ciudadanos/citas)
+        const defaultConsul = ['dashboard','citas','ciudadanos','banners','fechas_bloqueadas','valijas','crm','buzon','reporteria_ciudadanos','reporteria_citas','reporteria_maestro']
         const arr = (lista && lista.length) ? lista : defaultConsul
         todos.forEach(cb => { cb.checked = arr.includes(cb.value); cb.disabled = false })
-        if (hint) hint.textContent = '(Cónsul — ajusta los módulos visibles si es necesario)'
+        if (hint) hint.textContent = '(Cónsul — ajusta los módulos y reportes visibles)'
       } else {
-        // Gestor (asistente): editable. Si la cuenta no tenía permisos guardados,
-        // se pre-marca el set operativo por defecto para que el superadmin vea
-        // un estado coherente.
+        // Gestor (asistente): editable. Default operativo básico sin reportería.
         const arr = (lista && lista.length) ? lista : ['dashboard','citas','ciudadanos','banners','fechas_bloqueadas']
         todos.forEach(cb => { cb.checked = arr.includes(cb.value); cb.disabled = false })
-        if (hint) hint.textContent = '(Marca cada módulo que el gestor debe ver)'
+        if (hint) hint.textContent = '(Marca cada módulo y reporte que el gestor debe ver)'
       }
     }
     function _getPermisos() {
@@ -3078,27 +3083,39 @@
         valijas: 'valijas',
         crm: 'crm',
         usuarios: 'usuarios',
-        reporteria: 'reporteria',
       }
+      // Permisos finos de reportería: si tiene cualquiera, muestra el tab.
+      const REP_PERMS = ['reporteria_ciudadanos','reporteria_citas','reporteria_maestro','reporteria_auditoria']
       function _tabBtnByKey(tabKey) {
         return [...document.querySelectorAll('.nav-link')].find(b => (b.getAttribute('onclick') || '').includes(`showTab('${tabKey}')`))
       }
+      function _tieneAlgunReporte(perms) {
+        return REP_PERMS.some(p => perms.includes(p))
+      }
 
       if (role === 'superadmin') {
-        // Acceso total: muestro todo, incluido el grupo de superadmin
-        document.querySelectorAll('.nav-rol-superadmin').forEach(el => el.style.display = '')
+        // Acceso total
+        document.querySelectorAll('.nav-rol-superadmin, .nav-rol-reporteria').forEach(el => el.style.display = '')
       } else if (role === 'consul') {
-        // Cónsul: supervisión sin Usuarios, Reportería, Buzón ni Valijas
-        document.querySelectorAll('.nav-rol-citas, .nav-rol-buzon, .nav-rol-crm, .nav-rol-valijas').forEach(el => el.style.display = 'none')
+        // Cónsul: supervisión. Reportería visible si tiene al menos un permiso fino
+        document.querySelectorAll('.nav-rol-buzon, .nav-rol-crm, .nav-rol-valijas').forEach(el => el.style.display = 'none')
+        if (_tieneAlgunReporte(permisos)) document.querySelectorAll('.nav-rol-reporteria').forEach(el => el.style.display = '')
       } else {
-        // Gestor (asistente): visibilidad dictada por permisos[] del usuario.
-        // Sin permiso explícito → tab oculto. El backend sigue protegiendo cada
-        // endpoint (esto es solo UX para no mostrar lo que no usará).
+        // Gestor (asistente)
         Object.entries(PERM_TO_TAB).forEach(([perm, tab]) => {
           const btn = _tabBtnByKey(tab)
           if (btn && !permisos.includes(perm)) btn.style.display = 'none'
         })
+        if (_tieneAlgunReporte(permisos)) document.querySelectorAll('.nav-rol-reporteria').forEach(el => el.style.display = '')
       }
+      // Aplicar visibilidad por reporte individual en las cards de Reportería
+      window._repPermisos = { ciudadanos: 'reporteria_ciudadanos', citas: 'reporteria_citas', maestro: 'reporteria_maestro', auditoria: 'reporteria_auditoria' }
+      Object.entries(window._repPermisos).forEach(([tipo, perm]) => {
+        const card = document.querySelector(`.rep-card[onclick*="'${tipo}'"]`)
+        if (!card) return
+        if (role === 'superadmin' || permisos.includes(perm)) return
+        card.style.display = 'none'
+      })
 
       // Bloquear fechas pasadas + fin de semana en los date inputs operativos
       ;['c-fecha', 're-fecha'].forEach(id => aplicarRestriccionFecha(id, { sinFindes: true }))

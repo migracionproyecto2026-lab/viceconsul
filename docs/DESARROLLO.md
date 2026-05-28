@@ -200,7 +200,24 @@ Campos nuevos sobre la base existente: `realizadoPorId?`, `entidad?` (`cita` | `
 
 Razón: aislar en la bitácora los eventos delicados (entrada y salida de personal con acceso al panel) para reporting institucional y reconciliación de accesos.
 
-`MODULOS_VALIDOS = ['dashboard', 'ciudadanos', 'banners', 'fechas_bloqueadas', 'citas', 'usuarios', 'valijas', 'crm', 'buzon', 'reporteria']`.
+`MODULOS_VALIDOS = ['dashboard', 'ciudadanos', 'banners', 'fechas_bloqueadas', 'citas', 'usuarios', 'valijas', 'crm', 'buzon', 'reporteria_ciudadanos', 'reporteria_citas', 'reporteria_maestro', 'reporteria_auditoria']`.
+
+### Reportería — acceso granular por reporte
+
+Cada uno de los 4 reportes tiene su permiso fino independiente. Middleware `requirePermiso(perm)` por endpoint:
+
+| Reporte | Permiso requerido |
+|---|---|
+| Ciudadanos (listar/export) | `reporteria_ciudadanos` |
+| Citas (listar/export) | `reporteria_citas` |
+| Maestro (listar/export) | `reporteria_maestro` |
+| Auditoría + Sesiones (listar/export) | `reporteria_auditoria` |
+
+Superadmin pasa siempre. Para roles `consul` y `asistente`, el middleware lee `permisos[]` de BD por sesión (no depende del JWT).
+
+**Frontend**: el tab "Reportería" en el sidebar aparece si el usuario tiene **al menos un** permiso `reporteria_*`. Dentro del tab, cada card lanzadora se muestra/oculta individualmente según el permiso fino correspondiente.
+
+Permiso `reporteria_auditoria` se marca como **sensible** en el modal de Editar usuario (contiene rastro de sesiones, IPs y cambios de configuración del panel).
 
 ### Reportería (`/api/admin/reportes/*`, **solo superadmin**)
 

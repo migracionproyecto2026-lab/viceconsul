@@ -564,7 +564,12 @@ router.delete('/fechas-bloqueadas', async (req, res) => {
 })
 
 // ── USUARIOS (solo superadmin) ─────────────────────────────────────────────
-const MODULOS_VALIDOS = ['dashboard', 'ciudadanos', 'banners', 'fechas_bloqueadas', 'citas', 'usuarios', 'valijas', 'crm', 'buzon', 'reporteria']
+const MODULOS_VALIDOS = [
+  'dashboard', 'ciudadanos', 'banners', 'fechas_bloqueadas', 'citas', 'usuarios',
+  'valijas', 'crm', 'buzon',
+  // Reportería granular — cada reporte tiene su propio permiso fino
+  'reporteria_ciudadanos', 'reporteria_citas', 'reporteria_maestro', 'reporteria_auditoria',
+]
 
 function requireSuperadmin(req, res, next) {
   if (req.session?.role !== 'superadmin') return res.status(403).json({ error: 'No autorizado' })
