@@ -14,13 +14,14 @@ web/scripts/apps-script-citas.js
 web/docs/GUIA-INSTALACION.md
 web/docs/ERRORES-COMUNES.md
 
-# Scripts internos con credenciales / archivos de desarrollo IA
+# Scripts internos con credenciales / archivos locales de desarrollo
 admin/seed.js
 admin/seed-demo.js
 admin/scripts/crear-superadmin.js
 admin/prisma/seed.js
 admin/prisma/seed-banners.js
 admin/AGENTS.md
+admin/CLAUDE.md
 admin/CLAUDE.md
 admin/app/
 
