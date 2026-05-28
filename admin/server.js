@@ -21,7 +21,6 @@ app.use((req, res, next) => {
 const ALLOWED_ORIGINS = [
   'http://localhost:8080',
   'http://127.0.0.1:8080',
-  'https://espaciosigo-ai.github.io',
   'https://migracionproyecto2026-lab.github.io',
   'https://viceconsul-production.up.railway.app',
   'https://admin.viceconsulado-nuevaesparta.com',
