@@ -36,13 +36,13 @@ app.use(cors({
   credentials: true,
 }))
 
-// ── Redirección HTTP → HTTPS (solo en producción, detrás de proxy) ─────────
+// ── Redirección HTTP → HTTPS (cuando hay proxy delante, sin importar NODE_ENV) ─
+// En local sin proxy x-forwarded-proto es undefined → no redirige.
+// En Railway/Vercel/etc. con x-forwarded-proto=http → 301 a https.
 app.use((req, res, next) => {
-  if (process.env.NODE_ENV === 'production') {
-    const proto = req.headers['x-forwarded-proto'] || (req.secure ? 'https' : 'http')
-    if (proto !== 'https') {
-      return res.redirect(301, `https://${req.headers.host}${req.url}`)
-    }
+  const xfp = req.headers['x-forwarded-proto']
+  if (xfp && xfp !== 'https') {
+    return res.redirect(301, `https://${req.headers.host}${req.url}`)
   }
   next()
 })

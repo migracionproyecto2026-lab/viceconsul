@@ -16,13 +16,14 @@ function verifyToken(token) {
   }
 }
 
-function setAuthCookie(res, payload) {
+function setAuthCookie(res, payload, req) {
   const token = signToken(payload)
-  const isProd = process.env.NODE_ENV === 'production'
+  // Detectar HTTPS por req.secure (express trust proxy) o x-forwarded-proto
+  const isHttps = req && (req.secure || req.headers?.['x-forwarded-proto'] === 'https')
   res.cookie(COOKIE_NAME, token, {
     httpOnly: true,
-    secure: isProd,
-    sameSite: isProd ? 'strict' : 'lax',
+    secure: isHttps,
+    sameSite: isHttps ? 'strict' : 'lax',
     maxAge: MAX_AGE_SECONDS * 1000,
     path: '/',
   })

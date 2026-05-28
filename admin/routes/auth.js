@@ -49,7 +49,7 @@ router.post('/login', async (req, res) => {
     if (admin) {
       const valid = await bcrypt.compare(password, admin.password)
       if (!valid) return res.status(GENERIC.status).json({ error: GENERIC.error })
-      setAuthCookie(res, { sub: admin.id, role: admin.role, email: admin.email, nombre: admin.nombre })
+      setAuthCookie(res, { sub: admin.id, role: admin.role, email: admin.email, nombre: admin.nombre }, req)
       return res.json({ user: { id: admin.id, nombre: admin.nombre, email: admin.email, role: admin.role }, redirect: '/admin' })
     }
 
@@ -59,7 +59,7 @@ router.post('/login', async (req, res) => {
     if (!valid) return res.status(GENERIC.status).json({ error: GENERIC.error })
     if (!citizen.verified) return res.status(403).json({ error: 'Cuenta no verificada. Revisa tu correo.', needsVerify: true, email })
 
-    setAuthCookie(res, { sub: citizen.id, role: 'citizen', email: citizen.email, nombre: citizen.nombre })
+    setAuthCookie(res, { sub: citizen.id, role: 'citizen', email: citizen.email, nombre: citizen.nombre }, req)
     res.json({ user: { id: citizen.id, nombre: citizen.nombre, email: citizen.email, role: 'citizen' }, redirect: '/dashboard' })
   } catch (err) {
     console.error('Login error:', err)
