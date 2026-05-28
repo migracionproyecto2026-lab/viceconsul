@@ -172,7 +172,7 @@ Configuración dinámica clave-valor (usada por `/api/config`).
 
 **Bitácora:** `GET /bitacora` (filtro `tipo`, `limit`), `POST /bitacora/leer-todo`.
 
-**Ciudadanos:** `GET /ciudadanos` (paginado + búsqueda), `GET /ciudadanos/buscar`, `GET /ciudadanos/:id`, `PUT /ciudadanos/:id`.
+**Ciudadanos:** `GET /ciudadanos` (paginado + búsqueda), `GET /ciudadanos/buscar`, `GET /ciudadanos/:id`, `PUT /ciudadanos/:id`, `DELETE /ciudadanos/:id` (irreversible, **solo superadmin**; bloquea si tiene citas asociadas salvo `?force=true`, que cascada borrando todas sus citas + ActivityLogs y registra una entrada `ciudadano_eliminado` en la bitácora general).
 
 **Banners:** CRUD completo.
 

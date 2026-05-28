@@ -451,6 +451,37 @@ router.put('/ciudadanos/:id', async (req, res) => {
   } catch (err) { res.status(500).json({ error: 'Error del servidor' }) }
 })
 
+// Borrado definitivo de un ciudadano (irreversible). Solo superadmin.
+// Por defecto bloquea si tiene citas asociadas. Con ?force=true cascada:
+// borra todas sus citas (y sus ActivityLogs) + el ciudadano.
+router.delete('/ciudadanos/:id', async (req, res) => {
+  try {
+    if (req.session?.role !== 'superadmin') return res.status(403).json({ error: 'Solo el superadministrador puede eliminar ciudadanos.' })
+    const id = req.params.id
+    const force = req.query.force === 'true'
+    const citizen = await prisma.citizen.findUnique({ where: { id }, include: { _count: { select: { citas: true } } } })
+    if (!citizen) return res.status(404).json({ error: 'Ciudadano no encontrado' })
+    const totalCitas = citizen._count?.citas || 0
+    if (totalCitas > 0 && !force) {
+      return res.status(409).json({ error: `Este ciudadano tiene ${totalCitas} cita(s) asociada(s). Para eliminarlo igualmente y borrar todas sus citas, repita la operación confirmando.`, totalCitas })
+    }
+    if (totalCitas > 0) {
+      const citas = await prisma.appointment.findMany({ where: { citizenId: id }, select: { id: true } })
+      const citaIds = citas.map(c => c.id)
+      await prisma.activityLog.deleteMany({ where: { citaId: { in: citaIds } } })
+      await prisma.appointment.deleteMany({ where: { id: { in: citaIds } } })
+    }
+    await prisma.citizen.delete({ where: { id } })
+    await logActividad({
+      tipo: 'ciudadano_eliminado',
+      ciudadanoEmail: citizen.email,
+      notaInterna: `Ciudadano eliminado: ${citizen.nombre} ${citizen.apellido} (${citizen.email})${totalCitas ? ' — con ' + totalCitas + ' cita(s) en cascada' : ''}`,
+      realizadoPor: getNombreAdmin(req.session),
+    })
+    res.json({ ok: true, citasBorradas: totalCitas })
+  } catch (err) { console.error(err); res.status(500).json({ error: 'Error del servidor' }) }
+})
+
 // ── BANNERS ────────────────────────────────────────────────────────────────
 router.get('/banners', async (req, res) => {
   try { res.json(await prisma.banner.findMany({ orderBy: { orden: 'asc' } })) }

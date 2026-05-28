@@ -111,6 +111,15 @@ Para cada ciudadano puede ver:
 
 Edición permitida: nombre, apellido, teléfono, cédula, tipo de documento, marcar como verificado manualmente.
 
+### Eliminar un ciudadano (solo superadministrador)
+El icono de papelera elimina al ciudadano de forma **definitiva e irreversible** (desde el listado o desde la ficha).
+
+- Si el ciudadano **no tiene citas**, se elimina directamente tras confirmación.
+- Si **tiene citas registradas**, el sistema avisa el número exacto y pide doble confirmación. Si se confirma, **se borran en cascada también sus citas** y los registros asociados en la bitácora.
+- Toda eliminación queda registrada en la bitácora general (entrada `ciudadano_eliminado` con autor y motivo).
+
+Use esta acción solo para datos de prueba o registros erróneos. Para casos reales, prefiera editar o anonimizar.
+
 ---
 
 ## 6. Banners (avisos en la web pública)

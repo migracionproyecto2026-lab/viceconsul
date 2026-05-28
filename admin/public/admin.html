@@ -2148,9 +2148,10 @@
             ${c.citas.map(x => `<tr><td style="font-family:Menlo,Consolas,monospace;font-size:.78rem;color:var(--rojo);white-space:nowrap;">${x.serial || '—'}</td><td style="font-family:Menlo,Consolas,monospace;font-size:.78rem;color:${x.valija ? '#1e40af' : 'var(--gris-claro)'};white-space:nowrap;">${x.valija?.serial || '—'}</td><td>${x.fecha || '—'}</td><td>${x.hora}</td><td style="font-size:.82rem;">${x.tramite}</td><td>${badge(x.status)}</td></tr>`).join('')}
           </tbody></table></div>`}
           <hr style="margin:16px 0;">
-          <div style="display:flex;gap:8px;">
-            <button class="btn-o" style="flex:1;" onclick="_renderCiudadanoModal(_ciudadanoActual, true)"><i class="bi bi-pencil"></i> Editar datos</button>
-            ${!c.verified ? `<button class="btn-p" style="flex:1;" onclick="_verificarCiudadano()"><i class="bi bi-patch-check"></i> Verificar</button>` : ''}
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn-o" style="flex:1;min-width:120px;" onclick="_renderCiudadanoModal(_ciudadanoActual, true)"><i class="bi bi-pencil"></i> Editar datos</button>
+            ${!c.verified ? `<button class="btn-p" style="flex:1;min-width:120px;" onclick="_verificarCiudadano()"><i class="bi bi-patch-check"></i> Verificar</button>` : ''}
+            ${window._userRole === 'superadmin' ? `<button class="btn-del" style="flex:0 0 auto;padding:8px 14px;background:#fee;color:#991b1b;border-color:#fecaca;" onclick="eliminarCiudadano('${c.id}','${(c.nombre + ' ' + c.apellido).replace(/'/g, "\\'")}',${(c.citas || []).length})"><i class="bi bi-trash"></i> Eliminar</button>` : ''}
           </div>`
       } else {
         document.getElementById('mo-ciu-body').innerHTML = `
@@ -2185,6 +2186,21 @@
       _ciudadanoActual.verified = true
       _renderCiudadanoModal(_ciudadanoActual, false)
       toast('Ciudadano verificado'); loadCiudadanos()
+    }
+
+    // Eliminar ciudadano (irreversible). Solo superadmin.
+    // Si tiene citas, backend responde 409 — se pregunta confirmación adicional para cascada.
+    async function eliminarCiudadano(id, nombre, totalCitas) {
+      const aviso = totalCitas > 0
+        ? `¿Eliminar definitivamente a ${nombre}?\n\nTiene ${totalCitas} cita(s) registrada(s) que también se borrarán en cascada (con sus registros en la bitácora).\n\nEsta acción NO se puede deshacer.`
+        : `¿Eliminar definitivamente a ${nombre}?\n\nEsta acción NO se puede deshacer.`
+      if (!confirm(aviso)) return
+      const url = totalCitas > 0 ? `/api/admin/ciudadanos/${id}?force=true` : `/api/admin/ciudadanos/${id}`
+      const r = await api('DELETE', url)
+      if (r?.error) return toast(r.error, false)
+      toast(r.citasBorradas ? `Ciudadano eliminado (+ ${r.citasBorradas} cita(s))` : 'Ciudadano eliminado')
+      closeModal('mo-ciudadano')
+      loadCiudadanos(); loadDashboard()
     }
 
     async function _guardarCiudadano() {
@@ -2262,13 +2278,17 @@
       const d = await api('GET', `/api/admin/ciudadanos?q=${encodeURIComponent(q)}&page=${page}`)
       const el = document.getElementById('ciu-table')
       if (!d || !d.ciudadanos.length) { el.innerHTML = '<p style="color:var(--gris-claro);font-size:.88rem;padding:16px 0;">No se encontraron ciudadanos.</p>'; document.getElementById('ciu-pag').innerHTML = ''; return }
+      const esSuper = window._userRole === 'superadmin'
       el.innerHTML = `<table><thead><tr><th>Nombre</th><th>Correo</th><th>Teléfono</th><th>Citas</th><th>Estado</th><th></th></tr></thead><tbody>${d.ciudadanos.map(c => `<tr>
       <td><strong>${c.nombre} ${c.apellido}</strong><br><span style="font-size:.72rem;color:var(--gris-claro);">ID ${c.id}${c.cedula ? ' · ' + c.cedula : ''}</span></td>
       <td>${c.email}</td>
       <td>${c.telefono || '—'}</td>
       <td><span class="badge b-pendiente">${c._count.citas}</span></td>
       <td>${c.verified ? '<span class="badge b-confirmada">Verificado</span>' : '<span class="badge b-pendiente">Pendiente</span>'}</td>
-      <td><button class="btn-o" style="font-size:.78rem;padding:4px 10px;" onclick="verCiudadano('${c.id}')"><i class="bi bi-eye"></i> Ver</button></td>
+      <td style="white-space:nowrap;">
+        <button class="btn-o" style="font-size:.78rem;padding:4px 10px;" onclick="verCiudadano('${c.id}')"><i class="bi bi-eye"></i> Ver</button>
+        ${esSuper ? `<button class="btn-del" style="font-size:.78rem;padding:4px 10px;margin-left:4px;background:#fee;color:#991b1b;border-color:#fecaca;" onclick="eliminarCiudadano('${c.id}','${(c.nombre + ' ' + c.apellido).replace(/'/g, "\\'")}',${c._count.citas})" title="Eliminar ciudadano (irreversible)"><i class="bi bi-trash"></i></button>` : ''}
+      </td>
     </tr>`).join('')
         }</tbody></table>`
       document.getElementById('ciu-pag').innerHTML = pager(d.page, d.pages, d.total, 'loadCiudadanos')
