@@ -16,22 +16,26 @@ function verifyToken(token) {
   }
 }
 
+// Atributos de la cookie. En producción siempre Secure + SameSite=strict.
+// El override por env COOKIE_INSECURE=1 sirve solo para entornos de desarrollo
+// donde el navegador acceda al panel por http://localhost. Nunca usarlo en prod.
+const COOKIE_OPTS = {
+  httpOnly: true,
+  secure: process.env.COOKIE_INSECURE === '1' ? false : true,
+  sameSite: process.env.COOKIE_INSECURE === '1' ? 'lax' : 'strict',
+  path: '/',
+}
+
 function setAuthCookie(res, payload, req) {
   const token = signToken(payload)
-  // Detectar HTTPS por req.secure (express trust proxy) o x-forwarded-proto
-  const isHttps = req && (req.secure || req.headers?.['x-forwarded-proto'] === 'https')
-  res.cookie(COOKIE_NAME, token, {
-    httpOnly: true,
-    secure: isHttps,
-    sameSite: isHttps ? 'strict' : 'lax',
-    maxAge: MAX_AGE_SECONDS * 1000,
-    path: '/',
-  })
+  res.cookie(COOKIE_NAME, token, { ...COOKIE_OPTS, maxAge: MAX_AGE_SECONDS * 1000 })
   return token
 }
 
+// clearCookie debe usar los MISMOS atributos que se usaron al setear, o el navegador
+// no la marca como borrada. Sin esto, en HTTPS quedaría una cookie "huérfana" sin Secure.
 function clearAuthCookie(res) {
-  res.clearCookie(COOKIE_NAME, { path: '/' })
+  res.clearCookie(COOKIE_NAME, COOKIE_OPTS)
 }
 
 function getSession(req) {
