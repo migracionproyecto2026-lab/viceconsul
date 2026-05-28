@@ -54,11 +54,21 @@ En el menú **Citas** verá la lista. Las dos primeras columnas son los identifi
 
 Ningún identificador contiene datos personales del ciudadano.
 
+Otras columnas:
+- **Origen** — indica si la cita fue solicitada por el ciudadano desde la **web pública** o creada por el personal desde el **panel**. Útil para distinguir solicitudes ciudadanas pendientes de gestiones internas.
+- **Solicitud** — fecha y hora en que se creó la cita en el sistema (DD/MM/AAAA HH:MM).
+
 Puede filtrar por:
 - fecha exacta
 - estado (pendiente, confirmada, completada, cancelada, inasistencia)
+- **origen** (Web pública / Panel admin)
 - mes
 - rango de fechas
+
+### Eliminar una cita (solo superadministrador)
+El icono de papelera al final de la fila elimina la cita de forma **definitiva e irreversible**. Borra también los registros asociados en la bitácora. Pide confirmación antes de proceder. Disponible únicamente para el rol `superadmin`; no aparece para Cónsul ni Asistente.
+
+Use esta acción solo para datos de prueba o registros erróneos. Para retirar una cita real del flujo operativo, **cancélela** en lugar de eliminarla — la cancelación preserva la trazabilidad.
 
 ### Crear una cita
 1. Botón **Nueva cita**.

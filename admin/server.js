@@ -226,6 +226,7 @@ app.post('/api/public/cita', publicLimiter, async (req, res) => {
         hora: hora || '08:30',
         tramite,
         notas,
+        origen: 'web',
       }
     })
 

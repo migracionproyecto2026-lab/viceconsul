@@ -97,7 +97,7 @@ Campos: `id`, `nombre`, `email` (unique), `password` (bcrypt), `role` (`superadm
 ### `Appointment`
 Cita consular. Vinculada a `Citizen` o con datos externos (cita anónima desde web).
 
-Campos clave: `serial` (folio público, ej. `VCNE-2026-0001`, único), `citizenId?`, `nombreExterno?`, `emailExterno?`, `telefonoExterno?`, `cedulaExterno?`, `tipoDocumento?`, `fecha`, `hora`, `tramite`, `status`, `notas?`, `documentosPendientes?` (JSON array de strings), `recordatorioEnviado`, `valijaId?` (cuando el trámite se incluye en una valija diplomática).
+Campos clave: `serial` (Ticket público, ej. `VCNE-2026-0001`, único), `citizenId?`, `nombreExterno?`, `emailExterno?`, `telefonoExterno?`, `cedulaExterno?`, `tipoDocumento?`, `fecha`, `hora`, `tramite`, `status`, `origen` (`'web'` | `'admin'`, default `'admin'`), `notas?`, `documentosPendientes?` (JSON array de strings), `recordatorioEnviado`, `valijaId?` (cuando el trámite se incluye en una valija diplomática).
 
 Status: `pendiente` → `confirmada` → `en_proceso` → `asistencia_tarde` / `completada` / `cancelada` / `inasistencia`.
 
@@ -160,7 +160,9 @@ Configuración dinámica clave-valor (usada por `/api/config`).
 
 **Stats:** `GET /api/admin/stats`
 
-**Citas:** `GET /citas` (filtros: `fecha`, `status`, `mes`, `fechaDesde`/`fechaHasta`), `POST /citas` (rechaza fecha ≤ hoy y S/D), `PUT /citas/:id`, `POST /citas/:id/cancelar`, `POST /citas/:id/reagendar` (rechaza fecha ≤ hoy, valida día hábil L-V y conflicto de horario; dispara correo `reagendamiento` con fecha anterior y nueva).
+**Citas:** `GET /citas` (filtros: `fecha`, `status`, `mes`, `fechaDesde`/`fechaHasta`, `origen` ∈ `{web, admin}`), `POST /citas` (rechaza fecha ≤ hoy y S/D; marca `origen='admin'`), `PUT /citas/:id`, `POST /citas/:id/cancelar`, `POST /citas/:id/reagendar` (rechaza fecha ≤ hoy, valida día hábil L-V y conflicto de horario; dispara correo `reagendamiento`), `DELETE /citas/:id` (irreversible; **solo superadmin**; borra ActivityLogs asociados y registra una entrada `cita_eliminada` en la bitácora general).
+
+`POST /api/public/cita` marca la cita con `origen='web'`. El campo `Appointment.origen` (default `'admin'`) permite filtrar y distinguir solicitudes ciudadanas de creaciones internas.
 
 `POST /api/public/cita` (formulario público) también rechaza fecha ≤ hoy + S/D antes de tocar la base de datos.
 

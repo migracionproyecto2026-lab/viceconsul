@@ -69,7 +69,7 @@ router.get('/stats', async (req, res) => {
 // ── CITAS ──────────────────────────────────────────────────────────────────
 router.get('/citas', async (req, res) => {
   try {
-    const { fecha, status, mes, fechaDesde, fechaHasta } = req.query
+    const { fecha, status, mes, fechaDesde, fechaHasta, origen } = req.query
     const page = Math.max(1, parseInt(req.query.page || '1'))
     const limit = 20
     const where = {}
@@ -79,6 +79,7 @@ router.get('/citas', async (req, res) => {
     if (fechaDesde && fechaHasta) where.fecha = { gte: fechaDesde, lte: fechaHasta }
     else if (fechaDesde) where.fecha = { gte: fechaDesde }
     else if (fechaHasta) where.fecha = { lte: fechaHasta }
+    if (origen === 'web' || origen === 'admin') where.origen = origen
 
     const [citas, total] = await Promise.all([
       prisma.appointment.findMany({
@@ -125,6 +126,7 @@ router.post('/citas', async (req, res) => {
         telefonoExterno: telefonoExterno || null,
         fecha: fecha || null,
         hora, tramite, notas,
+        origen: 'admin',
       },
       include: { citizen: { select: { nombre: true, apellido: true, email: true } } },
     })
@@ -283,6 +285,30 @@ router.post('/citas/:id/reagendar', async (req, res) => {
     if (email) sendReagendamiento(email, getCitaNombre(citaActualizada), citaActualizada, cita.fecha, cita.hora, notaInterna).catch(console.error) // fire-and-forget
 
     res.json({ ok: true, cita: citaActualizada })
+  } catch (err) { console.error(err); res.status(500).json({ error: 'Error del servidor' }) }
+})
+
+// Borrado definitivo de una cita (irreversible). Solo superadmin.
+// Borra ActivityLogs asociados y la propia Appointment. La valija no se toca:
+// si era la única cita dentro, queda vacía y puede borrarse luego desde su módulo.
+router.delete('/citas/:id', async (req, res) => {
+  try {
+    if (req.session?.role !== 'superadmin') return res.status(403).json({ error: 'Solo el superadministrador puede eliminar citas.' })
+    const id = req.params.id
+    const cita = await prisma.appointment.findUnique({ where: { id }, include: { citizen: { select: { email: true } } } })
+    if (!cita) return res.status(404).json({ error: 'Cita no encontrada' })
+    await prisma.activityLog.deleteMany({ where: { citaId: id } })
+    await prisma.appointment.delete({ where: { id } })
+    // Log fuera de la relación (citaId ya no existe): se registra como nota suelta
+    await prisma.activityLog.create({
+      data: {
+        tipo: 'cita_eliminada',
+        ciudadanoEmail: cita.citizen?.email || cita.emailExterno || null,
+        notaInterna: `Cita eliminada (${cita.serial || 'sin ticket'}) — ${cita.tramite}${cita.fecha ? ' del ' + cita.fecha + ' ' + cita.hora : ''}`,
+        realizadoPor: getNombreAdmin(req.session),
+      },
+    })
+    res.json({ ok: true })
   } catch (err) { console.error(err); res.status(500).json({ error: 'Error del servidor' }) }
 })
 

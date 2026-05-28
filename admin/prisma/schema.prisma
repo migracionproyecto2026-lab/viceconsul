@@ -51,6 +51,7 @@ model Appointment {
   hora                 String
   tramite              String
   status               String       @default("pendiente")
+  origen               String       @default("admin")  // 'web' | 'admin'
   notas                String?
   documentosPendientes String?
   recordatorioEnviado  Boolean      @default(false)
