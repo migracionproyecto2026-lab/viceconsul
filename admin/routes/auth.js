@@ -117,10 +117,27 @@ router.post('/logout', async (req, res) => {
 })
 
 // GET /api/auth/me
-router.get('/me', (req, res) => {
+// Devuelve la sesión + los permisos actuales del admin desde la BD (no del JWT)
+// para que los cambios en permisos surtan efecto sin necesidad de re-login.
+router.get('/me', async (req, res) => {
   const session = getSession(req)
   if (!session) return res.status(401).json({ error: 'No autenticado' })
-  res.json({ user: session })
+  let permisos = []
+  if (session.role && session.role !== 'citizen') {
+    try {
+      const admin = await prisma.adminUser.findUnique({
+        where: { id: session.sub },
+        select: { permisos: true, role: true, nombre: true, email: true, cargo: true },
+      })
+      if (!admin) return res.status(401).json({ error: 'Cuenta no existe' })
+      // El rol vigente lo toma de BD (en caso de que se haya cambiado)
+      session.role = admin.role
+      session.nombre = admin.nombre
+      session.cargo = admin.cargo
+      permisos = admin.permisos || []
+    } catch (err) { console.error('/me error:', err) }
+  }
+  res.json({ user: { ...session, permisos } })
 })
 
 module.exports = router

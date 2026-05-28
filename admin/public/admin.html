@@ -2999,14 +2999,41 @@
       document.getElementById('u-av').textContent = initials(n)
       document.getElementById('fecha-hoy').textContent = new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
 
-      // ── Permisos por rol ──
-      // consul: solo Dashboard, Ciudadanos, Avisos web, Fechas bloqueadas
-      if (role === 'consul') {
-        document.querySelectorAll('.nav-rol-citas, .nav-rol-buzon, .nav-rol-crm, .nav-rol-valijas').forEach(el => el.style.display = 'none')
+      // ── Visibilidad de tabs según rol + permisos ──────────────────────────
+      const permisos = me.user.permisos || []
+      window._userPermisos = permisos
+
+      // permiso (BD) → key del tab usado en showTab(X)
+      const PERM_TO_TAB = {
+        dashboard: 'dashboard',
+        citas: 'citas',
+        buzon: 'buzon',
+        ciudadanos: 'ciudadanos',
+        banners: 'banners',
+        fechas_bloqueadas: 'fechas',
+        valijas: 'valijas',
+        crm: 'crm',
+        usuarios: 'usuarios',
+        reporteria: 'reporteria',
       }
-      // superadmin: mostrar gestión de usuarios
+      function _tabBtnByKey(tabKey) {
+        return [...document.querySelectorAll('.nav-link')].find(b => (b.getAttribute('onclick') || '').includes(`showTab('${tabKey}')`))
+      }
+
       if (role === 'superadmin') {
+        // Acceso total: muestro todo, incluido el grupo de superadmin
         document.querySelectorAll('.nav-rol-superadmin').forEach(el => el.style.display = '')
+      } else if (role === 'consul') {
+        // Cónsul: supervisión sin Usuarios, Reportería, Buzón ni Valijas
+        document.querySelectorAll('.nav-rol-citas, .nav-rol-buzon, .nav-rol-crm, .nav-rol-valijas').forEach(el => el.style.display = 'none')
+      } else {
+        // Gestor (asistente): visibilidad dictada por permisos[] del usuario.
+        // Sin permiso explícito → tab oculto. El backend sigue protegiendo cada
+        // endpoint (esto es solo UX para no mostrar lo que no usará).
+        Object.entries(PERM_TO_TAB).forEach(([perm, tab]) => {
+          const btn = _tabBtnByKey(tab)
+          if (btn && !permisos.includes(perm)) btn.style.display = 'none'
+        })
       }
 
       // Bloquear fechas pasadas + fin de semana en los date inputs operativos
