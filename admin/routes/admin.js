@@ -100,7 +100,10 @@ router.post('/citas', async (req, res) => {
     if (!hora || !tramite) return res.status(400).json({ error: 'Hora y trámite son obligatorios' })
 
     if (fecha) {
-      const dia = new Date(fecha + 'T12:00:00').getDay()
+      const fd = new Date(fecha + 'T12:00:00')
+      const hoy = new Date(); hoy.setHours(12, 0, 0, 0)
+      if (fd <= hoy) return res.status(400).json({ error: 'La fecha debe ser posterior al día de hoy.' })
+      const dia = fd.getDay()
       if (dia === 0 || dia === 6) return res.status(400).json({ error: 'Solo se pueden agendar citas de lunes a viernes.' })
     }
 
@@ -238,7 +241,10 @@ router.post('/citas/:id/reagendar', async (req, res) => {
     const id = req.params.id
 
     if (!nuevaFecha || !nuevaHora) return res.status(400).json({ error: 'Nueva fecha y nueva hora son obligatorias.' })
-    const dia = new Date(nuevaFecha + 'T12:00:00').getDay()
+    const fd = new Date(nuevaFecha + 'T12:00:00')
+    const hoyDt = new Date(); hoyDt.setHours(12, 0, 0, 0)
+    if (fd <= hoyDt) return res.status(400).json({ error: 'La nueva fecha debe ser posterior al día de hoy.' })
+    const dia = fd.getDay()
     if (dia === 0 || dia === 6) return res.status(400).json({ error: 'Solo se pueden agendar citas de lunes a viernes.' })
 
     const cita = await prisma.appointment.findUnique({

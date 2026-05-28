@@ -161,8 +161,13 @@ app.post('/api/public/cita', publicLimiter, async (req, res) => {
     const errVal = validarCitaPublica(req.body)
     if (errVal) return res.status(400).json({ error: errVal })
 
-    // Verificar fecha bloqueada
+    // Verificar fecha futura, día hábil y no bloqueada
     if (fecha) {
+      const fd = new Date(fecha + 'T12:00:00')
+      const hoy = new Date(); hoy.setHours(12, 0, 0, 0)
+      if (fd <= hoy) return res.status(400).json({ error: 'La fecha debe ser posterior al día de hoy.' })
+      const dow = fd.getDay()
+      if (dow === 0 || dow === 6) return res.status(400).json({ error: 'Solo se atiende de lunes a viernes.' })
       const bloqueada = await prisma.blockedDate.findUnique({ where: { fecha } })
       if (bloqueada) return res.status(409).json({ error: `La fecha ${fecha} no está disponible: ${bloqueada.motivo || 'fecha bloqueada'}` })
     }

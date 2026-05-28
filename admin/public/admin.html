@@ -1577,6 +1577,16 @@
       DIAS_HABILES: [1, 2, 3, 4, 5], // lun=1 … vie=5; no sáb=6 ni dom=0
       HORAS: ['08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30'],
     }
+    // Devuelve true si la fecha es futura (no hoy ni pasada) y es L-V
+    function esFechaFuturaHabil(fechaStr) {
+      if (!fechaStr) return false
+      const d = new Date(fechaStr + 'T12:00:00')
+      const hoy = new Date(); hoy.setHours(12, 0, 0, 0)
+      if (d <= hoy) return false
+      const dow = d.getDay()
+      return dow !== 0 && dow !== 6
+    }
+
     function esFechaHabil(fechaStr) {
       if (!fechaStr) return true
       const d = new Date(fechaStr + 'T12:00:00')
@@ -1597,8 +1607,9 @@
     // ── Restricción de fechas: no permite pasadas (y opcionalmente fin de semana) ─
     function aplicarRestriccionFecha(id, opts) {
       const el = document.getElementById(id); if (!el) return
-      const hoy = new Date(); hoy.setHours(0, 0, 0, 0)
-      el.min = hoy.toISOString().split('T')[0]
+      // No se permite el día presente: mínimo es mañana
+      const manana = new Date(); manana.setHours(0, 0, 0, 0); manana.setDate(manana.getDate() + 1)
+      el.min = manana.toISOString().split('T')[0]
       if (opts && opts.sinFindes) {
         el.addEventListener('change', function () {
           if (!this.value) return
@@ -1904,7 +1915,7 @@
       const tramite = document.getElementById('c-tramite').value
       const errEl = document.getElementById('c-err')
       if (!fecha || !hora || !tramite) { errEl.textContent = 'Fecha, hora y trámite son obligatorios.'; errEl.style.display = 'block'; return }
-      if (!esFechaHabil(fecha)) { errEl.textContent = 'Solo se pueden agendar citas de lunes a viernes.'; errEl.style.display = 'block'; return }
+      if (!esFechaFuturaHabil(fecha)) { errEl.textContent = 'La fecha debe ser un día hábil (lunes a viernes) posterior a hoy.'; errEl.style.display = 'block'; return }
       if (_fechasBloqueadas.includes(fecha)) { errEl.textContent = 'Esta fecha está bloqueada. No se pueden crear citas para ese día.'; errEl.style.display = 'block'; return }
       errEl.style.display = 'none'
       const nombreVal = document.getElementById('c-nombre').value.trim()
@@ -2029,7 +2040,8 @@
       document.getElementById('re-id').value = id
       const reFecha = document.getElementById('re-fecha')
       reFecha.value = ''
-      reFecha.min = new Date().toISOString().split('T')[0]
+      const manana = new Date(); manana.setHours(0,0,0,0); manana.setDate(manana.getDate() + 1)
+      reFecha.min = manana.toISOString().split('T')[0]
       document.getElementById('re-hora').value = ''
       document.getElementById('re-liberar').checked = true
       document.getElementById('re-nota').value = ''
@@ -2043,10 +2055,17 @@
     function validarFechaReagendar(fecha) {
       const warn = document.getElementById('re-fecha-warn')
       const input = document.getElementById('re-fecha')
-      if (fecha && !esFechaHabil(fecha)) {
+      if (!fecha) { warn.style.display = 'none'; return }
+      if (!esFechaFuturaHabil(fecha)) {
+        const hoyIso = new Date().toISOString().split('T')[0]
         input.value = ''
+        warn.innerHTML = fecha === hoyIso
+          ? '<i class="bi bi-exclamation-triangle"></i> No se puede agendar para el día presente. Elija a partir de mañana.'
+          : new Date(fecha + 'T12:00:00') < new Date(new Date().setHours(0,0,0,0))
+            ? '<i class="bi bi-exclamation-triangle"></i> No se pueden agendar citas en fechas pasadas.'
+            : '<i class="bi bi-exclamation-triangle"></i> Solo se pueden agendar citas de lunes a viernes.'
         warn.style.display = 'block'
-        toast('Sábados y domingos no son días hábiles.', false)
+        toast('Fecha no válida.', false)
       } else {
         warn.style.display = 'none'
       }
@@ -2061,7 +2080,7 @@
       const errEl = document.getElementById('re-err')
       errEl.style.display = 'none'
       if (!nuevaFecha || !nuevaHora) { errEl.textContent = 'Selecciona fecha y hora nuevas.'; errEl.style.display = 'block'; return }
-      if (!esFechaHabil(nuevaFecha)) { errEl.textContent = 'Solo se pueden agendar citas de lunes a viernes.'; errEl.style.display = 'block'; return }
+      if (!esFechaFuturaHabil(nuevaFecha)) { errEl.textContent = 'La nueva fecha debe ser un día hábil (lunes a viernes) posterior a hoy.'; errEl.style.display = 'block'; return }
       _btnLoading('re-btn', 'Reagendando…')
       try {
         const r = await api('POST', `/api/admin/citas/${id}/reagendar`, {
@@ -2591,7 +2610,15 @@
     }
     function validarFechaCita(fecha) {
       const warn = document.getElementById('c-fecha-warn')
-      if (!esFechaHabil(fecha)) {
+      if (!fecha) { warn.style.display = 'none'; return }
+      const hoyIso = new Date().toISOString().split('T')[0]
+      if (fecha === hoyIso) {
+        warn.innerHTML = '<i class="bi bi-exclamation-triangle"></i> No se puede agendar para el día presente. Elija a partir de mañana.'
+        warn.style.display = 'block'
+      } else if (new Date(fecha + 'T12:00:00') < new Date(new Date().setHours(0,0,0,0))) {
+        warn.innerHTML = '<i class="bi bi-exclamation-triangle"></i> No se pueden agendar citas en fechas pasadas.'
+        warn.style.display = 'block'
+      } else if (!esFechaHabil(fecha)) {
         warn.innerHTML = '<i class="bi bi-exclamation-triangle"></i> Solo se pueden agendar citas de lunes a viernes.'
         warn.style.display = 'block'
       } else if (_fechasBloqueadas.includes(fecha)) {

@@ -73,8 +73,8 @@ El sistema avisa por correo al ciudadano automáticamente.
 ### Reagendar
 Dentro de la cita: botón **Reagendar** → elegir nueva fecha/hora.
 
-- En la ventana aparecen **pills** con los próximos 10 días hábiles (L-V). Hacer clic en uno selecciona la fecha automáticamente.
-- También se puede usar el selector de fecha tradicional, pero solo acepta lunes a viernes: si elige sábado o domingo, el sistema rechaza la selección.
+- En la ventana aparecen **pills** con los próximos 10 días hábiles (L-V), siempre **a partir de mañana** (el día presente nunca está disponible para agendar).
+- También se puede usar el selector de fecha tradicional, pero solo acepta lunes a viernes posteriores a hoy: si elige sábado, domingo o el día presente, el sistema rechaza la selección.
 - Si la plaza original **no** se libera (por ejemplo, otra persona la usará), marcar la opción y poner motivo.
 - Al confirmar, el ciudadano recibe un correo dedicado de **reagendamiento** indicando la fecha anterior y la nueva.
 

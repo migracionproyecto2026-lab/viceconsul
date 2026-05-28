@@ -160,7 +160,9 @@ Configuración dinámica clave-valor (usada por `/api/config`).
 
 **Stats:** `GET /api/admin/stats`
 
-**Citas:** `GET /citas` (filtros: `fecha`, `status`, `mes`, `fechaDesde`/`fechaHasta`), `POST /citas`, `PUT /citas/:id`, `POST /citas/:id/cancelar`, `POST /citas/:id/reagendar` (valida día hábil L-V y conflicto de horario; dispara correo `reagendamiento` con fecha anterior y nueva).
+**Citas:** `GET /citas` (filtros: `fecha`, `status`, `mes`, `fechaDesde`/`fechaHasta`), `POST /citas` (rechaza fecha ≤ hoy y S/D), `PUT /citas/:id`, `POST /citas/:id/cancelar`, `POST /citas/:id/reagendar` (rechaza fecha ≤ hoy, valida día hábil L-V y conflicto de horario; dispara correo `reagendamiento` con fecha anterior y nueva).
+
+`POST /api/public/cita` (formulario público) también rechaza fecha ≤ hoy + S/D antes de tocar la base de datos.
 
 **Valijas:** `GET /valijas`, `GET /valijas/:id`, `POST /valijas/cerrar-dia` (agrupa citas completadas), `POST /valijas/:id/enviar` (notifica a cada ciudadano: correo *valija enviada*), `POST /valijas/:id/recibir` (notifica a cada ciudadano: correo *en revisión*), `GET /valijas/:id/ticket` (HTML imprimible).
 
