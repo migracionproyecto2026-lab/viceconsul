@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const { prisma } = require('../lib/db')
 const { requireAdmin } = require('../lib/auth')
-const { sendAppointmentReceived, sendAppointmentConfirmation, sendCancellationEmail, sendNoShowEmail, sendInRevisionEmail, renderEmail } = require('../lib/email')
+const { sendAppointmentReceived, sendAppointmentConfirmation, sendCancellationEmail, sendNoShowEmail, sendInRevisionEmail, sendValijaSentEmail, sendReagendamiento, renderEmail } = require('../lib/email')
 const { nextSerial: __nextSerial } = require('../lib/serial')
 const bcrypt = require('bcryptjs')
 
@@ -236,11 +236,22 @@ router.post('/citas/:id/reagendar', async (req, res) => {
   try {
     const { nuevaFecha, nuevaHora, liberarPlaza, motivoNoLiberar, notaInterna } = req.body
     const id = req.params.id
+
+    if (!nuevaFecha || !nuevaHora) return res.status(400).json({ error: 'Nueva fecha y nueva hora son obligatorias.' })
+    const dia = new Date(nuevaFecha + 'T12:00:00').getDay()
+    if (dia === 0 || dia === 6) return res.status(400).json({ error: 'Solo se pueden agendar citas de lunes a viernes.' })
+
     const cita = await prisma.appointment.findUnique({
       where: { id },
       include: { citizen: { select: { nombre: true, apellido: true, email: true } } },
     })
     if (!cita) return res.status(404).json({ error: 'Cita no encontrada' })
+
+    // Conflicto de horario: no permitir colisión con otra cita activa
+    const ocupada = await prisma.appointment.findFirst({
+      where: { fecha: nuevaFecha, hora: nuevaHora, status: { notIn: ['cancelada', 'inasistencia'] }, NOT: { id } },
+    })
+    if (ocupada) return res.status(409).json({ error: `Ya existe una cita a las ${nuevaHora} el ${nuevaFecha}. Elige otro horario.` })
 
     if (!liberarPlaza && motivoNoLiberar && cita.fecha) {
       await prisma.blockedDate.upsert({
@@ -263,7 +274,7 @@ router.post('/citas/:id/reagendar', async (req, res) => {
     })
 
     const email = getCitaEmail(citaActualizada)
-    if (email) sendAppointmentConfirmation(email, getCitaNombre(citaActualizada), citaActualizada).catch(console.error) // fire-and-forget
+    if (email) sendReagendamiento(email, getCitaNombre(citaActualizada), citaActualizada, cita.fecha, cita.hora, notaInterna).catch(console.error) // fire-and-forget
 
     res.json({ ok: true, cita: citaActualizada })
   } catch (err) { console.error(err); res.status(500).json({ error: 'Error del servidor' }) }
@@ -576,16 +587,28 @@ router.post('/valijas/cerrar-dia', async (req, res) => {
   } catch (err) { console.error(err); res.status(500).json({ error: 'Error del servidor' }) }
 })
 
-// Marca la valija como ENVIADA (al Consulado General)
+// Marca la valija como ENVIADA (al Consulado General) y notifica a cada ciudadano
 router.post('/valijas/:id/enviar', async (req, res) => {
   try {
     const id = req.params.id
-    const v = await prisma.valija.findUnique({ where: { id } })
+    const v = await prisma.valija.findUnique({
+      where: { id },
+      include: { citas: { include: { citizen: { select: { nombre: true, apellido: true, email: true } } } } },
+    })
     if (!v) return res.status(404).json({ error: 'Valija no encontrada' })
     if (v.estado !== 'abierta') return res.status(400).json({ error: `La valija ya está en estado "${v.estado}"` })
+
     const updated = await prisma.valija.update({ where: { id }, data: { estado: 'enviada', fechaEnvio: new Date() } })
-    await logActividad({ tipo: 'valija_enviada', notaInterna: `Valija ${v.serial} enviada al Consulado General`, realizadoPor: getNombreAdmin(req.session) })
-    res.json({ ok: true, valija: updated })
+
+    // Notificación a cada ciudadano con correo (fire-and-forget)
+    for (const c of v.citas) {
+      const email = getCitaEmail(c)
+      if (email) sendValijaSentEmail(email, getCitaNombre(c), { tramite: c.tramite, fecha: c.fecha, hora: c.hora, serial: c.serial }, v.serial).catch(console.error)
+    }
+    const notificados = v.citas.filter(c => getCitaEmail(c)).length
+
+    await logActividad({ tipo: 'valija_enviada', notaInterna: `Valija ${v.serial} enviada al Consulado General — notificados ${notificados} ciudadano(s)`, realizadoPor: getNombreAdmin(req.session) })
+    res.json({ ok: true, valija: updated, notificados })
   } catch (err) { console.error(err); res.status(500).json({ error: 'Error del servidor' }) }
 })
 

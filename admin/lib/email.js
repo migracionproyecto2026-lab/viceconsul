@@ -14,9 +14,33 @@ const LOGO_URL = 'https://www.viceconsulado-nuevaesparta.com/images/LogoPng.png'
 const SITIO_URL = 'https://www.viceconsulado-nuevaesparta.com'
 const CONTACTO_EMAIL = process.env.GMAIL_USER || 'viceconsuladomargarita@gmail.com'  // contacto/respuesta: solo gmail
 const WHATSAPP_TEL = '584248429665'
-const WHATSAPP_URL = `https://wa.me/${WHATSAPP_TEL}?text=Hola%2C%20necesito%20informaci%C3%B3n%20sobre%20mi%20tr%C3%A1mite`
 const WHATSAPP_LOGO = 'https://admin.viceconsulado-nuevaesparta.com/images/whatsapp.png'
 const VERDE_WA = '#25D366'
+
+// Construye URL de WhatsApp con mensaje pre-rellenado contextual.
+// El ciudadano abre el chat con saludo + resumen del trámite ya escrito.
+function whatsappUrl(msg) {
+  const texto = msg || 'Hola, necesito información sobre mi trámite.'
+  return `https://wa.me/${WHATSAPP_TEL}?text=${encodeURIComponent(texto)}`
+}
+// Mensaje de preámbulo por tipo de correo: nombre + folio + contexto.
+function preambulo(tipo, nombre, cita) {
+  const primer = (nombre || '').split(' ')[0] || 'Ciudadano'
+  const folio = cita?.serial ? ` (folio ${cita.serial})` : ''
+  const tramite = cita?.tramite ? ` para el trámite "${cita.tramite}"` : ''
+  switch (tipo) {
+    case 'recibida':       return `Hola, mi nombre es ${primer}. Acabo de recibir el correo de solicitud recibida${folio}${tramite}. Quiero consultar sobre mi trámite.`
+    case 'confirmacion':   return `Hola, mi nombre es ${primer}. He recibido el correo de cita confirmada${folio}${tramite}. Tengo una consulta.`
+    case 'reagendamiento': return `Hola, mi nombre es ${primer}. He recibido el correo de reagendamiento de mi cita${folio}${tramite}. Quiero confirmar la nueva fecha.`
+    case 'cancelacion':    return `Hola, mi nombre es ${primer}. Me llegó el correo de cancelación de mi cita${folio}${tramite}. Quisiera más información o reagendar.`
+    case 'inasistencia':   return `Hola, mi nombre es ${primer}. Me llegó el correo de inasistencia${folio}${tramite}. Quisiera reagendar.`
+    case 'recordatorio':   return `Hola, mi nombre es ${primer}. He recibido el recordatorio de mi cita${folio}${tramite}. Tengo una consulta antes de asistir.`
+    case 'valijaEnviada':  return `Hola, mi nombre es ${primer}. Me llegó el correo de que mi trámite${folio}${tramite} ha sido enviado al Consulado General. Quisiera más información.`
+    case 'enRevision':     return `Hola, mi nombre es ${primer}. Me llegó el correo de que mi trámite${folio}${tramite} está en revisión en el Consulado General. Quisiera más información.`
+    case 'verificacion':   return `Hola, mi nombre es ${primer}. Estoy verificando mi cuenta y necesito ayuda.`
+    default:               return `Hola, mi nombre es ${primer}. Necesito información sobre mi trámite${folio}.`
+  }
+}
 
 function getTransporter() {
   const port = Number(process.env.SMTP_PORT) || 465
@@ -29,7 +53,8 @@ function getTransporter() {
 }
 
 // ── Layout responsive (table-based, compatible con Gmail/Outlook/móvil) ──────
-function layout({ titulo, preheader = '', cuerpo }) {
+function layout({ titulo, preheader = '', cuerpo, whatsappMsg }) {
+  const waUrl = whatsappUrl(whatsappMsg)
   return `<!DOCTYPE html>
 <html lang="es" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -86,7 +111,7 @@ function layout({ titulo, preheader = '', cuerpo }) {
               <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 auto;">
                 <tr>
                   <td align="center" bgcolor="${VERDE_WA}" style="border-radius:9px;">
-                    <a href="${WHATSAPP_URL}" target="_blank" style="display:inline-block;padding:13px 24px;font-family:Arial,Helvetica,sans-serif;font-size:14.5px;font-weight:bold;color:#ffffff;text-decoration:none;border-radius:9px;">
+                    <a href="${waUrl}" target="_blank" style="display:inline-block;padding:13px 24px;font-family:Arial,Helvetica,sans-serif;font-size:14.5px;font-weight:bold;color:#ffffff;text-decoration:none;border-radius:9px;">
                       <img src="${WHATSAPP_LOGO}" width="19" height="19" alt="" style="vertical-align:middle;margin-right:8px;">Información por WhatsApp
                     </a>
                   </td>
@@ -141,6 +166,7 @@ const TEMPLATES = {
     html: layout({
       titulo: 'Verificación de cuenta',
       preheader: `Su código de verificación es ${code}`,
+      whatsappMsg: preambulo('verificacion', nombre, null),
       cuerpo: `
         <p style="margin:0 0 12px;">Hola <strong>${nombre}</strong>,</p>
         <p style="margin:0 0 4px;">Use este código para verificar su cuenta:</p>
@@ -157,11 +183,27 @@ const TEMPLATES = {
     html: layout({
       titulo: 'Hemos recibido su solicitud',
       preheader: `${cita.serial || ''} · ${cita.tramite} · ${cita.fecha} · ${cita.hora}`,
+      whatsappMsg: preambulo('recibida', nombre, cita),
       cuerpo: `
         <p style="margin:0 0 12px;">Estimado/a <strong>${nombre}</strong>,</p>
         <p style="margin:0;">Hemos recibido su solicitud de cita. Queda <strong>pendiente de confirmación</strong> por nuestro personal; recibirá un nuevo correo cuando sea confirmada.</p>
         ${infoTable([['Folio', cita.serial || '—'], ['Trámite', cita.tramite], ['Fecha', cita.fecha], ['Hora', cita.hora]])}
         ${aviso('Conserve este folio para cualquier consulta sobre su trámite. Si necesita modificar o cancelar, contáctenos por los medios al pie.')}`,
+    }),
+  }),
+
+  // Cuando la valija con su trámite ES ENVIADA al Consulado General (salió del viceconsulado)
+  valijaEnviada: ({ nombre, cita, valijaSerial }) => ({
+    subject: `Su trámite ha sido enviado al Consulado General: ${cita.tramite}`,
+    html: layout({
+      titulo: 'Su trámite ha salido hacia el Consulado General',
+      preheader: `${cita.serial || ''} · ${cita.tramite} · Valija ${valijaSerial || ''} enviada`,
+      whatsappMsg: preambulo('valijaEnviada', nombre, cita),
+      cuerpo: `
+        <p style="margin:0 0 12px;">Estimado/a <strong>${nombre}</strong>,</p>
+        <p style="margin:0;">Le informamos que su trámite ha sido <strong>enviado al Consulado General de España en Caracas</strong> dentro de la valija diplomática del Viceconsulado.</p>
+        ${infoTable([['Folio', cita.serial || '—'], ['Trámite', cita.tramite], ['Valija', valijaSerial || '—'], ['Estado', 'Enviada']])}
+        ${aviso('Le notificaremos nuevamente cuando el Consulado General confirme la recepción de la valija.')}`,
     }),
   }),
 
@@ -171,10 +213,11 @@ const TEMPLATES = {
     html: layout({
       titulo: 'Su trámite ha llegado al Consulado General',
       preheader: `${cita.tramite} — ${valijaSerial ? 'Valija ' + valijaSerial : ''} — en revisión`,
+      whatsappMsg: preambulo('enRevision', nombre, cita),
       cuerpo: `
         <p style="margin:0 0 12px;">Estimado/a <strong>${nombre}</strong>,</p>
         <p style="margin:0;">Le informamos que su trámite ha sido <strong>recibido en el Consulado General</strong> y entra en proceso de revisión.</p>
-        ${infoTable([['Trámite', cita.tramite], ['Cita', cita.fecha + ' ' + cita.hora], ['Valija', valijaSerial || '—'], ['Estado', 'En revisión']])}
+        ${infoTable([['Folio', cita.serial || '—'], ['Trámite', cita.tramite], ['Cita', (cita.fecha || '') + ' ' + (cita.hora || '')], ['Valija', valijaSerial || '—'], ['Estado', 'En revisión']])}
         ${aviso('Le notificaremos por este medio cualquier novedad sobre su trámite. Si tiene consultas urgentes, use el WhatsApp del pie.')}`,
     }),
   }),
@@ -185,6 +228,7 @@ const TEMPLATES = {
     html: layout({
       titulo: 'Su cita ha sido confirmada',
       preheader: `${cita.serial || ''} · ${cita.tramite} · ${cita.fecha} · ${cita.hora}`,
+      whatsappMsg: preambulo('confirmacion', nombre, cita),
       cuerpo: `
         <p style="margin:0 0 12px;">Estimado/a <strong>${nombre}</strong>,</p>
         <p style="margin:0;">Su cita en el Viceconsulado Honorario de España ha sido <strong>confirmada</strong>:</p>
@@ -194,11 +238,33 @@ const TEMPLATES = {
     }),
   }),
 
+  // Cuando el personal reagenda la cita a otra fecha/hora
+  reagendamiento: ({ nombre, cita, fechaAnterior, horaAnterior, notaInterna }) => ({
+    subject: `Cita reagendada [${cita.serial || ''}]: ${cita.tramite} — ${cita.fecha}`,
+    html: layout({
+      titulo: 'Su cita ha sido reagendada',
+      preheader: `${cita.serial || ''} · Nueva fecha: ${cita.fecha} · ${cita.hora}`,
+      whatsappMsg: preambulo('reagendamiento', nombre, cita),
+      cuerpo: `
+        <p style="margin:0 0 12px;">Estimado/a <strong>${nombre}</strong>,</p>
+        <p style="margin:0;">Le informamos que su cita en el Viceconsulado Honorario de España ha sido <strong>reagendada</strong>.</p>
+        ${infoTable([
+          ['Folio', cita.serial || '—'],
+          ['Trámite', cita.tramite],
+          ['Fecha anterior', (fechaAnterior || '—') + (horaAnterior ? ' a las ' + horaAnterior : '')],
+          ['Nueva fecha', cita.fecha + ' a las ' + cita.hora],
+        ])}
+        ${notaInterna ? aviso(notaInterna) : ''}
+        ${aviso('Por favor confirme con nosotros la nueva fecha. Llegue <strong>10 minutos antes</strong> con todos sus documentos.')}`,
+    }),
+  }),
+
   recordatorio: ({ nombre, cita }) => ({
     subject: `Recordatorio: su cita es hoy a las ${cita.hora}`,
     html: layout({
       titulo: 'Recordatorio de cita',
       preheader: `Su cita es hoy a las ${cita.hora}`,
+      whatsappMsg: preambulo('recordatorio', nombre, cita),
       cuerpo: `
         <p style="margin:0 0 12px;">Estimado/a <strong>${nombre}</strong>,</p>
         <p style="margin:0;">Le recordamos que tiene una cita programada para <strong>hoy</strong>:</p>
@@ -212,6 +278,7 @@ const TEMPLATES = {
     html: layout({
       titulo: 'Cancelación de su cita',
       preheader: `${cita.serial || ''} · Su cita del ${cita.fecha} ha sido cancelada`,
+      whatsappMsg: preambulo('cancelacion', nombre, cita),
       cuerpo: `
         <p style="margin:0 0 12px;">Estimado/a <strong>${nombre}</strong>,</p>
         <p style="margin:0;">Le informamos que su cita ha sido cancelada:</p>
@@ -226,6 +293,7 @@ const TEMPLATES = {
     html: layout({
       titulo: 'Registro de inasistencia',
       preheader: `${cita.serial || ''} · Inasistencia registrada — ${cita.tramite}`,
+      whatsappMsg: preambulo('inasistencia', nombre, cita),
       cuerpo: `
         <p style="margin:0 0 12px;">Estimado/a <strong>${nombre}</strong>,</p>
         <p style="margin:0;">Hemos registrado su inasistencia a la siguiente cita:</p>
@@ -347,6 +415,10 @@ const sendNoShowEmail = (to, nombre, cita) =>
   send('inasistencia', to, { nombre, cita }, 'Inasistencia')
 const sendInRevisionEmail = (to, nombre, cita, valijaSerial) =>
   send('enRevision', to, { nombre, cita, valijaSerial }, 'En revisión (valija recibida)')
+const sendValijaSentEmail = (to, nombre, cita, valijaSerial) =>
+  send('valijaEnviada', to, { nombre, cita, valijaSerial }, 'Valija enviada al Consulado General')
+const sendReagendamiento = (to, nombre, cita, fechaAnterior, horaAnterior, notaInterna) =>
+  send('reagendamiento', to, { nombre, cita, fechaAnterior, horaAnterior, notaInterna }, 'Cita reagendada')
 
 module.exports = {
   sendVerificationEmail,
@@ -356,6 +428,8 @@ module.exports = {
   sendCancellationEmail,
   sendNoShowEmail,
   sendInRevisionEmail,
+  sendValijaSentEmail,
+  sendReagendamiento,
   renderEmail,
   verifyTransport,
   verifyGmailApi,

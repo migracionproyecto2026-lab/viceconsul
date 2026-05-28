@@ -708,6 +708,28 @@
       background: #f59e0b;
     }
 
+    /* Pills de días hábiles (selector rápido en reagendar) */
+    .dp-pill {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1px;
+      padding: 6px 10px;
+      background: #fff;
+      border: 1px solid #d4d4d4;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: Arial, sans-serif;
+      font-size: .72rem;
+      color: var(--texto);
+      line-height: 1.15;
+      transition: all .15s ease;
+    }
+    .dp-pill strong { font-size: .82rem; color: var(--rojo); }
+    .dp-pill:hover { border-color: var(--rojo); background: #fffbfb; }
+    .dp-pill.active { background: var(--rojo); color: #fff; border-color: var(--rojo); }
+    .dp-pill.active strong { color: #fff; }
+
     .dot-inasistencia {
       background: #8b5cf6;
     }
@@ -1349,23 +1371,24 @@
         <input type="hidden" id="re-id">
         <div class="alerta alerta-err" id="re-err" style="display:none;"></div>
         <div id="re-info" class="nota-box" style="margin-bottom:14px;"></div>
-        <div class="fr">
-          <div class="fg"><label class="fl">Nueva fecha</label><input type="date" id="re-fecha" class="fc" required onchange="validarFechaReagendar(this.value)">
-            <div id="re-fecha-warn" style="font-size:.76rem;color:#991b1b;margin-top:4px;display:none;"><i class="bi bi-exclamation-triangle"></i> Solo se pueden agendar citas de lunes a viernes.</div>
-          </div>
-          <div class="fg">
-            <label class="fl">Nueva hora</label>
-            <select id="re-hora" class="fc" required>
-              <option value="">Seleccionar...</option>
-              <option value="08:30">8:30 AM</option>
-              <option value="09:00">9:00 AM</option>
-              <option value="09:30">9:30 AM</option>
-              <option value="10:00">10:00 AM</option>
-              <option value="10:30">10:30 AM</option>
-              <option value="11:00">11:00 AM</option>
-              <option value="11:30">11:30 AM</option>
-            </select>
-          </div>
+        <div class="fg">
+          <label class="fl">Nueva fecha <span style="color:var(--gris-claro);font-weight:400;">(solo lunes a viernes)</span></label>
+          <div id="re-fecha-pills" class="dp-pills" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;"></div>
+          <input type="date" id="re-fecha" class="fc" required onchange="validarFechaReagendar(this.value)">
+          <div id="re-fecha-warn" style="font-size:.76rem;color:#991b1b;margin-top:4px;display:none;"><i class="bi bi-exclamation-triangle"></i> Solo se pueden agendar citas de lunes a viernes.</div>
+        </div>
+        <div class="fg">
+          <label class="fl">Nueva hora</label>
+          <select id="re-hora" class="fc" required>
+            <option value="">Seleccionar...</option>
+            <option value="08:30">8:30 AM</option>
+            <option value="09:00">9:00 AM</option>
+            <option value="09:30">9:30 AM</option>
+            <option value="10:00">10:00 AM</option>
+            <option value="10:30">10:30 AM</option>
+            <option value="11:00">11:00 AM</option>
+            <option value="11:30">11:30 AM</option>
+          </select>
         </div>
         <hr class="divider">
         <p style="font-size:.82rem;font-weight:600;margin-bottom:10px;color:var(--texto);">Plaza liberada (horario
@@ -1745,17 +1768,17 @@
       _citas = (d && d.citas) || []
       const el = document.getElementById('citas-table')
       if (!_citas.length) { el.innerHTML = '<p style="color:var(--gris-claro);font-size:.88rem;padding:20px 0;text-align:center;">No hay citas con estos filtros.</p>'; return }
-      el.innerHTML = `<table><thead><tr><th>Fecha cita</th><th>Hora</th><th>Ciudadano</th><th>Trámite</th><th>Estado</th><th>Solicitud</th><th>Ticket</th><th>Acciones</th></tr></thead><tbody>${_citas.map(c => {
+      el.innerHTML = `<table><thead><tr><th>Folio</th><th>Fecha cita</th><th>Hora</th><th>Ciudadano</th><th>Trámite</th><th>Estado</th><th>Solicitud</th><th>Acciones</th></tr></thead><tbody>${_citas.map(c => {
         const i = getCitaInfo(c)
         const activa = !['cancelada', 'completada', 'inasistencia'].includes(c.status)
         const docPend = c.documentosPendientes ? `<span title="Documentos pendientes" style="color:#7e22ce;margin-left:4px;"><i class="bi bi-file-earmark-x"></i></span>` : ''
         return `<tr>
+        <td style="font-family:Menlo,Consolas,monospace;font-size:.78rem;color:var(--rojo);white-space:nowrap;">${c.serial || '—'}</td>
         <td>${c.fecha || '<span style="color:var(--gris-claro)">Sin fecha</span>'}</td><td><strong>${c.hora}</strong></td>
         <td>${i.nombre}${i.email ? `<br><span style="font-size:.75rem;color:var(--gris-claro);">${i.email}</span>` : ''}</td>
         <td style="font-size:.82rem;">${c.tramite}${docPend}</td>
         <td>${badge(c.status)}</td>
         <td style="font-size:.75rem;color:var(--gris-claro);white-space:nowrap;">${fmt(c.createdAt)}</td>
-        <td><button class="btn-ic" onclick="verTicket('${c.id}')" title="Ver ticket / correo" style="color:#475569;"><i class="bi bi-receipt"></i></button></td>
         <td style="white-space:nowrap;">
           ${c.status === 'pendiente' ? `<button class="btn-ic" onclick="avanzarStatus('${c.id}','confirmada')" title="Confirmar cita" style="color:#166534;border-color:#bbf7d0;"><i class="bi bi-check-lg"></i></button> ` : ''}
           ${c.status === 'confirmada' ? `<button class="btn-ic" onclick="avanzarStatus('${c.id}','en_proceso')" title="Llegó — En proceso" style="color:#9a3412;border-color:#fed7aa;"><i class="bi bi-person-check"></i></button> ` : ''}
@@ -1778,9 +1801,6 @@
       if (r?.error) return toast(r.error, false)
       toast('Estado actualizado'); loadCitas(); loadDashboard()
     }
-
-    // Abre el ticket/correo de la cita (HTML del email según su estado)
-    function verTicket(id) { window.open(`/api/admin/citas/${id}/ticket`, '_blank', 'noopener') }
 
     function _setCitaSections(mode) {
       // mode: 'nueva' | 'editar-registrado' | 'editar-externo'
@@ -1971,21 +1991,64 @@
     }
 
     // ── Reagendar ──────────────────────────────────────────────────────────────
+    // Renderiza pills de los próximos 10 días hábiles (L-V), saltando S/D y fechas bloqueadas.
+    function renderPillsHabiles(containerId, inputId, max = 10) {
+      const cont = document.getElementById(containerId); if (!cont) return
+      cont.innerHTML = ''
+      const meses = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic']
+      const dias = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb']
+      const hoy = new Date(); hoy.setHours(0,0,0,0)
+      let agregados = 0
+      const cursor = new Date(hoy)
+      while (agregados < max) {
+        cursor.setDate(cursor.getDate() + 1)
+        const dow = cursor.getDay()
+        if (dow === 0 || dow === 6) continue // saltar S/D
+        const iso = cursor.toISOString().split('T')[0]
+        if (_fechasBloqueadas.includes(iso)) continue
+        const b = document.createElement('button')
+        b.type = 'button'
+        b.className = 'dp-pill'
+        b.dataset.fecha = iso
+        b.innerHTML = `${dias[dow]}<strong>${String(cursor.getDate()).padStart(2,'0')}</strong>${meses[cursor.getMonth()]}`
+        b.onclick = () => {
+          cont.querySelectorAll('.dp-pill').forEach(p => p.classList.remove('active'))
+          b.classList.add('active')
+          const input = document.getElementById(inputId)
+          input.value = iso
+          input.dispatchEvent(new Event('change'))
+        }
+        cont.appendChild(b)
+        agregados++
+      }
+    }
+
     function openReagendar(id) {
       const c = _citas.find(x => x.id === id); if (!c) return
       document.getElementById('re-id').value = id
-      document.getElementById('re-fecha').value = ''
+      const reFecha = document.getElementById('re-fecha')
+      reFecha.value = ''
+      reFecha.min = new Date().toISOString().split('T')[0]
       document.getElementById('re-hora').value = ''
       document.getElementById('re-liberar').checked = true
       document.getElementById('re-nota').value = ''
       document.getElementById('re-motivo-wrap').style.display = 'none'
+      document.getElementById('re-fecha-warn').style.display = 'none'
+      renderPillsHabiles('re-fecha-pills', 're-fecha')
       const i = getCitaInfo(c)
       document.getElementById('re-info').innerHTML = `<strong>${i.nombre}</strong> · ${c.tramite}<br>Cita actual: <strong>${c.fecha} a las ${c.hora}</strong>`
       openModal('mo-reagendar')
     }
     function validarFechaReagendar(fecha) {
       const warn = document.getElementById('re-fecha-warn')
-      warn.style.display = esFechaHabil(fecha) ? 'none' : 'block'
+      const input = document.getElementById('re-fecha')
+      if (fecha && !esFechaHabil(fecha)) {
+        input.value = ''
+        warn.style.display = 'block'
+        toast('Sábados y domingos no son días hábiles.', false)
+      } else {
+        warn.style.display = 'none'
+      }
     }
     function toggleMotivoNoLiberar() {
       document.getElementById('re-motivo-wrap').style.display = document.getElementById('re-liberar').checked ? 'none' : 'block'
@@ -2038,8 +2101,8 @@
           </div>
           <div class="fl" style="margin-bottom:8px;">Historial de citas (${(c.citas || []).length})</div>
           ${!c.citas?.length ? '<p style="color:var(--gris-claro);font-size:.85rem;">Sin citas registradas.</p>' : `
-          <div class="tw"><table><thead><tr><th>Fecha</th><th>Hora</th><th>Trámite</th><th>Estado</th><th>Ticket</th></tr></thead><tbody>
-            ${c.citas.map(x => `<tr><td>${x.fecha || '—'}</td><td>${x.hora}</td><td style="font-size:.82rem;">${x.tramite}</td><td>${badge(x.status)}</td><td><button class="btn-ic" onclick="verTicket('${x.id}')" title="Ver ticket / correo" style="color:#475569;"><i class="bi bi-receipt"></i></button></td></tr>`).join('')}
+          <div class="tw"><table><thead><tr><th>Folio</th><th>Fecha</th><th>Hora</th><th>Trámite</th><th>Estado</th></tr></thead><tbody>
+            ${c.citas.map(x => `<tr><td style="font-family:Menlo,Consolas,monospace;font-size:.78rem;color:var(--rojo);white-space:nowrap;">${x.serial || '—'}</td><td>${x.fecha || '—'}</td><td>${x.hora}</td><td style="font-size:.82rem;">${x.tramite}</td><td>${badge(x.status)}</td></tr>`).join('')}
           </tbody></table></div>`}
           <hr style="margin:16px 0;">
           <div style="display:flex;gap:8px;">
