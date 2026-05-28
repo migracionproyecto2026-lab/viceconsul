@@ -36,6 +36,17 @@ app.use(cors({
   credentials: true,
 }))
 
+// ── Redirección HTTP → HTTPS (solo en producción, detrás de proxy) ─────────
+app.use((req, res, next) => {
+  if (process.env.NODE_ENV === 'production') {
+    const proto = req.headers['x-forwarded-proto'] || (req.secure ? 'https' : 'http')
+    if (proto !== 'https') {
+      return res.redirect(301, `https://${req.headers.host}${req.url}`)
+    }
+  }
+  next()
+})
+
 // ── Cabeceras de seguridad (sin dependencias) ───────────────────────────────
 app.use((req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff')
@@ -43,8 +54,18 @@ app.use((req, res, next) => {
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
   res.setHeader('X-XSS-Protection', '0')
   res.setHeader('X-Permitted-Cross-Domain-Policies', 'none')
+  // CSP básica: bloquea inline scripts externos no permitidos
+  res.setHeader('Content-Security-Policy',
+    "default-src 'self'; " +
+    "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; " +
+    "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; " +
+    "font-src 'self' https://cdn.jsdelivr.net https://fonts.gstatic.com; " +
+    "img-src 'self' data: https:; " +
+    "connect-src 'self' https://admin.viceconsulado-nuevaesparta.com https://api.resend.com; " +
+    "frame-ancestors 'self'; base-uri 'self'; form-action 'self';"
+  )
   if (req.secure || req.headers['x-forwarded-proto'] === 'https') {
-    res.setHeader('Strict-Transport-Security', 'max-age=15552000; includeSubDomains')
+    res.setHeader('Strict-Transport-Security', 'max-age=15552000; includeSubDomains; preload')
   }
   next()
 })

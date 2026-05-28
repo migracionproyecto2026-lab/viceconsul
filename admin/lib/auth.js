@@ -18,10 +18,11 @@ function verifyToken(token) {
 
 function setAuthCookie(res, payload) {
   const token = signToken(payload)
+  const isProd = process.env.NODE_ENV === 'production'
   res.cookie(COOKIE_NAME, token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
+    secure: isProd,
+    sameSite: isProd ? 'strict' : 'lax',
     maxAge: MAX_AGE_SECONDS * 1000,
     path: '/',
   })
