@@ -220,9 +220,17 @@ const TEMPLATES = {
   }),
 }
 
-// Prueba la conexión/credenciales SMTP sin enviar correo
-async function verifyTransport() {
-  return getTransporter().verify()
+// Prueba la conexión/credenciales SMTP sin enviar correo (timeout corto para no colgar)
+async function verifyTransport(opts = {}) {
+  const port = opts.port || Number(process.env.SMTP_PORT) || 465
+  const t = nodemailer.createTransport({
+    host: process.env.SMTP_HOST || 'smtp.gmail.com',
+    port,
+    secure: port === 465,
+    auth: { user: process.env.GMAIL_USER, pass: process.env.GMAIL_PASS },
+    connectionTimeout: 8000, greetingTimeout: 8000, socketTimeout: 8000,
+  })
+  return t.verify()
 }
 
 // Render sin enviar (para previews/tests)

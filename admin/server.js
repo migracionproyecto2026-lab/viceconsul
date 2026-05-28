@@ -246,11 +246,12 @@ app.get('/api/health', (req, res) => {
   })
 })
 app.get('/api/health/smtp', publicLimiter, async (req, res) => {
+  const port = req.query.port ? Number(req.query.port) : undefined
   try {
     const { verifyTransport } = require('./lib/email')
-    await verifyTransport()
-    res.json({ smtp: 'ok' })
-  } catch (e) { res.json({ smtp: 'error', message: e.message }) }
+    await verifyTransport({ port })
+    res.json({ smtp: 'ok', port: port || 'default' })
+  } catch (e) { res.json({ smtp: 'error', port: port || 'default', code: e.code || null, message: e.message }) }
 })
 
 // ── Fallback SPA ───────────────────────────────────────────────────────────
