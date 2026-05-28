@@ -708,6 +708,49 @@
       background: #f59e0b;
     }
 
+    /* Reportería — cards lanzadoras */
+    .rep-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 16px;
+    }
+    .rep-card {
+      background: #fff;
+      border: 1px solid var(--borde);
+      border-radius: 12px;
+      padding: 22px 20px;
+      text-align: left;
+      cursor: pointer;
+      transition: all .18s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-family: inherit;
+    }
+    .rep-card:hover { border-color: var(--rojo); box-shadow: 0 4px 16px rgba(170, 21, 27, .12); transform: translateY(-2px); }
+    .rep-icon {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem;
+    }
+    .rep-titulo {
+      font-family: 'Libre Baskerville', Georgia, serif;
+      font-size: 1.1rem;
+      color: var(--rojo);
+      font-weight: 700;
+    }
+    .rep-desc { font-size: .85rem; color: var(--gris); line-height: 1.5; }
+    .rep-resumen-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 8px 0; }
+    .rep-resumen-chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 12px;
+      background: #faf8f3; border: 1px solid var(--borde);
+      border-radius: 14px;
+      font-size: .76rem; color: var(--texto);
+    }
+    .rep-resumen-chip b { color: var(--rojo); font-size: .92rem; }
+
     /* Pills de días hábiles (selector rápido en reagendar) */
     .dp-pill {
       display: inline-flex;
@@ -924,6 +967,7 @@
       <button class="nav-link" onclick="showTab('banners')"><i class="bi bi-megaphone"></i>Avisos web</button>
       <button class="nav-link" onclick="showTab('fechas')"><i class="bi bi-calendar-x"></i>Fechas bloqueadas</button>
       <button class="nav-link nav-rol-superadmin" style="display:none;" onclick="showTab('usuarios')"><i class="bi bi-shield-lock"></i>Usuarios</button>
+      <button class="nav-link nav-rol-superadmin" style="display:none;" onclick="showTab('reporteria')"><i class="bi bi-graph-up"></i>Reportería</button>
     </nav>
     <div class="sidebar-footer">
       <div class="user-chip">
@@ -1118,6 +1162,58 @@
         </div>
       </div>
 
+      <!-- REPORTERÍA (solo superadmin) -->
+      <div id="tab-reporteria" class="tab-pane">
+        <div class="card">
+          <div class="card-title"><i class="bi bi-graph-up"></i>Reportería institucional</div>
+          <p style="font-size:.82rem;color:var(--gris);margin-bottom:18px;">
+            Reportes exportables a Excel sobre la operación del Viceconsulado. Cada exportación queda registrada en la bitácora de auditoría con autor, IP y filtros aplicados.
+          </p>
+          <div class="rep-grid">
+            <button class="rep-card" onclick="abrirReporte('ciudadanos')">
+              <div class="rep-icon" style="background:#dbeafe;color:#1e40af;"><i class="bi bi-people-fill"></i></div>
+              <div class="rep-titulo">Ciudadanos</div>
+              <div class="rep-desc">Padrón con citas, verificación y origen. Búsqueda, filtros y exportación.</div>
+            </button>
+            <button class="rep-card" onclick="abrirReporte('citas')">
+              <div class="rep-icon" style="background:#fef3c7;color:#92400e;"><i class="bi bi-calendar-check"></i></div>
+              <div class="rep-titulo">Citas por estatus</div>
+              <div class="rep-desc">Estado de cada cita con folio de valija, fecha de solicitud y origen. Filtros amplios.</div>
+            </button>
+            <button class="rep-card" onclick="abrirReporte('maestro')">
+              <div class="rep-icon" style="background:#dcfce7;color:#166534;"><i class="bi bi-card-list"></i></div>
+              <div class="rep-titulo">Maestro de trámites</div>
+              <div class="rep-desc">Catálogo institucional con requisitos, duración y volumetría (30 días / año).</div>
+            </button>
+            <button class="rep-card" onclick="abrirReporte('auditoria')">
+              <div class="rep-icon" style="background:#fee2e2;color:#991b1b;"><i class="bi bi-shield-check"></i></div>
+              <div class="rep-titulo">Auditoría transaccional</div>
+              <div class="rep-desc">Todos los movimientos: sesiones, cambios de admin, citas, valijas, banners. Antes/después.</div>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL: Reportería (común a los 4 reportes) -->
+  <div class="mo" id="mo-reporte">
+    <div class="modal" style="max-width:1180px;width:96vw;">
+      <div class="mh">
+        <span class="mt" id="rep-titulo">Reporte</span>
+        <button class="mc-btn" onclick="closeModal('mo-reporte')">×</button>
+      </div>
+      <div class="mb" style="max-height:78vh;overflow-y:auto;">
+        <div id="rep-filtros" class="filtros" style="flex-wrap:wrap;gap:8px;margin-bottom:14px;"></div>
+        <div id="rep-resumen" style="margin-bottom:10px;"></div>
+        <div class="tw" id="rep-tabla" style="font-size:.82rem;"></div>
+        <div id="rep-pag" style="margin-top:10px;"></div>
+      </div>
+      <div class="mf">
+        <button class="btn-o" onclick="closeModal('mo-reporte')">Cerrar</button>
+        <button class="btn-p" id="rep-export-btn" onclick="exportarReporte()"><i class="bi bi-file-earmark-excel"></i> Exportar Excel</button>
+      </div>
     </div>
   </div>
 
@@ -2670,6 +2766,190 @@
       } else {
         warn.style.display = 'none'
       }
+    }
+
+    // ── Reportería ─────────────────────────────────────────────────────────────
+    const _rep = { tipo: null, filtros: {}, page: 1, limit: 50 }
+
+    function abrirReporte(tipo) {
+      _rep.tipo = tipo
+      _rep.page = 1
+      _rep.filtros = {}
+      const titulos = { ciudadanos: 'Reporte — Ciudadanos', citas: 'Reporte — Citas por estatus', maestro: 'Reporte — Maestro de trámites', auditoria: 'Reporte — Auditoría transaccional' }
+      document.getElementById('rep-titulo').textContent = titulos[tipo] || 'Reporte'
+      _renderFiltrosReporte(tipo)
+      cargarReporte()
+      openModal('mo-reporte')
+    }
+
+    function _filtroHtml(id, label, html) {
+      return `<div style="display:flex;flex-direction:column;gap:2px;"><label style="font-size:.7rem;color:var(--gris);text-transform:uppercase;letter-spacing:.4px;">${label}</label>${html}</div>`
+    }
+
+    function _renderFiltrosReporte(tipo) {
+      const c = document.getElementById('rep-filtros')
+      const inp = (id, ph) => `<input class="fc" id="${id}" placeholder="${ph}" oninput="_repFiltroDebounced()" style="width:auto;min-width:160px;">`
+      const date = id => `<input class="fc" type="date" id="${id}" onchange="_repFiltroDebounced()" style="width:auto;">`
+      const sel = (id, opts) => `<select class="fc" id="${id}" onchange="_repFiltroDebounced()" style="width:auto;">${opts.map(([v,l]) => `<option value="${v}">${l}</option>`).join('')}</select>`
+      if (tipo === 'ciudadanos') {
+        c.innerHTML =
+          _filtroHtml('rf-q','Buscar', inp('rf-q','Nombre, email, cédula...')) +
+          _filtroHtml('rf-verif','Verificado', sel('rf-verified',[['','Todos'],['true','Sí'],['false','No']])) +
+          _filtroHtml('rf-inv','Origen', sel('rf-esInvitado',[['','Todos'],['true','Invitado web'],['false','Cuenta propia']])) +
+          _filtroHtml('rf-desde','Registro desde', date('rf-desde')) +
+          _filtroHtml('rf-hasta','Hasta', date('rf-hasta')) +
+          `<button class="btn-o" onclick="_repLimpiar()" style="align-self:flex-end;"><i class="bi bi-x-circle"></i> Limpiar</button>`
+      } else if (tipo === 'citas') {
+        c.innerHTML =
+          _filtroHtml('rf-cit','Ciudadano', inp('rf-ciudadano','Nombre o email...')) +
+          _filtroHtml('rf-tra','Trámite', inp('rf-tramite','Trámite...')) +
+          _filtroHtml('rf-est','Estado', sel('rf-status',[['','Todos'],['pendiente','Pendiente'],['confirmada','Confirmada'],['en_proceso','En proceso'],['asistencia_tarde','Asistencia tarde'],['completada','Completada'],['cancelada','Cancelada'],['inasistencia','Inasistencia']])) +
+          _filtroHtml('rf-or','Origen', sel('rf-origen',[['','Todos'],['web','Web pública'],['admin','Panel admin']])) +
+          _filtroHtml('rf-fd','Fecha cita desde', date('rf-fechaDesde')) +
+          _filtroHtml('rf-fh','Hasta', date('rf-fechaHasta')) +
+          _filtroHtml('rf-sd','Solicitud desde', date('rf-solicitudDesde')) +
+          _filtroHtml('rf-sh','Hasta', date('rf-solicitudHasta')) +
+          _filtroHtml('rf-val','Folio valija', inp('rf-valijaSerial','VAL-...')) +
+          `<button class="btn-o" onclick="_repLimpiar()" style="align-self:flex-end;"><i class="bi bi-x-circle"></i> Limpiar</button>`
+      } else if (tipo === 'maestro') {
+        c.innerHTML =
+          _filtroHtml('rf-q','Buscar', inp('rf-q','Código o nombre...')) +
+          _filtroHtml('rf-cat','Categoría', sel('rf-categoria',[['','Todas'],['Pasaportes','Pasaportes'],['Registro Civil','Registro Civil'],['Certificaciones','Certificaciones'],['Identificación','Identificación'],['Nacionalidad','Nacionalidad'],['Otros','Otros']])) +
+          _filtroHtml('rf-act','Activo', sel('rf-activo',[['','Todos'],['true','Sí'],['false','No']])) +
+          `<button class="btn-o" onclick="_repLimpiar()" style="align-self:flex-end;"><i class="bi bi-x-circle"></i> Limpiar</button>`
+      } else if (tipo === 'auditoria') {
+        c.innerHTML =
+          _filtroHtml('rf-ent','Entidad', sel('rf-entidad',[['','Todas'],['cita','Cita'],['ciudadano','Ciudadano'],['usuario_admin','Usuario admin'],['banner','Banner'],['valija','Valija'],['fecha_bloqueada','Fecha bloqueada'],['sesion','Sesión'],['reporte','Reporte']])) +
+          _filtroHtml('rf-acc','Acción', sel('rf-accion',[['','Todas'],['crear','Crear'],['editar','Editar'],['eliminar','Eliminar'],['cambio_estado','Cambio estado'],['cambio_permisos','Cambio permisos'],['login_ok','Login ok'],['login_fail','Login fallido'],['logout','Logout'],['exportar','Exportar']])) +
+          _filtroHtml('rf-aut','Autor', inp('rf-realizadoPor','Nombre / email...')) +
+          _filtroHtml('rf-cem','Email ciudadano', inp('rf-ciudadanoEmail','email@...')) +
+          _filtroHtml('rf-ip','IP', inp('rf-ip','x.x.x.x')) +
+          _filtroHtml('rf-desde','Desde', date('rf-desde')) +
+          _filtroHtml('rf-hasta','Hasta', date('rf-hasta')) +
+          `<button class="btn-o" onclick="_repLimpiar()" style="align-self:flex-end;"><i class="bi bi-x-circle"></i> Limpiar</button>`
+      }
+    }
+
+    let _repDebounceT = null
+    function _repFiltroDebounced() {
+      clearTimeout(_repDebounceT)
+      _repDebounceT = setTimeout(() => { _rep.page = 1; cargarReporte() }, 320)
+    }
+    function _repLimpiar() {
+      _renderFiltrosReporte(_rep.tipo)
+      _rep.page = 1
+      cargarReporte()
+    }
+
+    function _repRecogerFiltros() {
+      const f = {}
+      document.querySelectorAll('#rep-filtros input, #rep-filtros select').forEach(el => {
+        if (el.id && el.id.startsWith('rf-') && el.value) {
+          // mapping: rf-<campo>
+          const campo = el.id.slice(3)
+          f[campo] = el.value
+        }
+      })
+      return f
+    }
+
+    async function cargarReporte() {
+      const tipo = _rep.tipo; if (!tipo) return
+      _rep.filtros = _repRecogerFiltros()
+      const qs = new URLSearchParams({ ...(_rep.filtros), page: String(_rep.page), limit: String(_rep.limit) }).toString()
+      const url = `/api/admin/reportes/${tipo}?${qs}`
+      const d = await api('GET', url)
+      if (!d || d.error) {
+        document.getElementById('rep-tabla').innerHTML = `<p style="color:#991b1b;padding:14px;">${d?.error || 'Error al cargar'}</p>`
+        return
+      }
+      _pintarReporte(tipo, d)
+    }
+
+    function _pintarReporte(tipo, d) {
+      const tabla = document.getElementById('rep-tabla')
+      const resumen = document.getElementById('rep-resumen')
+      resumen.innerHTML = ''
+      let html = ''
+      if (tipo === 'ciudadanos') {
+        if (!d.ciudadanos?.length) { tabla.innerHTML = '<p style="color:var(--gris-claro);padding:20px;text-align:center;">Sin resultados.</p>'; document.getElementById('rep-pag').innerHTML = ''; return }
+        html = `<table><thead><tr><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Tipo doc.</th><th>Nº doc.</th><th>Invitado</th><th>Verificado</th><th>Registro</th><th>Citas</th></tr></thead><tbody>` +
+          d.ciudadanos.map(c => `<tr>
+            <td><strong>${c.nombre} ${c.apellido}</strong></td>
+            <td>${c.email}</td>
+            <td>${c.telefono || '—'}</td>
+            <td>${c.tipoDocumento || '—'}</td>
+            <td>${c.cedula || '—'}</td>
+            <td>${c.esInvitado ? 'Sí' : 'No'}</td>
+            <td>${c.verified ? '<span class="badge b-confirmada">Sí</span>' : '<span class="badge b-pendiente">No</span>'}</td>
+            <td style="font-size:.72rem;">${fmtDT(c.createdAt)}</td>
+            <td>${c._count?.citas ?? 0}</td>
+          </tr>`).join('') + `</tbody></table>`
+      } else if (tipo === 'citas') {
+        if (d.resumen) {
+          resumen.innerHTML = '<div class="rep-resumen-chips">' + Object.entries(d.resumen).map(([k, v]) => `<span class="rep-resumen-chip">${k}: <b>${v}</b></span>`).join('') + `<span class="rep-resumen-chip">Total: <b>${d.total}</b></span></div>`
+        }
+        if (!d.citas?.length) { tabla.innerHTML = '<p style="color:var(--gris-claro);padding:20px;text-align:center;">Sin resultados.</p>'; document.getElementById('rep-pag').innerHTML = ''; return }
+        html = `<table><thead><tr><th>Ticket</th><th>Folio</th><th>Fecha</th><th>Hora</th><th>Ciudadano</th><th>Trámite</th><th>Estado</th><th>Origen</th><th>Solicitud</th></tr></thead><tbody>` +
+          d.citas.map(c => {
+            const i = getCitaInfo(c)
+            return `<tr>
+              <td style="font-family:Menlo,Consolas,monospace;color:var(--rojo);">${c.serial || '—'}</td>
+              <td style="font-family:Menlo,Consolas,monospace;color:${c.valija ? '#1e40af' : 'var(--gris-claro)'};">${c.valija?.serial || '—'}</td>
+              <td>${c.fecha || '—'}</td><td>${c.hora}</td>
+              <td>${i.nombre}<br><span style="font-size:.7rem;color:var(--gris-claro);">${i.email || ''}</span></td>
+              <td>${c.tramite}</td>
+              <td>${badge(c.status)}</td>
+              <td>${c.origen === 'web' ? 'Web' : 'Panel'}</td>
+              <td style="font-size:.72rem;">${fmtDT(c.createdAt)}</td>
+            </tr>`
+          }).join('') + `</tbody></table>`
+      } else if (tipo === 'maestro') {
+        if (!d.tramites?.length) { tabla.innerHTML = '<p style="color:var(--gris-claro);padding:20px;text-align:center;">Sin resultados.</p>'; document.getElementById('rep-pag').innerHTML = ''; return }
+        html = `<table><thead><tr><th>Código</th><th>Nombre</th><th>Categoría</th><th>Requisitos</th><th>Duración</th><th>Activo</th><th>Vol. 30d</th><th>Vol. año</th></tr></thead><tbody>` +
+          d.tramites.map(t => `<tr>
+            <td style="font-family:Menlo,Consolas,monospace;">${t.codigo}</td>
+            <td><strong>${t.nombre}</strong></td>
+            <td>${t.categoria || '—'}</td>
+            <td style="font-size:.78rem;">${(t.requisitos || []).map(r => '• ' + r).join('<br>')}</td>
+            <td>${t.duracionEstimada || '—'} min</td>
+            <td>${t.activo ? 'Sí' : 'No'}</td>
+            <td>${t.volumen30d}</td>
+            <td>${t.volumenAno}</td>
+          </tr>`).join('') + `</tbody></table>`
+      } else if (tipo === 'auditoria') {
+        if (!d.logs?.length) { tabla.innerHTML = '<p style="color:var(--gris-claro);padding:20px;text-align:center;">Sin resultados.</p>'; document.getElementById('rep-pag').innerHTML = ''; return }
+        html = `<table><thead><tr><th>Fecha</th><th>Autor</th><th>IP</th><th>Entidad</th><th>Acción</th><th>Email</th><th>Nota</th><th>Cambios</th></tr></thead><tbody>` +
+          d.logs.map(l => `<tr>
+            <td style="font-size:.72rem;">${fmtDT(l.createdAt)}</td>
+            <td>${l.realizadoPor || '—'}</td>
+            <td style="font-family:Menlo,Consolas,monospace;font-size:.72rem;">${l.ip || '—'}</td>
+            <td>${l.entidad || '—'}</td>
+            <td>${l.accion || l.tipo}</td>
+            <td style="font-size:.72rem;">${l.ciudadanoEmail || '—'}</td>
+            <td style="font-size:.78rem;">${l.notaInterna || '—'}</td>
+            <td>${(l.antes || l.despues) ? `<button class="btn-o" style="font-size:.7rem;padding:2px 8px;" onclick='_repVerCambios(${JSON.stringify(l).replace(/'/g, "&#39;")})'>Ver</button>` : '—'}</td>
+          </tr>`).join('') + `</tbody></table>`
+      }
+      tabla.innerHTML = html
+      document.getElementById('rep-pag').innerHTML = pager(d.page, d.pages, d.total, '_repIr')
+    }
+
+    function _repIr(p) { _rep.page = p; cargarReporte() }
+
+    function _repVerCambios(log) {
+      const a = log.antes ? JSON.parse(log.antes) : null
+      const dsp = log.despues ? JSON.parse(log.despues) : null
+      const fmt = o => o ? JSON.stringify(o, null, 2) : '(sin datos)'
+      alert(`Antes:\n${fmt(a)}\n\nDespués:\n${fmt(dsp)}`)
+    }
+
+    function exportarReporte() {
+      if (!_rep.tipo) return
+      _rep.filtros = _repRecogerFiltros()
+      const qs = new URLSearchParams(_rep.filtros).toString()
+      // Descarga directa por navegador (incluye cookies de sesión)
+      window.location.href = `/api/admin/reportes/${_rep.tipo}/export?${qs}`
     }
 
     // ── Auth ───────────────────────────────────────────────────────────────────

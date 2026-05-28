@@ -131,6 +131,19 @@ Fechas o franjas no disponibles para citas. Soporta clave `YYYY-MM-DD` (día com
 ### `Setting`
 Configuración dinámica clave-valor (usada por `/api/config`).
 
+### `SessionLog` (nuevo)
+Sesiones admin (volumen alto, queries específicas). Campos: `adminUserId?`, `email`, `nombre?`, `role?`, `tipo` (`login_ok` | `login_fail` | `logout` | `expirado`), `ip?`, `userAgent?`, `createdAt`.
+
+### `TramiteMaestro` (nuevo)
+Catálogo institucional de trámites. Campos: `codigo` (unique, ej. `PAS-PRIM`), `nombre`, `categoria?`, `descripcion?`, `requisitos[]`, `duracionEstimada?` (minutos), `activo`, `createdAt`, `updatedAt`. Sembrado vía `scripts/seed-tramites.js`.
+
+### `ActivityLog` — extendido para auditoría 360°
+Campos nuevos sobre la base existente: `realizadoPorId?`, `entidad?` (`cita` | `ciudadano` | `usuario_admin` | `banner` | `valija` | `fecha_bloqueada` | `sesion` | `reporte` | `setting`), `entidadId?`, `accion?` (`crear` | `editar` | `eliminar` | `cambio_estado` | `login_ok` | `login_fail` | `logout` | `cambio_permisos` | `exportar`), `ip?`, `userAgent?`, `antes?` (JSON snapshot pre-cambio), `despues?` (JSON snapshot post-cambio). Índices: `(createdAt desc)`, `(entidad, createdAt)`, `(realizadoPorId, createdAt)`, `(ciudadanoEmail)`.
+
+**Inmutabilidad operativa**: no se expone borrado de `ActivityLog` desde el panel — solo cascadas técnicas al borrar la entidad principal.
+
+**Política de sanitización**: el helper `lib/audit.js` aplica allowlist por entidad antes de serializar `antes`/`despues`. Campos `password`, `verifyCode`, `verifyExpiry`, `buzonLastRead` jamás se persisten en logs.
+
 ---
 
 ## 5. Endpoints
@@ -178,7 +191,23 @@ Configuración dinámica clave-valor (usada por `/api/config`).
 
 **Fechas bloqueadas:** `GET`, `POST`, `DELETE`.
 
-**Usuarios admin** (solo superadmin): CRUD con validación de módulos permitidos.
+**Usuarios admin** (solo superadmin): CRUD con validación de módulos permitidos. Cada operación se audita con `entidad='usuario_admin'`, captura `antes`/`despues` (sin password) y diferencia `accion='cambio_permisos'` cuando varían `role` o `permisos[]`.
+
+### Reportería (`/api/admin/reportes/*`, **solo superadmin**)
+
+| Endpoint | Función |
+|---|---|
+| `GET /reportes/ciudadanos` | Padrón paginado con filtros (q, tipoDocumento, verified, esInvitado, desde, hasta) |
+| `GET /reportes/ciudadanos/export` | XLSX completo del filtro |
+| `GET /reportes/citas` | Citas paginadas con filtros (status, origen, tramite, ciudadano, valijaSerial, rangos de fecha cita y fecha solicitud) + resumen por estado |
+| `GET /reportes/citas/export` | XLSX completo del filtro |
+| `GET /reportes/maestro` | Catálogo `TramiteMaestro` + volumetría (30d, año) |
+| `GET /reportes/maestro/export` | XLSX con dos hojas: principal + Requisitos desnormalizados |
+| `GET /reportes/auditoria` | `ActivityLog` paginado con filtros (entidad, accion, realizadoPor, ciudadanoEmail, ip, rango fecha) |
+| `GET /reportes/auditoria/export` | XLSX con dos hojas: Auditoría + Sesiones admin |
+| `GET /reportes/auditoria/sesiones` | `SessionLog` paginado (filtros email, tipo, rango) |
+
+Cada `*/export` genera un `ActivityLog` con `entidad='reporte', accion='exportar'`, registrando el reporte solicitado, filtros aplicados y nº de filas. Trazabilidad de quién extrae qué.
 
 ---
 

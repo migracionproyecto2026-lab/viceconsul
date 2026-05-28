@@ -215,6 +215,27 @@ Ciclo de vida de una valija:
 
 ---
 
+## 10.ter Reportería (solo superadministrador)
+
+Menú **Reportería** → cuatro reportes exportables a Excel sobre toda la operación. Cada exportación queda registrada en la bitácora con autor, IP, filtros aplicados y número de filas (trazabilidad de quién extrajo qué información).
+
+| Reporte | Para qué sirve |
+|---|---|
+| **Ciudadanos** | Padrón completo con verificación, origen (cuenta propia / invitado web), total de citas y último trámite. Filtros: búsqueda libre, tipo de documento, verificado, origen, rango de fecha de registro. |
+| **Citas por estatus** | Estado de cada cita con Ticket, Folio de valija, fecha de solicitud (con hora), origen (web / panel) y estado de la valija. Resumen por estado en la parte superior. Filtros: ciudadano, trámite, estado, origen, rango fecha cita, rango fecha solicitud, folio de valija. |
+| **Maestro de trámites** | Catálogo institucional con código, nombre, requisitos, duración estimada y volumetría (últimos 30 días y año en curso). Filtros: búsqueda, categoría, activo/inactivo. |
+| **Auditoría transaccional** | Bitácora completa de movimientos: sesiones admin (logins ok/fallidos/logout), creación/edición/eliminación de citas y ciudadanos, cambios de permisos, valijas, banners, fechas bloqueadas. Filtros: entidad, acción, autor, email del ciudadano afectado, IP, rango de fecha. Cada fila tiene un botón "Ver" para inspeccionar los valores anteriores y posteriores del cambio. |
+
+Cómo usar:
+
+1. Click en la tarjeta del reporte → se abre el visor con filtros, tabla paginada y botón **Exportar Excel**.
+2. Ajusta los filtros: la tabla se refresca automáticamente al escribir o seleccionar.
+3. **Exportar Excel**: descarga un archivo `.xlsx` con todos los registros que cumplen el filtro actual (sin paginación). El archivo tiene cabecera con la marca institucional.
+
+> El reporte de Auditoría nunca incluye contraseñas ni códigos de verificación. La política de sanitización del sistema garantiza que los snapshots "antes/después" no contengan datos sensibles.
+
+---
+
 ## 11. Buenas prácticas
 
 - Confirmar siempre la cita el día antes (cambia estado de **pendiente** a **confirmada**).
