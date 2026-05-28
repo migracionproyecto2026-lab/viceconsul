@@ -1803,20 +1803,23 @@
     }
 
     // ── Polling automático (30 s) ──────────────────────────────────────────────
+    // refreshStats() corre SIEMPRE para mantener los badges del sidebar al día
+    // sin importar en qué tab esté el usuario. Además, si el tab activo tiene
+    // un loader registrado, también se llama.
     const POLL_INTERVAL = 30000
-    const POLL_TABS = { citas: loadCitas, dashboard: loadDashboard }
+    const POLL_TABS = { citas: loadCitas, dashboard: loadDashboard, buzon: () => typeof loadBuzon === 'function' && loadBuzon() }
     let _pollTimer = null
     function _modalAbierto() { return !!document.querySelector('.mo.open') }
     function _resetPoll() {
       clearInterval(_pollTimer)
-      const fn = POLL_TABS[_activeTab]
-      if (!fn) return
       _pollTimer = setInterval(() => {
         if (_modalAbierto() || document.hidden) return
-        fn()
+        refreshStats()
+        const fn = POLL_TABS[_activeTab]
+        if (fn) fn()
       }, POLL_INTERVAL)
     }
-    document.addEventListener('visibilitychange', () => { if (!document.hidden) _resetPoll() })
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) { refreshStats(); _resetPoll() } })
 
     // ── Modales ────────────────────────────────────────────────────────────────
     function openModal(id) { document.getElementById(id).classList.add('open') }
@@ -1824,24 +1827,40 @@
     document.querySelectorAll('.mo').forEach(m => m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open') }))
 
     // ── Dashboard ──────────────────────────────────────────────────────────────
+    // Actualiza un badge: si el valor es 0 o falsy, lo oculta. Si tiene valor,
+    // lo muestra. Antes solo se asignaba cuando >0, así que un contador que
+    // bajaba a 0 quedaba mostrando el número anterior (notificaciones fantasma).
+    function _setBadge(id, valor) {
+      const b = document.getElementById(id); if (!b) return
+      const n = Number(valor) || 0
+      if (n > 0) { b.textContent = n > 99 ? '99+' : String(n); b.style.display = 'inline' }
+      else { b.textContent = ''; b.style.display = 'none' }
+    }
+
+    // Refresca solo los contadores del sidebar y stats — barato, se puede
+    // llamar desde cualquier tab para mantener las notificaciones al día.
+    async function refreshStats() {
+      const s = await api('GET', '/api/admin/stats'); if (!s) return null
+      const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v ?? '—' }
+      set('s-c', s.totalCiudadanos); set('s-v', s.ciudadanosVerificados)
+      set('s-p', s.citasPendientes); set('s-h', s.citasHoy)
+      set('s-s', s.citasSemana); set('s-f', s.docPendientes ?? '—')
+      set('s-sc', s.citasSinCuenta ?? '—')
+      _setBadge('nb-citas', s.citasPendientes)
+      _setBadge('nb-crm', s.docPendientes)
+      _setBadge('nb-buzon', s.logsSinLeer)
+      return s
+    }
+
     async function loadDashboard() {
       document.getElementById('fecha-hoy').textContent = new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
-      const s = await api('GET', '/api/admin/stats'); if (!s) return
-      document.getElementById('s-c').textContent = s.totalCiudadanos
-      document.getElementById('s-v').textContent = s.ciudadanosVerificados
-      document.getElementById('s-p').textContent = s.citasPendientes
-      document.getElementById('s-h').textContent = s.citasHoy
-      document.getElementById('s-s').textContent = s.citasSemana
-      document.getElementById('s-f').textContent = s.docPendientes ?? '—'
-      if (s.citasPendientes > 0) { const b = document.getElementById('nb-citas'); b.textContent = s.citasPendientes; b.style.display = 'inline' }
-      if ((s.docPendientes || 0) > 0) { const b = document.getElementById('nb-crm'); b.textContent = s.docPendientes; b.style.display = 'inline' }
-      if (s.logsSinLeer > 0) { const b = document.getElementById('nb-buzon'); b.textContent = s.logsSinLeer; b.style.display = 'inline' }
-      document.getElementById('s-sc').textContent = s.citasSinCuenta ?? '—'
+      const s = await refreshStats(); if (!s) return
 
       const today = new Date().toISOString().split('T')[0]
-      const citas = await api('GET', `/api/admin/citas?fecha=${today}`)
+      const resp = await api('GET', `/api/admin/citas?fecha=${today}`)
+      const citas = (resp && Array.isArray(resp.citas)) ? resp.citas : []
       const el = document.getElementById('citas-hoy')
-      if (!citas || !citas.length) { el.innerHTML = '<p style="color:var(--gris-claro);font-size:.88rem;padding:16px 0;">No hay citas programadas para hoy.</p>'; renderChartEstados(citas); return }
+      if (!citas.length) { el.innerHTML = '<p style="color:var(--gris-claro);font-size:.88rem;padding:16px 0;">No hay citas programadas para hoy.</p>'; renderChartEstados([]); return }
       el.innerHTML = `<div class="tw"><table><thead><tr><th>Hora</th><th>Ciudadano</th><th>Trámite</th><th>Estado</th></tr></thead><tbody>${citas.map(c => { const i = getCitaInfo(c); return `<tr><td><strong>${c.hora}</strong></td><td>${i.nombre}</td><td>${c.tramite}</td><td>${badge(c.status)}</td></tr>` }).join('')
         }</tbody></table></div>`
       renderChartEstados(citas)
@@ -2323,8 +2342,45 @@
     }
 
     // ── Buzón ──────────────────────────────────────────────────────────────────
-    const LOG_COLORS = { creacion: 'dot-creacion', cancelacion: 'dot-cancelacion', reagendamiento: 'dot-reagendamiento', inasistencia: 'dot-inasistencia', confirmacion: 'dot-confirmacion' }
-    const LOG_LABELS = { creacion: 'Nueva cita', cancelacion: 'Cancelación', reagendamiento: 'Reagendamiento', inasistencia: 'Inasistencia', confirmacion: 'Confirmación' }
+    // Mapa exhaustivo de tipos emitidos por el backend (lib/audit + logActividad)
+    const LOG_COLORS = {
+      creacion: 'dot-creacion', nueva_cita_web: 'dot-creacion',
+      cancelacion: 'dot-cancelacion',
+      reagendamiento: 'dot-reagendamiento',
+      inasistencia: 'dot-inasistencia',
+      confirmacion: 'dot-confirmacion',
+      status_confirmada: 'dot-confirmacion', status_completada: 'dot-confirmacion',
+      status_en_proceso: 'dot-reagendamiento', status_asistencia_tarde: 'dot-reagendamiento',
+      status_cancelada: 'dot-cancelacion', status_inasistencia: 'dot-inasistencia',
+      valija_creada: 'dot-creacion', valija_enviada: 'dot-reagendamiento', valija_recibida: 'dot-confirmacion',
+      documento_recibido: 'dot-creacion', registro_finalizado: 'dot-confirmacion',
+      cita_eliminada: 'dot-cancelacion', ciudadano_eliminado: 'dot-cancelacion',
+      ciudadano_editado: 'dot-reagendamiento',
+      usuario_admin_creado: 'dot-creacion', usuario_admin_editado: 'dot-reagendamiento',
+      usuario_admin_eliminado: 'dot-cancelacion', usuario_admin_permisos: 'dot-reagendamiento',
+      banner_creado: 'dot-creacion', banner_editado: 'dot-reagendamiento', banner_eliminado: 'dot-cancelacion',
+      fecha_bloqueada: 'dot-reagendamiento', fecha_desbloqueada: 'dot-creacion',
+      login_ok: 'dot-confirmacion', login_fail: 'dot-cancelacion', logout: 'dot-reagendamiento',
+    }
+    const LOG_LABELS = {
+      creacion: 'Nueva cita', nueva_cita_web: 'Nueva cita (web)',
+      cancelacion: 'Cancelación',
+      reagendamiento: 'Reagendamiento',
+      inasistencia: 'Inasistencia',
+      confirmacion: 'Confirmación',
+      status_confirmada: 'Cita confirmada', status_completada: 'Cita completada',
+      status_en_proceso: 'Cita en proceso', status_asistencia_tarde: 'Asistencia tarde',
+      status_cancelada: 'Cita cancelada', status_inasistencia: 'Inasistencia',
+      valija_creada: 'Valija creada', valija_enviada: 'Valija enviada', valija_recibida: 'Valija recibida',
+      documento_recibido: 'Documento recibido', registro_finalizado: 'Registro finalizado',
+      cita_eliminada: 'Cita eliminada', ciudadano_eliminado: 'Ciudadano eliminado',
+      ciudadano_editado: 'Ciudadano editado',
+      usuario_admin_creado: 'Usuario admin creado', usuario_admin_editado: 'Usuario admin editado',
+      usuario_admin_eliminado: 'Usuario admin eliminado', usuario_admin_permisos: 'Cambio de permisos',
+      banner_creado: 'Aviso creado', banner_editado: 'Aviso editado', banner_eliminado: 'Aviso eliminado',
+      fecha_bloqueada: 'Fecha bloqueada', fecha_desbloqueada: 'Fecha desbloqueada',
+      login_ok: 'Inicio de sesión', login_fail: 'Login fallido', logout: 'Cierre de sesión',
+    }
 
     let _buzonLastRead = localStorage.getItem('buzonLastRead_' + (window._userId || '')) ? new Date(localStorage.getItem('buzonLastRead_' + (window._userId || ''))) : new Date(0)
 
@@ -2333,18 +2389,18 @@
       const d = await api('GET', `/api/admin/bitacora?tipo=${tipo}&page=${page}`)
       const logs = (d && d.logs) || []
       const el = document.getElementById('buzon-list')
-      if (!logs.length) { el.innerHTML = '<p style="color:var(--gris-claro);font-size:.88rem;">Sin registros.</p>'; return }
-
-      // Update badge based on local lastRead
-      const sinLeer = logs.filter(l => new Date(l.createdAt) > _buzonLastRead).length
-      const nb = document.getElementById('nb-buzon')
-      if (sinLeer > 0) { nb.textContent = sinLeer; nb.style.display = 'inline' } else { nb.textContent = ''; nb.style.display = 'none' }
+      if (!logs.length) {
+        el.innerHTML = '<p style="color:var(--gris-claro);font-size:.88rem;">Sin registros.</p>'
+        // Refresca el badge global por si el sin-leer cambió a 0
+        refreshStats()
+        return
+      }
 
       el.innerHTML = `<div style="display:flex;justify-content:flex-end;margin-bottom:10px;">
     <button class="btn-o" onclick="marcarTodoLeido()" style="font-size:.78rem;padding:5px 10px;"><i class="bi bi-check2-all"></i> Marcar todo como leído</button>
   </div>`+ logs.map(l => {
         const col = LOG_COLORS[l.tipo] || 'dot-creacion'
-        const lbl = LOG_LABELS[l.tipo] || l.tipo
+        const lbl = LOG_LABELS[l.tipo] || (l.tipo || '').replace(/_/g, ' ')
         const fecha = new Date(l.createdAt).toLocaleString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
         const esNuevo = new Date(l.createdAt) > _buzonLastRead
         let desc = l.notaInterna || ''
@@ -3042,7 +3098,7 @@
 
       cargarFechasBloqueadas()
       loadDashboard()
-      setInterval(() => { if (document.getElementById('tab-dashboard').classList.contains('active')) loadDashboard() }, 60000)
+      _resetPoll() // polling 30s: stats globales + loader del tab activo
     }
 
     // ── Efemérides ─────────────────────────────────────────────────────────────
