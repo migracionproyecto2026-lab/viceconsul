@@ -80,7 +80,9 @@ El sistema gestiona citas para los trámites consulares competencia del Vicecons
 
 Toda transición queda registrada en **bitácora** (`ActivityLog`) con autor, fecha y nota.
 
-**Folio de la cita.** Cada cita recibe al crearse un folio único (`VCNE-YYYY-NNNN`). El folio se entrega al ciudadano en cada correo y se usa como referencia institucional. **El folio no contiene ningún dato personal**; por sí solo no permite identificar al ciudadano.
+**Ticket de la cita.** Cada cita recibe al crearse un **Ticket** único (`VCNE-AAAA-NNNN`). Es el identificador del trámite del ciudadano: se entrega en cada correo y se muestra en la lista de citas. No contiene datos personales; por sí solo no permite identificar al ciudadano.
+
+**Folio de la valija.** Al cerrar el día, los trámites *completados* se agrupan en una **valija** con su propio identificador (`VAL-AAAA-NNNN`), llamado **Folio**. La columna *Folio* de la lista de citas queda vacía hasta que el trámite es asignado a una valija.
 
 ---
 

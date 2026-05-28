@@ -47,7 +47,12 @@ Verá tarjetas con:
 ## 4. Gestión de citas
 
 ### Ver citas
-En el menú **Citas** verá la lista. La primera columna es el **Folio** (ej. `VCNE-2026-0001`): es el identificador único del trámite, no contiene datos personales y se envía al ciudadano en cada correo. Sirve como referencia institucional.
+En el menú **Citas** verá la lista. Las dos primeras columnas son los identificadores del trámite:
+
+- **Ticket** (ej. `VCNE-2026-0001`) — identificador único del trámite del ciudadano. Se genera **en el momento de crear la cita** y se le envía por correo. Cada ciudadano recibe un ticket distinto por cada trámite que solicita.
+- **Folio** (ej. `VAL-2026-0001`) — identificador de la **valija diplomática** que contiene este trámite. Aparece vacío (`—`) hasta que se ejecuta **Cerrar día** y el trámite queda agrupado en una valija.
+
+Ningún identificador contiene datos personales del ciudadano.
 
 Puede filtrar por:
 - fecha exacta
@@ -156,14 +161,16 @@ El sistema envía automáticamente:
 | Cuándo | Quién recibe | Asunto |
 |--------|--------------|--------|
 | Registro nuevo | Ciudadano | Código de verificación |
-| Solicitud de cita creada | Ciudadano | Solicitud recibida [folio] |
-| Cita confirmada por el equipo | Ciudadano | Cita confirmada [folio] |
-| Cita reagendada por el equipo | Ciudadano | Cita reagendada [folio] |
+| Solicitud de cita creada | Ciudadano | Solicitud recibida [ticket] |
+| Cita confirmada por el equipo | Ciudadano | Cita confirmada [ticket] |
+| Cita reagendada por el equipo | Ciudadano | Cita reagendada [ticket] |
 | 1 hora antes | Ciudadano | Recordatorio de cita |
-| Cancelación | Ciudadano | Cancelación de cita [folio] |
-| Inasistencia | Ciudadano | Registro de inasistencia [folio] |
+| Cancelación | Ciudadano | Cancelación de cita [ticket] |
+| Inasistencia | Ciudadano | Registro de inasistencia [ticket] |
 | Valija marcada **enviada** | Cada ciudadano dentro de la valija | Su trámite ha sido enviado al Consulado General |
 | Valija marcada **recibida** | Cada ciudadano dentro de la valija | Su trámite está en revisión |
+
+Los correos referencian al **Ticket** del trámite. Los correos de valija añaden además el **Folio** de la valija que viaja al Consulado General.
 
 Cada correo incluye un botón de **WhatsApp** con un mensaje pre-rellenado que ya menciona el nombre del ciudadano y el folio del trámite, para que el contacto sea más rápido.
 
@@ -185,7 +192,7 @@ Ciclo de vida de una valija:
    - La valija pasa a estado *recibida* y queda marcada con la fecha de recepción.
    - **Se envía automáticamente un correo a cada ciudadano** indicando que su trámite está en revisión.
 
-> El número de valija y los folios de los trámites son nuestro registro institucional. No contienen datos personales por sí mismos.
+> El **Folio** (serial de la valija, `VAL-AAAA-NNNN`) y los **Tickets** de los trámites (`VCNE-AAAA-NNNN`) son el registro institucional. No contienen datos personales por sí mismos.
 
 ---
 

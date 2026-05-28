@@ -101,12 +101,19 @@ Campos clave: `serial` (folio público, ej. `VCNE-2026-0001`, único), `citizenI
 
 Status: `pendiente` → `confirmada` → `en_proceso` → `asistencia_tarde` / `completada` / `cancelada` / `inasistencia`.
 
-**Folio (`serial`)**: es la referencia institucional del trámite. No contiene datos personales — se genera atómicamente vía `Counter` por año (`VCNE-YYYY-NNNN`). Se muestra al ciudadano en cada correo y al equipo en la lista de citas.
+**Identificadores trazables** (sin datos personales):
+
+| UI | Modelo | Formato | Cuándo se crea |
+|----|--------|---------|----------------|
+| **Ticket** | `Appointment.serial` | `VCNE-YYYY-NNNN` | Al crear la cita (público o panel). Se incluye en cada correo al ciudadano. |
+| **Folio** | `Valija.serial` | `VAL-YYYY-NNNN` | Al ejecutar `POST /valijas/cerrar-dia`. Antes el Appointment tiene `valijaId=null` y la columna Folio aparece vacía en el panel. |
+
+Ambos serial se generan atómicamente vía `Counter` (`$inc` MongoDB) por prefijo y año (`lib/serial.js → nextSerial(prefix)`).
 
 ### `Valija`
-Bolsa diplomática que agrupa las citas *completadas* listas para enviar al Consulado General. Serial propio (`VAL-YYYY-NNNN`).
+Bolsa diplomática que agrupa las citas *completadas* listas para enviar al Consulado General. Identificada por **Folio** (`serial`).
 
-Estados: `abierta` → `enviada` → `recibida`. Cada transición a `enviada` o `recibida` dispara correo automático a todos los ciudadanos cuyos trámites están dentro de la valija (con correo registrado).
+Estados: `abierta` → `enviada` → `recibida`. Cada transición a `enviada` o `recibida` dispara correo automático a todos los ciudadanos cuyos trámites están dentro de la valija (con correo registrado). El estado `abierta` es interno.
 
 ### `ActivityLog`
 Auditoría inmutable de toda acción consular.
@@ -178,6 +185,9 @@ Configuración dinámica clave-valor (usada por `/api/config`).
 - **Rate limit:** login 10 req / 15 min, API 120 req / 60s.
 - **CORS** allowlist explícita (`server.js:21-31`).
 - **WAF-lite path blocker:** rechaza paths con `wp-`, `.env`, `.git`, `xmlrpc`, `sitemap`, `etc/passwd`, traversal.
+- **Redirect HTTP→HTTPS** (server.js): en `NODE_ENV=production`, cualquier petición con `x-forwarded-proto=http` se 301-redirige a `https://`.
+- **CSP** estricta (`default-src 'self'`, allowlist explícita para cdn.jsdelivr.net / fonts.googleapis.com / api.resend.com).
+- **Cookie de sesión** con `sameSite=strict` en producción (`lax` en dev).
 - **Setup endpoint** bloqueado tras crear primer admin.
 - **Roles** validados en `requireAdmin` (lib/auth.js); `requireSuperadmin` adicional para gestión de usuarios.
 - **Auditoría** en cada acción mutativa vía `ActivityLog`.
