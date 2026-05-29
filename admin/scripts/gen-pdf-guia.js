@@ -27,6 +27,6 @@ async function genPDF(srcHtml, outPdf, margin) {
   await genPDF(
     path.join(projectRoot, 'entregable', 'stack-y-costos-2paginas.html'),
     path.join(projectRoot, 'entregable', 'Stack-Seguridad-Costos.pdf'),
-    { top: '16mm', bottom: '16mm', left: '14mm', right: '14mm' },
+    { top: '14mm', bottom: '14mm', left: '13mm', right: '13mm' },
   )
 })().catch(e => { console.error(e); process.exit(1) })

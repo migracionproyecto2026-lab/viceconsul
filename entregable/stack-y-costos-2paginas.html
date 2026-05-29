@@ -4,31 +4,32 @@
 <meta charset="UTF-8">
 <title>Stack, seguridad y costos — Viceconsulado Honorario de España, Nueva Esparta</title>
 <style>
-  @page { size: A4 portrait; margin: 16mm 14mm 16mm 14mm; }
+  @page { size: A4 portrait; margin: 14mm 13mm 14mm 13mm; }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
-  body { font-family: Arial, Helvetica, sans-serif; color: #2b2b2b; line-height: 1.5; font-size: 10.8pt; background: #fff; }
+  body { font-family: Arial, Helvetica, sans-serif; color: #2b2b2b; line-height: 1.32; font-size: 9.2pt; background: #fff; }
   h1, h2, h3, h4 { font-family: Georgia, "Times New Roman", serif; margin: 0; color: #AA151B; }
   .page { page-break-after: always; padding: 0; }
   .page:last-child { page-break-after: auto; }
-  .rule { height: 3px; background: linear-gradient(90deg, #AA151B 0%, #C9A227 100%); border-radius: 2px; margin-bottom: 10px; }
-  .caja-dorada { border-left: 4px solid #C9A227; background: #fbf6ec; padding: 10px 14px; border-radius: 0 8px 8px 0; margin: 10px 0; }
-  table { width: 100%; border-collapse: collapse; font-size: 10pt; margin: 6px 0; }
-  th, td { border: 1px solid #d8d5cf; padding: 5px 9px; text-align: left; vertical-align: top; }
-  th { background: #faf8f3; color: #AA151B; font-family: Georgia, serif; font-weight: 600; }
-  ul { margin: 4px 0 6px 18px; padding: 0; }
-  li { margin-bottom: 3px; }
-  code { font-family: Menlo, Consolas, monospace; background: #f4f4f5; padding: 1px 5px; border-radius: 3px; font-size: 9.5pt; color: #AA151B; }
-  .footer-page { margin-top: 8mm; font-family: Arial, sans-serif; font-size: 8pt; color: #888; text-align: center; border-top: 1px solid #eee; padding-top: 4mm; }
-  .head-pag { text-align: center; margin-bottom: 4mm; }
-  .head-pag h1 { font-size: 18pt; }
-  .head-pag .sub { color: #6b6b6b; font-size: 10pt; margin-top: 3mm; font-family: Georgia, serif; }
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .bloque { border: 1px solid #ece7db; background: #fff; border-radius: 8px; padding: 9px 12px; }
-  .bloque h4 { color: #AA151B; font-size: 11pt; margin-bottom: 3px; }
-  .bloque ul { font-size: 10pt; margin-top: 2px; }
-  .lema { background: #fff7f7; border: 2px solid #AA151B; border-radius: 10px; padding: 10px 14px; margin-top: 8px; }
-  .lema b { color: #AA151B; font-family: Georgia, serif; font-size: 11pt; }
+  .rule { height: 3px; background: linear-gradient(90deg, #AA151B 0%, #C9A227 100%); border-radius: 2px; margin-bottom: 8px; }
+  .caja-dorada { border-left: 4px solid #C9A227; background: #fbf6ec; padding: 8px 12px; border-radius: 0 8px 8px 0; margin: 8px 0; font-size: 9.8pt; }
+  table { width: 100%; border-collapse: collapse; font-size: 8.8pt; margin: 3px 0; }
+  th, td { border: 1px solid #d8d5cf; padding: 3px 7px; text-align: left; vertical-align: top; }
+  th { background: #faf8f3; color: #AA151B; font-family: Georgia, serif; font-weight: 600; font-size: 8.8pt; }
+  ul { margin: 2px 0 3px 15px; padding: 0; }
+  li { margin-bottom: 1px; }
+  code { font-family: Menlo, Consolas, monospace; background: #f4f4f5; padding: 1px 5px; border-radius: 3px; font-size: 9pt; color: #AA151B; }
+  .footer-page { margin-top: 6mm; font-family: Arial, sans-serif; font-size: 7.5pt; color: #888; text-align: center; border-top: 1px solid #eee; padding-top: 3mm; }
+  .head-pag { text-align: center; margin-bottom: 3mm; }
+  .head-pag h1 { font-size: 16pt; }
+  .head-pag .sub { color: #6b6b6b; font-size: 9.5pt; margin-top: 2mm; font-family: Georgia, serif; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+  .bloque { border: 1px solid #ece7db; background: #fff; border-radius: 6px; padding: 4px 8px; }
+  .bloque h4 { color: #AA151B; font-size: 9.5pt; margin-bottom: 1px; }
+  .bloque ul { font-size: 8.6pt; margin-top: 1px; line-height: 1.28; }
+  .lema { background: #fff7f7; border: 2px solid #AA151B; border-radius: 10px; padding: 8px 12px; margin-top: 6px; }
+  .lema b { color: #AA151B; font-family: Georgia, serif; font-size: 10.5pt; }
+  h2.s { font-size: 11.5pt; margin-top: 4mm; }
 </style>
 </head>
 <body>
@@ -41,7 +42,7 @@
   </div>
   <div class="rule"></div>
 
-  <h2 style="font-size:13pt;margin-top:4mm;">1. Arquitectura</h2>
+  <h2 class="s">1. Arquitectura</h2>
   <div class="rule" style="height:2px;"></div>
   <p style="margin-top:4px;">La plataforma se compone de dos aplicaciones independientes que se comunican por canales cifrados:</p>
   <table>
@@ -56,7 +57,7 @@
     </tbody>
   </table>
 
-  <h2 style="font-size:13pt;margin-top:6mm;">2. Seguridad aplicada</h2>
+  <h2 class="s" style="margin-top:5mm;">2. Seguridad aplicada</h2>
   <div class="rule" style="height:2px;"></div>
   <div class="grid-2" style="margin-top:4px;">
     <div class="bloque">
@@ -123,7 +124,7 @@
   </div>
   <div class="rule"></div>
 
-  <h2 style="font-size:13pt;margin-top:4mm;">3. Dominio e infraestructura</h2>
+  <h2 class="s">3. Dominio e infraestructura</h2>
   <div class="rule" style="height:2px;"></div>
   <table>
     <thead><tr><th style="width:30%;">Recurso</th><th>Detalle actual</th></tr></thead>
@@ -137,7 +138,7 @@
     </tbody>
   </table>
 
-  <h2 style="font-size:13pt;margin-top:6mm;">4. Costos operativos vigentes</h2>
+  <h2 class="s" style="margin-top:5mm;">4. Costos operativos vigentes</h2>
   <div class="rule" style="height:2px;"></div>
   <p style="margin-top:4px;">La plataforma opera hoy con un coste mensual mínimo, sostenido por niveles gratuitos o de bajo coste de cada proveedor. Los importes son aproximados y están sujetos a cambios de tarifa por parte del proveedor.</p>
   <table>
@@ -153,7 +154,7 @@
   </table>
   <p style="margin-top:6px;font-size:9.5pt;color:#6b6b6b;"><b>Costo total mensual recurrente actual:</b> alrededor de 5 USD. La operación es sostenible para el viceconsulado honorario con presupuesto institucional mínimo, y el dimensionamiento permite escalar gradualmente sin reescribir la plataforma.</p>
 
-  <h2 style="font-size:13pt;margin-top:6mm;">5. Situación actual y evolución prevista</h2>
+  <h2 class="s" style="margin-top:5mm;">5. Situación actual y evolución prevista</h2>
   <div class="rule" style="height:2px;"></div>
   <ul style="margin-top:4px;">
     <li>La plataforma <b>funciona hoy en producción</b> con el dimensionamiento descrito; es adecuada al volumen real de citas del Viceconsulado Honorario y a las necesidades del personal.</li>

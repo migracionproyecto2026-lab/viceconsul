@@ -7,7 +7,7 @@
   @page { size: A4 portrait; margin: 18mm 16mm 18mm 16mm; }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
-  body { font-family: Arial, Helvetica, sans-serif; color: #2b2b2b; line-height: 1.55; font-size: 11.5pt; background: #fff; }
+  body { font-family: Arial, Helvetica, sans-serif; color: #2b2b2b; line-height: 1.48; font-size: 10.8pt; background: #fff; }
   h1, h2, h3, h4 { font-family: Georgia, "Times New Roman", serif; margin: 0; color: #AA151B; }
   .page { page-break-after: always; padding: 0; }
   .page:last-child { page-break-after: auto; }
@@ -15,9 +15,9 @@
   .caja { border: 1px solid #ece7db; background: #faf8f3; border-radius: 8px; padding: 12px 14px; margin: 10px 0; }
   .caja-dorada { border-left: 4px solid #C9A227; background: #fbf6ec; padding: 11px 14px; border-radius: 0 8px 8px 0; margin: 11px 0; }
   .caja-cred { background: #fff7f7; border: 2px solid #AA151B; border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
-  table { width: 100%; border-collapse: collapse; font-size: 10.5pt; margin: 8px 0; }
-  th, td { border: 1px solid #d8d5cf; padding: 6px 10px; text-align: left; vertical-align: top; }
-  th { background: #faf8f3; color: #AA151B; font-family: Georgia, serif; font-weight: 600; }
+  table { width: 100%; border-collapse: collapse; font-size: 9.8pt; margin: 6px 0; }
+  th, td { border: 1px solid #d8d5cf; padding: 4px 8px; text-align: left; vertical-align: top; }
+  th { background: #faf8f3; color: #AA151B; font-family: Georgia, serif; font-weight: 600; font-size: 9.8pt; }
   ul { margin: 6px 0 6px 18px; padding: 0; }
   li { margin-bottom: 4px; }
   code { font-family: Menlo, Consolas, monospace; background: #f4f4f5; padding: 1px 6px; border-radius: 3px; font-size: 10.5pt; color: #AA151B; }
@@ -39,10 +39,10 @@
   .step h4 { margin: 0 0 3px 0; font-size: 11pt; }
 
   /* Tareas guiadas */
-  .tarea { background: #fff; border-left: 4px solid #AA151B; border-radius: 0 8px 8px 0; padding: 9px 14px; margin: 9px 0; }
-  .tarea h4 { color: #AA151B; font-size: 11.5pt; margin-bottom: 4px; }
-  .tarea ol { margin: 4px 0 4px 18px; padding: 0; }
-  .tarea ol li { margin-bottom: 3px; }
+  .tarea { background: #fff; border-left: 4px solid #AA151B; border-radius: 0 8px 8px 0; padding: 7px 14px; margin: 6px 0; }
+  .tarea h4 { color: #AA151B; font-size: 11pt; margin-bottom: 3px; }
+  .tarea ol { margin: 3px 0 3px 18px; padding: 0; font-size: 11pt; }
+  .tarea ol li { margin-bottom: 2px; }
 </style>
 </head>
 <body>
@@ -93,6 +93,10 @@
   </table>
   <p style="font-size:9.5pt;color:#6b6b6b;margin-top:4px;">Cada movimiento operativo o administrativo queda en bitácora inmutable. Las altas y bajas de personal con acceso al panel generan, además del registro general, una transacción específica destacada para reconciliación de accesos.</p>
 
+  <h3 style="margin-top:10px;">Módulos del panel</h3>
+  <div class="rule" style="height:2px;"></div>
+  <p style="margin-top:4px;font-size:10.5pt;">El panel agrupa los módulos en cuatro áreas: <b>Operativa</b> (Dashboard, Gestión de Citas, Buzón / Bitácora, Ciudadanos, Registro incompleto, Valija Diplomática), <b>Configuración</b> (Avisos web, Fechas bloqueadas), <b>Administración</b> (Usuarios, solo superadmin) y <b>Reportería</b> (cuatro reportes Excel con acceso granular por permiso).</p>
+
   <div class="footer-page">Guía breve del Viceconsulado &middot; Página 2 de 6</div>
 </section>
 
@@ -122,6 +126,8 @@
   </table>
 
   <div class="caja-dorada"><b>Solo dos transiciones</b> generan notificación al ciudadano por correo: el paso de la valija a <i>enviada</i> y de <i>enviada</i> a <i>recibida</i>. Los demás estados son internos del gestor.</div>
+
+  <p style="font-size:10pt;color:#6b6b6b;margin-top:8px;">Cada correo al ciudadano incluye su Ticket, los datos de la cita y un botón de WhatsApp con un mensaje pre-rellenado (saludo + nombre + ticket + contexto del evento) que facilita el contacto si necesita aclaraciones.</p>
 
   <div class="footer-page">Guía breve del Viceconsulado &middot; Página 3 de 6</div>
 </section>
@@ -169,6 +175,20 @@
     </ol>
   </div>
 
+  <h3 style="margin-top:10px;">Estados de una cita</h3>
+  <div class="rule" style="height:2px;"></div>
+  <table>
+    <thead><tr><th style="width:24%;">Estado</th><th>Significado</th></tr></thead>
+    <tbody>
+      <tr><td><b>pendiente</b></td><td>Solicitud recibida, aún sin validar por el personal.</td></tr>
+      <tr><td><b>confirmada</b></td><td>Validada por el equipo; el ciudadano recibió correo.</td></tr>
+      <tr><td><b>en_proceso</b></td><td>El ciudadano está presente; se está atendiendo.</td></tr>
+      <tr><td><b>completada</b></td><td>Trámite atendido; queda lista para integrarse en valija.</td></tr>
+      <tr><td><b>cancelada</b></td><td>Cancelada por el equipo o por el ciudadano.</td></tr>
+      <tr><td><b>inasistencia</b></td><td>El ciudadano no se presentó (manual o automático tras tolerancia).</td></tr>
+    </tbody>
+  </table>
+
   <div class="footer-page">Guía breve del Viceconsulado &middot; Página 4 de 6</div>
 </section>
 
@@ -214,12 +234,9 @@
 
   <div class="tarea">
     <h4>3.9 Reportería institucional</h4>
-    Disponible para el superadministrador y para los roles habilitados expresamente. Cada exportación queda registrada en la bitácora con autor, filtros aplicados y nº de filas.
+    Disponible para roles habilitados expresamente. Cada exportación queda en bitácora con autor, filtros y nº de filas.
     <ol>
-      <li><b>Ciudadanos</b> — padrón con verificación, origen y total de citas.</li>
-      <li><b>Citas por estatus</b> — flujo completo con Ticket, Folio, fecha de solicitud, estado y origen.</li>
-      <li><b>Maestro de trámites</b> — catálogo institucional con requisitos y volumetría.</li>
-      <li><b>Auditoría transaccional</b> — bitácora completa con sesiones, cambios de personal e historial de cambios (reporte sensible).</li>
+      <li><b>Ciudadanos</b>, <b>Citas por estatus</b>, <b>Maestro de trámites</b> y <b>Auditoría transaccional</b> — todos exportables a Excel.</li>
     </ol>
   </div>
 
@@ -262,6 +279,16 @@
     <tr><th>WhatsApp ciudadanía</th><td>+58 424-8429665</td></tr>
     <tr><th>Sitio público</th><td>https://www.viceconsulado-nuevaesparta.com</td></tr>
     <tr><th>Panel administrativo</th><td>https://admin.viceconsulado-nuevaesparta.com</td></tr>
+  </table>
+
+  <h3 style="margin-top:12px;">Identificadores institucionales</h3>
+  <div class="rule" style="height:2px;"></div>
+  <table>
+    <thead><tr><th style="width:22%;">Tipo</th><th style="width:28%;">Formato</th><th>Origen</th></tr></thead>
+    <tbody>
+      <tr><td><b>Ticket</b></td><td><code>VCNE-AAAA-NNNN</code></td><td>Se genera al crear la cita. Llega al ciudadano por correo.</td></tr>
+      <tr><td><b>Folio</b></td><td><code>VAL-AAAA-NNNN</code></td><td>Se genera al cerrar el día. Identifica la valija enviada al Consulado General.</td></tr>
+    </tbody>
   </table>
 
   <div class="caja-dorada" style="margin-top:14px;"><b>Continuidad:</b> el sistema sobrevive a cambios de personal. La bitácora institucional registra toda la operación y los identificadores Ticket y Folio permiten reconstruir cualquier trámite sin depender de memoria individual.</div>
