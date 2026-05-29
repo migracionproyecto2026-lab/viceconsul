@@ -7,7 +7,13 @@ video-tutorial-kit/public/recordings/
 video-tutorial-kit/public/screenshots/
 video-tutorial-kit/public/audio/
 entregable/*.pdf
+entregable/.video-frames/
+entregable/.video-test-*.png
+entregable/*.mp4
 .claude/
+
+# Carpetas de videos generados por la IA (HTML+Stage+__seek)
+Viceconsulado _ Video/
 
 # Archivos del sistema anterior (Google Apps Script) y scripts internos
 web/scripts/apps-script-citas.js
