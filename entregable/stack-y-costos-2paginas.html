@@ -10,9 +10,10 @@
   body { font-family: Arial, Helvetica, sans-serif; color: #2b2b2b; line-height: 1.32; font-size: 9.2pt; background: #fff; }
   h1, h2, h3, h4 { font-family: Georgia, "Times New Roman", serif; margin: 0; color: #AA151B; }
   .page { page-break-after: always; padding: 0; }
-  .page:last-child { page-break-after: auto; }
+  .page:last-child { page-break-after: avoid; }
+  .page:last-child::after { content: none !important; }
   .rule { height: 3px; background: linear-gradient(90deg, #AA151B 0%, #C9A227 100%); border-radius: 2px; margin-bottom: 8px; }
-  .caja-dorada { border-left: 4px solid #C9A227; background: #fbf6ec; padding: 8px 12px; border-radius: 0 8px 8px 0; margin: 8px 0; font-size: 9.8pt; }
+  .caja-dorada { border-left: 4px solid #C9A227; background: #fbf6ec; padding: 6px 11px; border-radius: 0 8px 8px 0; margin: 6px 0; font-size: 9pt; }
   table { width: 100%; border-collapse: collapse; font-size: 8.8pt; margin: 3px 0; }
   th, td { border: 1px solid #d8d5cf; padding: 3px 7px; text-align: left; vertical-align: top; }
   th { background: #faf8f3; color: #AA151B; font-family: Georgia, serif; font-weight: 600; font-size: 8.8pt; }
