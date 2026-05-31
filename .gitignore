@@ -6,10 +6,10 @@ video-tutorial-kit/node_modules/
 video-tutorial-kit/public/recordings/
 video-tutorial-kit/public/screenshots/
 video-tutorial-kit/public/audio/
-entregable/*.pdf
-entregable/.video-frames/
-entregable/.video-test-*.png
-entregable/*.mp4
+# Entregables (PDF/HTML/video) — locales, NO van al repo público
+entregable/
+# Documentación interna del sistema — local / repo privado, no en el público
+docs/
 .claude/
 
 # Carpetas de videos generados por la IA (HTML+Stage+__seek)
