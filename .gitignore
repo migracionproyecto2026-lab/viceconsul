@@ -1,11 +1,8 @@
 # Notas locales con credenciales
 PENDIENTE*.txt
 
-# Artefactos pesados que NO van al repo (inflan el deploy de Railway)
-video-tutorial-kit/node_modules/
-video-tutorial-kit/public/recordings/
-video-tutorial-kit/public/screenshots/
-video-tutorial-kit/public/audio/
+# Kit de video — herramienta local, no va al repo público
+video-tutorial-kit/
 # Entregables (PDF/HTML/video) — locales, NO van al repo público
 entregable/
 # Documentación interna del sistema — local / repo privado, no en el público
@@ -14,22 +11,17 @@ docs/
 
 # Carpetas de videos generados por la IA (HTML+Stage+__seek)
 Viceconsulado _ Video/
+Viceconsulado _ Video Presentacion/
+Video Definitivo/
 
 # Archivos del sistema anterior (Google Apps Script) y scripts internos
 web/scripts/apps-script-citas.js
 web/docs/GUIA-INSTALACION.md
 web/docs/ERRORES-COMUNES.md
 
-# Scripts internos con credenciales / archivos locales de desarrollo
-admin/seed.js
-admin/seed-demo.js
-admin/scripts/crear-superadmin.js
-admin/prisma/seed.js
-admin/prisma/seed-banners.js
-admin/AGENTS.md
-admin/CLAUDE.md
-admin/CLAUDE.md
-admin/app/
+# El panel admin vive SOLO en el repo privado viceconsul-admin (Railway).
+# Esta copia local es legacy/desarrollo: jamás se publica en el repo público.
+admin/
 
 # Dependencies
 node_modules/
