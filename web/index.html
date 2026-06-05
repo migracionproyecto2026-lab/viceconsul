@@ -2123,9 +2123,12 @@ document.addEventListener('keydown', function(e){
 //  - Semana siguiente: martes a viernes (los lunes no están disponibles).
 //  - Semanas posteriores: solo si el viceconsulado las habilita expresamente.
 //  - Sábados y domingos: nunca disponibles.
+//  - Días habilitados puntualmente por el viceconsulado: disponibles aunque
+//    la regla de semanas los excluya (nunca sábados, domingos ni bloqueados).
 
 var _fechasBloqueadasPub = [];
 var _semanasHabilitadasPub = [];
+var _diasHabilitadosPub = [];
 
 function _lunesDeSemanaPub(d) {
   var x = new Date(d); x.setHours(12,0,0,0);
@@ -2142,6 +2145,7 @@ function evaluarDisponibilidadPub(fechaStr) {
   var manana = new Date(); manana.setHours(0,0,0,0); manana.setDate(manana.getDate() + 1);
   if (fechaStr < manana.toISOString().split('T')[0]) return { ok: false, motivo: 'Elija una fecha a partir de mañana' };
   if (_fechasBloqueadasPub.indexOf(fechaStr) !== -1) return { ok: false, motivo: 'Esta fecha no está disponible' };
+  if (_diasHabilitadosPub.indexOf(fechaStr) !== -1) return { ok: true };
   var lunesFecha = _lunesDeSemanaPub(d);
   var lunesActual = _lunesDeSemanaPub(new Date());
   var sa = Math.round((new Date(lunesFecha + 'T12:00:00') - new Date(lunesActual + 'T12:00:00')) / (7*24*60*60*1000));
@@ -2195,9 +2199,11 @@ function _initFechaInput() {
   Promise.all([
     fetch(apiBase + '/api/fechas-bloqueadas').then(function(r){return r.json()}).catch(function(){return []}),
     fetch(apiBase + '/api/semanas-habilitadas').then(function(r){return r.json()}).catch(function(){return []}),
+    fetch(apiBase + '/api/dias-habilitados').then(function(r){return r.json()}).catch(function(){return []}),
   ]).then(function(arr) {
     _fechasBloqueadasPub = (arr[0] || []).map(function(x){return x.fecha});
     _semanasHabilitadasPub = (arr[1] || []).map(function(x){return x.lunes});
+    _diasHabilitadosPub = (arr[2] || []).map(function(x){return x.fecha});
     _initFechaInput();
   }).catch(function() { _initFechaInput(); });
 })();
