@@ -486,6 +486,13 @@ select.form-input { appearance: auto; }
 }
 .slot-btn:hover { border-color: var(--rojo); color: var(--rojo); background: rgba(170,21,27,0.04); }
 .slot-btn.selected { border-color: var(--rojo); background: var(--rojo); color: white; }
+.slot-btn:disabled, .slot-btn.slot-blocked {
+  background: #f1efe9; color: #b8b3aa; border-color: #e2ded5;
+  cursor: not-allowed; text-decoration: line-through; opacity: .8;
+}
+.slot-btn:disabled:hover, .slot-btn.slot-blocked:hover {
+  border-color: #e2ded5; color: #b8b3aa; background: #f1efe9;
+}
 
 /* TEAM SECTION */
 .team-intro {
@@ -1505,6 +1512,8 @@ footer { background: #1a1a1a; margin-top: 60px; }
         <button type="button" class="slot-btn" data-hora="10:30" onclick="selectSlot(this)">10:30<br><span style="font-size:11px;font-weight:400">AM</span></button>
         <button type="button" class="slot-btn" data-hora="11:00" onclick="selectSlot(this)">11:00<br><span style="font-size:11px;font-weight:400">AM</span></button>
         <button type="button" class="slot-btn" data-hora="11:30" onclick="selectSlot(this)">11:30<br><span style="font-size:11px;font-weight:400">AM</span></button>
+        <button type="button" class="slot-btn" data-hora="12:00" onclick="selectSlot(this)">12:00<br><span style="font-size:11px;font-weight:400">PM</span></button>
+        <button type="button" class="slot-btn" data-hora="12:30" onclick="selectSlot(this)">12:30<br><span style="font-size:11px;font-weight:400">PM</span></button>
       </div>
       <input type="hidden" name="hora" id="horaInput">
       <div class="form-hint">Duración: 30 min por cita · Su hora queda sujeta a confirmación</div>
@@ -2190,6 +2199,25 @@ function _initFechaInput() {
     horaGroup.style.display = 'block';
     horaInput.value = '';
     resetSlots();
+    aplicarPlazasBloqueadas(this.value);
+  });
+}
+
+// Greyea las plazas horarias bloqueadas puntualmente para la fecha elegida.
+// Las plazas se guardan en el backend como `YYYY-MM-DD_HH:MM` y llegan dentro
+// de _fechasBloqueadasPub junto a los días completos.
+function aplicarPlazasBloqueadas(fecha) {
+  var bloqueadas = _fechasBloqueadasPub
+    .filter(function(f) { return f.indexOf(fecha + '_') === 0; })
+    .map(function(f) { return f.split('_')[1]; });
+  document.querySelectorAll('.slot-btn').forEach(function(b) {
+    var blocked = bloqueadas.indexOf(b.dataset.hora) !== -1;
+    b.disabled = blocked;
+    b.classList.toggle('slot-blocked', blocked);
+    if (blocked && b.classList.contains('selected')) {
+      b.classList.remove('selected');
+      document.getElementById('horaInput').value = '';
+    }
   });
 }
 
