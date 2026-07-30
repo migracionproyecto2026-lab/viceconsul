@@ -14,10 +14,43 @@
    CONFIGURACIÓN FÁCIL — CAMBIA ESTOS VALORES
    ============================================ */
 :root {
-  --rojo: #AA151B;
-  --rojo-oscuro: #8B1016;
-  --dorado: #F8CE46;
-  --dorado-oscuro: #C9A227;
+  /* ── COLOR DE MARCA — todo el tema sale de aqui ──────────────
+     --marca / --marca-oscuro : color principal (botones, enlaces, acentos)
+     --marca-rgb              : los mismos canales, para las rgba() con alfa
+     --realce / --realce-*    : color secundario (badges, filetes, bordes del hero)
+     --tinte / --tinte-borde  : fondos suaves derivados de la marca
+     --hero-a/b/c             : degradado de la cabecera
+     Cambiando estos valores cambia la piel entera del sitio.
+     El escudo de Espana (SVG en linea) NO usa estas variables a proposito:
+     es simbolo oficial y va siempre en rojo y gualda. */
+  --marca: #AA151B;
+  --marca-oscuro: #8B1016;
+  --marca-rgb: 170,21,27;
+  --realce: #F8CE46;
+  --realce-oscuro: #C9A227;
+  --realce-rgb: 248,206,70;
+  --tinte: #fdf0f0;
+  --tinte-borde: #f2d5d5;
+  --hero-a: #8B0000;
+  --hero-b: #500000;
+  --hero-c: #0a0a0a;
+
+  /* Rojo semantico: NO sigue a la marca. Con la marca en azul el rojo vuelve a
+     significar algo, y lo usan las dos cosas que deben destacar sobre el resto:
+       - los avisos (.slide-aviso)
+       - el Consulado General de Caracas, que Manuel pidio como distintivo */
+  --alerta: #AA151B;
+  --alerta-oscuro: #8B1016;
+  --alerta-rgb: 170,21,27;
+  --alerta-tinte: #FDF0F0;
+  --alerta-borde: #F2D5D5;
+
+  /* Alias heredados: el resto de la hoja sigue escrito con estos nombres */
+  --rojo: var(--marca);
+  --rojo-oscuro: var(--marca-oscuro);
+  --dorado: var(--realce);
+  --dorado-oscuro: var(--realce-oscuro);
+
   --verde-wa: #25D366;
   --fondo: #FAFAF7;
   --borde: #e8e5df;
@@ -66,7 +99,7 @@ a { color: var(--rojo); }
 
 /* Nombre: aparece al scrollear */
 .nav-brand { overflow: hidden; max-width: 0; opacity: 0; white-space: nowrap; transition: max-width 0.4s ease, opacity 0.3s ease; }
-.nav--scrolled .nav-brand { max-width: 260px; opacity: 1; }
+.nav--scrolled .nav-brand { max-width: 300px; opacity: 1; }
 .nav-title { font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 14px; line-height: 1.3; color: var(--texto); }
 .nav-sub   { font-family: 'DM Sans', sans-serif; font-size: 11px; color: var(--gris-claro); }
 
@@ -75,18 +108,35 @@ a { color: var(--rojo); }
   font-family: 'DM Sans', sans-serif;
   font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.4px;
+  letter-spacing: 0.2px;
   text-transform: uppercase;
   color: var(--gris);
   background: none;
   border: none;
   cursor: pointer;
-  padding: 8px 9px;
+  padding: 8px 7px;
   border-radius: 4px;
+  white-space: nowrap;
   transition: color 0.2s, background 0.2s;
 }
-.nav-btn:hover, .nav-btn.active { color: var(--rojo); background: rgba(170,21,27,0.06); }
+.nav-btn:hover, .nav-btn.active { color: var(--rojo); background: rgba(var(--marca-rgb),0.06); }
 a.nav-btn { text-decoration: none; display: inline-block; }
+
+/* ── FOCUS VISIBLE (accesibilidad teclado — WCAG 2.4.7) ── */
+a:focus-visible,
+button:focus-visible,
+.nav-btn:focus-visible,
+.back-btn:focus-visible,
+.btn:focus-visible,
+[tabindex]:focus-visible,
+.glosario-table a:focus-visible {
+  outline: 3px solid var(--rojo);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+/* no robar el anillo del ratón: solo teclado */
+a:focus:not(:focus-visible),
+button:focus:not(:focus-visible) { outline: none; }
 
 /* HAMBURGER */
 .hamburger { display: none; flex-direction: column; justify-content: center; gap: 5px; background: none; border: none; cursor: pointer; padding: 10px 6px; flex-shrink: 0; }
@@ -97,7 +147,7 @@ a.nav-btn { text-decoration: none; display: inline-block; }
 
 /* HERO */
 .hero {
-  background: linear-gradient(135deg, #8B0000 0%, #500000 50%, #0a0a0a 100%);
+  background: linear-gradient(135deg, var(--hero-a) 0%, var(--hero-b) 50%, var(--hero-c) 100%);
   padding: 60px 20px 64px;
   position: relative;
   overflow: hidden;
@@ -107,7 +157,7 @@ a.nav-btn { text-decoration: none; display: inline-block; }
   position: absolute;
   top: -40%; right: -10%;
   width: 600px; height: 600px;
-  background: radial-gradient(circle, rgba(248,206,70,0.10) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(var(--realce-rgb),0.10) 0%, transparent 70%);
   pointer-events: none;
 }
 .hero::after {
@@ -138,7 +188,7 @@ a.nav-btn { text-decoration: none; display: inline-block; }
   border-radius: 50%;
   object-fit: cover;
   filter: drop-shadow(0 6px 28px rgba(0,0,0,0.45));
-  border: 3px solid rgba(248,206,70,0.4);
+  border: 3px solid rgba(var(--realce-rgb),0.4);
 }
 .hero-text { flex: 1; }
 .hero-badge {
@@ -243,7 +293,7 @@ a.nav-btn { text-decoration: none; display: inline-block; }
 .slide-aviso {
   background: linear-gradient(135deg, #fdfcfc 0%, #faf8f6 100%);
   border: 1px solid var(--borde);
-  border-left: 6px solid var(--rojo);
+  border-left: 6px solid var(--alerta);
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.9);
 }
 .slide-info {
@@ -261,7 +311,7 @@ a.nav-btn { text-decoration: none; display: inline-block; }
   margin-bottom: 8px;
 }
 .slide-jornada .slide-label { color: #7a5c00; }
-.slide-aviso .slide-label { color: var(--rojo-oscuro); }
+.slide-aviso .slide-label { color: var(--alerta-oscuro); }
 .slide-info .slide-label { color: #1a5580; }
 .slide-title {
   font-family: 'DM Sans';
@@ -326,9 +376,13 @@ a.nav-btn { text-decoration: none; display: inline-block; }
 }
 .btn:hover { transform: translateY(-1px); }
 .btn-red { background: var(--rojo); color: white; }
-.btn-red:hover { background: var(--rojo-oscuro); box-shadow: 0 4px 14px rgba(170,21,27,0.3); }
+.btn-red:hover { background: var(--rojo-oscuro); box-shadow: 0 4px 14px rgba(var(--marca-rgb),0.3); }
 .btn-outline { background: none; border: 2px solid var(--rojo); color: var(--rojo); }
-.btn-outline:hover { background: rgba(170,21,27,0.06); }
+.btn-outline:hover { background: rgba(var(--marca-rgb),0.06); }
+/* Consulado General de Caracas: distintivo en rojo (peticion de Manuel).
+   Es el unico boton que no sigue al color de marca. */
+.btn-alerta { background: var(--alerta); color: white; }
+.btn-alerta:hover { background: var(--alerta-oscuro); box-shadow: 0 4px 14px rgba(var(--alerta-rgb),0.3); }
 .btn-sm { font-size: 14px; padding: 11px 20px; }
 .btn-green { background: var(--verde-wa); color: white; }
 .btn-green:hover { background: #1fb855; box-shadow: 0 4px 12px rgba(37,211,102,0.3); }
@@ -355,8 +409,8 @@ a.nav-btn { text-decoration: none; display: inline-block; }
 .tramite-badge {
   width: 44px; height: 44px;
   border-radius: 50%;
-  background: rgba(170,21,27,0.08);
-  border: 1.5px solid rgba(170,21,27,0.15);
+  background: rgba(var(--marca-rgb),0.08);
+  border: 1.5px solid rgba(var(--marca-rgb),0.15);
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
   font-family: 'DM Sans';
@@ -371,8 +425,9 @@ a.nav-btn { text-decoration: none; display: inline-block; }
 .tramite-item.open .tramite-arrow { transform: rotate(180deg); }
 .tramite-item.open .tramite-header { border-bottom: 1px solid #f0ede8; }
 .tramite-body { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
-.tramite-item.open .tramite-body { max-height: 2000px; }
-.tramite-content { padding: 24px 26px 28px; }
+.tramite-item.open .tramite-body { max-height: 4000px; }
+.tramite-content { padding: 24px 26px 28px; font-family: 'DM Sans', sans-serif; font-size: 15.5px; color: #444; line-height: 1.85; }
+.tramite-content div, .tramite-content p { font-family: 'DM Sans', sans-serif; }
 .tramite-content ul {
   font-family: 'DM Sans';
   font-size: 16px;
@@ -414,7 +469,7 @@ a.nav-btn { text-decoration: none; display: inline-block; }
   border-radius: 5px;
   transition: background 0.2s;
 }
-.tramite-link:hover { background: rgba(170,21,27,0.06); }
+.tramite-link:hover { background: rgba(var(--marca-rgb),0.06); }
 .no-tramites {
   background: #f8f7f4;
   border: 1px solid var(--borde);
@@ -453,7 +508,7 @@ a.nav-btn { text-decoration: none; display: inline-block; }
   transition: border-color 0.2s;
   color: var(--texto);
 }
-.form-input:focus { outline: none; border-color: var(--rojo); box-shadow: 0 0 0 3px rgba(170,21,27,0.07); }
+.form-input:focus { outline: none; border-color: var(--rojo); box-shadow: 0 0 0 3px rgba(var(--marca-rgb),0.07); }
 textarea.form-input { resize: vertical; }
 select.form-input { appearance: auto; }
 .form-hint { font-family: 'DM Sans'; font-size: 13px; color: #999; margin-top: 5px; }
@@ -484,7 +539,7 @@ select.form-input { appearance: auto; }
   color: #555;
   line-height: 1.3;
 }
-.slot-btn:hover { border-color: var(--rojo); color: var(--rojo); background: rgba(170,21,27,0.04); }
+.slot-btn:hover { border-color: var(--rojo); color: var(--rojo); background: rgba(var(--marca-rgb),0.04); }
 .slot-btn.selected { border-color: var(--rojo); background: var(--rojo); color: white; }
 .slot-btn:disabled, .slot-btn.slot-blocked {
   background: #f1efe9; color: #b8b3aa; border-color: #e2ded5;
@@ -681,14 +736,47 @@ footer { background: #1a1a1a; margin-top: 60px; }
 .footer-col a:hover { color: white; }
 .footer-col .schedule-row { display: flex; justify-content: space-between; gap: 12px; }
 .footer-col .schedule-row span:last-child { color: white; font-weight: 500; }
-.footer-legal { padding: 30px 20px 100px; text-align: center; }
-.footer-logo-row { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 14px; }
+/* ── PIE: mapa del sitio (marca · accesos · comunidad · institucional) ── */
+.footer-nav { border-bottom: 1px solid #333; padding: 44px 20px; }
+.footer-nav-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1.1fr;
+  gap: 40px;
+}
+.footer-nav-col a, .footer-nav-col div, .footer-nav-col p {
+  font-family: 'DM Sans';
+  font-size: 14px;
+  color: #bbb;
+  line-height: 2;
+  text-decoration: none;
+}
+.footer-nav-col a { display: block; }
+.footer-nav-col a:hover { color: white; }
+.footer-brand-row { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.footer-brand-name { font-family: 'DM Sans'; font-size: 14px; font-weight: 700; color: white; line-height: 1.4; }
+.footer-brand-desc { font-family: 'DM Sans'; font-size: 13.5px; color: #999; line-height: 1.8; }
+.footer-social { display: flex; gap: 10px; margin-top: 18px; }
+.footer-social a {
+  width: 38px; height: 38px; border-radius: 50%;
+  background: #2a2a2a; border: 1px solid #3a3a3a;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s, border-color 0.2s;
+}
+.footer-social a:hover { background: var(--rojo); border-color: var(--rojo); }
+.footer-social svg { width: 17px; height: 17px; fill: #ccc; }
+.footer-social a:hover svg { fill: white; }
+
+.footer-legal { padding: 26px 20px 100px; text-align: center; }
 .footer-shield { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; }
-.footer-name { font-family: 'DM Sans'; font-size: 13px; font-weight: 600; color: white; }
-.footer-text { font-family: 'DM Sans'; font-size: 12px; color: #555; line-height: 1.9; }
+.footer-text { font-family: 'DM Sans'; font-size: 12px; color: #666; line-height: 1.9; }
+.footer-cta { margin-bottom: 18px; display: flex; justify-content: center; }
+.footer-cta .btn-red, .footer-cta .btn-alerta { color: white; text-decoration: none; }
 .foot-links { margin-top: 14px; display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
 .foot-links a { font-family: 'DM Sans'; font-size: 12px; color: var(--rojo); text-decoration: none; }
 .foot-links a:hover { color: #e03030; }
+.footer-copy { font-family: 'DM Sans'; font-size: 12px; color: #555; margin-top: 16px; }
 
 /* WHATSAPP FLOAT — legacy, reemplazado por stickyWa */
 .wa-float {
@@ -739,13 +827,12 @@ footer { background: #1a1a1a; margin-top: 60px; }
   .bio-img-main { grid-column: auto; aspect-ratio: 4/3; }
   .footer-info-inner { grid-template-columns: 1fr 1fr; gap: 32px; }
   .footer-col:last-child { grid-column: 1 / -1; }
+  .footer-nav-inner { grid-template-columns: 1fr 1fr; gap: 32px; }
+  .footer-nav-col--marca { grid-column: 1 / -1; }
 }
 
-/* MOBILE (≤ 768px) */
-@media (max-width: 768px) {
-  body { font-size: 17px; }
-
-  /* NAV hamburger */
+/* NAV colapsado (hamburguesa) en laptops chicos y móvil (≤ 1024px) */
+@media (max-width: 1024px) {
   .hamburger { display: flex; }
   .nav-links {
     display: none;
@@ -755,14 +842,42 @@ footer { background: #1a1a1a; margin-top: 60px; }
     border-top: 1px solid var(--borde);
     border-bottom: 3px solid var(--rojo);
     flex-direction: column;
-    padding: 8px 20px 22px;
+    /* El relleno inferior deja hueco para la barra flotante del navegador:
+       sin el, el ultimo item del menu (Emergencia) queda tapado en iOS. */
+    padding: 8px 20px calc(64px + env(safe-area-inset-bottom, 0px));
     box-shadow: 0 8px 24px rgba(0,0,0,0.12);
     z-index: 999;
     gap: 2px;
+    max-height: calc(100vh - 72px);
+    max-height: calc(100dvh - 72px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
   }
   .nav-links.open { display: flex; }
+  /* Emergencia: ultimo item, separado y en rojo para que se distinga */
+  .nav-btn--emergencia {
+    color: var(--rojo) !important;
+    font-weight: 700;
+    margin-top: 6px;
+    border-top: 1px solid var(--borde);
+    border-radius: 0 0 6px 6px;
+  }
   .nav-btn { font-size: 16px; padding: 16px; text-align: left; border-radius: 6px; width: 100%; }
   .nav-sub { display: none; }
+  /* Dropdown en columna: fluye, no se superpone a los botones */
+  .nav-dropdown { display: block; width: 100%; }
+  .nav-dropdown-menu {
+    position: static; min-width: 0; padding: 2px 0 2px 14px;
+    box-shadow: none; border: none; border-top: none; border-radius: 0;
+    background: transparent;
+  }
+  .nav-dropdown-menu .nav-btn { font-size: 15px; padding: 13px 14px; }
+}
+
+/* MOBILE (≤ 768px) */
+@media (max-width: 768px) {
+  body { font-size: 17px; }
 
   /* HERO */
   .hero { padding: 40px 20px 48px; }
@@ -849,6 +964,9 @@ footer { background: #1a1a1a; margin-top: 60px; }
   .footer-info-inner { grid-template-columns: 1fr; gap: 28px; }
   .footer-col:last-child { grid-column: auto; }
   .footer-info { padding: 36px 20px; }
+  .footer-nav-inner { grid-template-columns: 1fr; gap: 26px; }
+  .footer-nav { padding: 34px 20px; }
+  .footer-nav-col--marca { grid-column: auto; }
 
   /* WA FLOAT */
   .wa-float { width: 54px; height: 54px; bottom: 18px; right: 18px; }
@@ -877,7 +995,305 @@ footer { background: #1a1a1a; margin-top: 60px; }
 .t-tag-cita    { background: #e8f0fe; color: #1a56c4; }
 .t-tag-gratis  { background: #e6f9f0; color: #1a7a4a; }
 .t-tag-tasa    { background: #fff3e0; color: #b35c00; }
-.t-tag-caracas { background: #fce8e8; color: #aa151b; }
+.t-tag-caracas { background: #fce8e8; color: var(--alerta); }
+
+/* ── NAV DROPDOWN (Comunidad) ── */
+.nav-dropdown { position: relative; display: inline-block; }
+.nav-dropdown-toggle .nav-caret { font-size: 10px; margin-left: 4px; transition: transform .25s; display: inline-block; }
+.nav-dropdown.open .nav-dropdown-toggle .nav-caret { transform: rotate(180deg); }
+.nav-dropdown-menu {
+  display: none; position: absolute; top: 100%; left: 0; min-width: 215px;
+  background: #fff; border: 1px solid var(--borde); border-top: 3px solid var(--rojo);
+  border-radius: 0 0 9px 9px; box-shadow: 0 10px 28px rgba(0,0,0,0.13); padding: 6px; z-index: 1000;
+}
+.nav-dropdown.open .nav-dropdown-menu { display: block; }
+.nav-dropdown-menu .nav-btn { display: block; width: 100%; text-align: left; white-space: nowrap; }
+
+/* ── CONOCE FOLLETO (Nosotros) — imágenes laterales alternadas + reveal al scroll ── */
+.conoce-folleto { margin: 30px 0 10px; display: flex; flex-direction: column; gap: 76px; }
+.conoce-row { display: grid; grid-template-columns: 1.05fr 1fr; align-items: center; gap: 50px; }
+.conoce-figure { grid-column: 1; grid-row: 1; position: relative; border-radius: 14px; overflow: hidden; aspect-ratio: 16 / 11; box-shadow: 0 16px 40px rgba(0,0,0,0.12); margin: 0; }
+.conoce-body   { grid-column: 2; grid-row: 1; }
+.conoce-row.reverse .conoce-figure { grid-column: 2; }
+.conoce-row.reverse .conoce-body   { grid-column: 1; }
+.conoce-figure picture { display: block; width: 100%; height: 100%; }
+.conoce-figure img { width: 100%; height: 100%; object-fit: cover; display: block; transform: scale(1.02); }
+/* ── Capas de profundidad superpuestas (depth 2.5D) — foto base + medio + frente ── */
+.conoce-figure .conoce-layer { position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; pointer-events: none; will-change: transform; }
+.conoce-layer--mid  { z-index: 2; }
+.conoce-layer--near { z-index: 3; }
+.conoce-body h3 { font-family:'DM Sans',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.6px; text-transform:uppercase; color:var(--rojo); margin-bottom:8px; }
+.conoce-body .conoce-sub { font-family:'Libre Baskerville',Georgia,serif; font-size:29px; line-height:1.2; color:var(--texto); margin-bottom:14px; }
+.conoce-body p { font-family:'DM Sans',sans-serif; font-size:15.5px; color:#555; line-height:1.8; margin-bottom:16px; max-width:46ch; }
+.conoce-body a { color:var(--rojo); font-weight:600; font-size:14.5px; text-decoration:none; border-bottom:1px solid transparent; transition:border-color .2s; }
+.conoce-body a:hover { border-bottom-color:var(--rojo); }
+/* estado inicial oculto solo si GSAP cargó (si no, contenido visible) */
+.gsap-on .conoce-row .conoce-figure, .gsap-on .conoce-row .conoce-body { opacity: 0; }
+
+/* ── COMUNIDAD SECTIONS ── */
+.com-intro { font-family: 'DM Sans', sans-serif; font-size: 16px; color: #555; line-height: 1.85; max-width: 740px; margin-bottom: 28px; }
+.com-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 28px; }
+.com-block { border: 1px solid var(--borde); border-radius: 10px; background: #fff; padding: 22px 24px; }
+.com-block .info-block-title { font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--dorado-oscuro); margin-bottom: 10px; }
+.com-block ul { margin: 0; padding-left: 18px; }
+.com-block li, .com-block div, .com-block p { font-family: 'DM Sans', sans-serif; font-size: 14.5px; color: #555; line-height: 1.75; }
+.com-block li { margin-bottom: 6px; }
+.com-block a { color: var(--rojo); font-weight: 600; text-decoration: none; }
+
+/* ── BARRA SUPERIOR DE UTILIDADES (propuesta, pantalla 1) ──
+   Solo en escritorio: por debajo de 1024px manda la hamburguesa, y su menu
+   es position:fixed desde top:72px, asi que una barra encima lo descuadraria. */
+.topbar { background: #1a1a1a; padding: 0 20px; }
+.topbar-inner {
+  max-width: 1200px; margin: 0 auto;
+  height: 38px; display: flex; align-items: center; gap: 26px; flex-wrap: nowrap;
+}
+.topbar a, .topbar span {
+  font-family: 'DM Sans', sans-serif; font-size: 12.5px;
+  color: #bbb; text-decoration: none; white-space: nowrap;
+  display: inline-flex; align-items: center; gap: 7px;
+}
+.topbar a:hover { color: #fff; }
+.topbar svg { width: 14px; height: 14px; flex-shrink: 0; }
+.topbar-emergencia { color: #fff !important; font-weight: 700; }
+.topbar-emergencia svg { fill: var(--rojo); }
+.topbar-emergencia:hover { color: var(--dorado) !important; }
+.topbar-sep { margin-left: auto; }
+@media (max-width: 1024px) { .topbar { display: none; } }
+
+/* ── ACCESOS RÁPIDOS (inicio, propuesta pantalla 1) ── */
+.accesos { margin: 8px auto 0; max-width: 1200px; padding: 0 20px; }
+.accesos-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+}
+.acceso {
+  background: #fff; border: 1px solid var(--borde); border-radius: 10px;
+  padding: 20px 14px; text-align: center; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+  min-height: 128px;
+  transition: border-color .18s, box-shadow .18s, transform .18s;
+  font-family: 'DM Sans', sans-serif;
+}
+.acceso:hover { border-color: var(--rojo); box-shadow: 0 6px 18px rgba(0,0,0,0.07); transform: translateY(-2px); }
+.acceso-icon {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--tinte); display: flex; align-items: center; justify-content: center;
+}
+.acceso-icon svg { width: 21px; height: 21px; stroke: var(--rojo); fill: none; stroke-width: 1.8; }
+.acceso-label { font-size: 13.5px; font-weight: 600; color: var(--texto); line-height: 1.35; }
+@media (max-width: 900px) { .accesos-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 560px) {
+  .accesos-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .acceso { padding: 16px 10px; min-height: 112px; }
+  .acceso-label { font-size: 12.5px; }
+}
+
+/* ── EMERGENCIAS CONSULARES (propuesta, pantalla 7) ── */
+/* Emergencias van en rojo (--alerta), no en el azul de marca: el rojo es la
+   senal de urgencia y perderla por coherencia cromatica seria un retroceso. */
+.emg-hero {
+  background: var(--alerta); border-radius: 14px; padding: 32px 28px;
+  text-align: center; margin-bottom: 28px;
+}
+.emg-hero-title {
+  font-family: 'Libre Baskerville', Georgia, serif; font-size: 25px; color: #fff; margin: 0 0 6px;
+}
+.emg-hero-sub { font-family: 'DM Sans', sans-serif; font-size: 15px; color: rgba(255,255,255,0.9); line-height: 1.7; }
+.emg-phone {
+  display: inline-flex; align-items: center; gap: 10px; margin-top: 18px;
+  background: #fff; color: var(--alerta); text-decoration: none;
+  font-family: 'DM Sans', sans-serif; font-size: 21px; font-weight: 700;
+  padding: 14px 28px; border-radius: 8px;
+}
+.emg-phone:hover { background: var(--dorado); color: #1a1a1a; }
+.emg-phone svg { width: 19px; height: 19px; }
+.emg-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+@media (max-width: 900px) { .emg-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .emg-grid { grid-template-columns: 1fr; } }
+.emg-card {
+  background: #fff; border: 1px solid var(--borde); border-top: 3px solid var(--alerta);
+  border-radius: 10px; padding: 22px 20px;
+}
+.emg-card-title {
+  font-family: 'DM Sans', sans-serif; font-size: 15.5px; font-weight: 700;
+  color: var(--texto); margin: 12px 0 7px;
+}
+.emg-card p { font-family: 'DM Sans', sans-serif; font-size: 14px; color: #666; line-height: 1.7; margin: 0; }
+.emg-card-icon svg { width: 24px; height: 24px; stroke: var(--alerta); fill: none; stroke-width: 1.7; }
+
+/* ── CENTRO DE DESCARGAS ── */
+.dl-toolbar { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 18px; }
+.dl-search {
+  flex: 1 1 260px; min-width: 0;
+  font-family: 'DM Sans'; font-size: 15px;
+  padding: 13px 16px;
+  border: 1px solid var(--borde); border-radius: 8px;
+  background: #fff; color: var(--texto);
+}
+.dl-search:focus { outline: none; border-color: var(--rojo); }
+.dl-count { font-family: 'DM Sans'; font-size: 13.5px; color: #888; }
+.dl-cats { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 22px; }
+.dl-cat {
+  font-family: 'DM Sans'; font-size: 13px; font-weight: 600;
+  padding: 9px 16px; border-radius: 20px; cursor: pointer;
+  background: #fff; border: 1px solid var(--borde); color: #666;
+  transition: all 0.18s;
+}
+.dl-cat:hover { border-color: var(--rojo); color: var(--rojo); }
+.dl-cat.active { background: var(--rojo); border-color: var(--rojo); color: #fff; }
+.dl-list { display: flex; flex-direction: column; gap: 10px; }
+.dl-row {
+  display: flex; align-items: center; gap: 16px;
+  background: #fff; border: 1px solid var(--borde); border-radius: 10px;
+  padding: 16px 18px;
+  transition: border-color 0.18s, box-shadow 0.18s;
+}
+.dl-row:hover { border-color: var(--dorado-oscuro); box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+.dl-icon {
+  flex-shrink: 0; width: 40px; height: 46px; border-radius: 5px;
+  background: var(--tinte); border: 1px solid var(--tinte-borde);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'DM Sans'; font-size: 9.5px; font-weight: 700;
+  letter-spacing: 0.5px; color: var(--rojo);
+}
+.dl-body { flex: 1 1 auto; min-width: 0; }
+.dl-title { font-family: 'DM Sans'; font-size: 15.5px; font-weight: 600; color: var(--texto); line-height: 1.45; }
+.dl-meta { font-family: 'DM Sans'; font-size: 12.5px; color: #999; margin-top: 3px; }
+.dl-action { flex-shrink: 0; }
+.dl-action .btn { min-width: 132px; justify-content: center; }
+.dl-empty {
+  font-family: 'DM Sans'; font-size: 15px; color: #999; text-align: center;
+  padding: 40px 20px; border: 1px dashed var(--borde); border-radius: 10px;
+}
+@media (max-width: 620px) {
+  .dl-row { flex-wrap: wrap; gap: 12px; }
+  .dl-body { flex-basis: calc(100% - 56px); }
+  .dl-action { flex-basis: 100%; }
+  .dl-action .btn { width: 100%; justify-content: center; }
+}
+
+/* ── ORGANIGRAMA (Nosotros): Embajada › Consulado General › Viceconsulado › Vicecónsul ── */
+.org-step {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: #aaa;
+  margin-bottom: 10px;
+}
+.org-arrow {
+  text-align: center;
+  color: var(--dorado-oscuro);
+  font-size: 24px;
+  line-height: 1;
+  margin: 10px 0;
+}
+/* Datos oficiales tomados de exteriores.gob.es */
+.org-datos {
+  margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--borde);
+  font-family: 'DM Sans', sans-serif; font-size: 13px; color: #666; line-height: 1.8;
+}
+.org-datos a { color: var(--rojo); text-decoration: none; font-weight: 600; }
+.org-datos a:hover { text-decoration: underline; }
+.org-datos-emg { margin-top: 6px; color: var(--rojo); font-weight: 600; }
+.org-datos-emg a { font-weight: 700; }
+.org-fuente {
+  font-family: 'DM Sans', sans-serif; font-size: 12px; color: #999;
+  text-align: center; margin: 0 auto 30px; max-width: 660px; line-height: 1.7;
+}
+.org-fuente a { color: #999; }
+/* ── COMUNIDAD polish (jerarquía + realce, sin cambios de contenido) ── */
+.com-kicker { font-family:'DM Sans',sans-serif; font-size:12px; font-weight:700; letter-spacing:1.6px; text-transform:uppercase; color:var(--rojo); margin-bottom:12px; display:flex; align-items:center; gap:10px; }
+.com-kicker::before { content:''; width:28px; height:2px; background:var(--dorado-oscuro); display:inline-block; }
+.page-title.com-title { position:relative; padding-bottom:16px; }
+.page-title.com-title::after { content:''; position:absolute; left:0; bottom:0; width:66px; height:3px; background:linear-gradient(to right,var(--rojo),var(--dorado)); border-radius:2px; }
+.com-intro { border-left:3px solid var(--borde); padding-left:18px; }
+.com-grid { gap:18px; margin-top:22px; }
+.com-block { border-top:3px solid var(--dorado-oscuro); box-shadow:0 1px 2px rgba(0,0,0,0.03); transition:box-shadow .2s, transform .2s; }
+.com-block:hover { box-shadow:0 10px 26px rgba(0,0,0,0.07); transform:translateY(-2px); }
+.consulado-block.com-official { justify-content:space-between; }
+/* ── Conoce en detalle: hero banner por destino ── */
+.conoce-hero { margin:0 0 20px; border-radius:14px; overflow:hidden; box-shadow:0 10px 28px rgba(0,0,0,0.10); aspect-ratio:16 / 8; }
+.conoce-hero img { width:100%; height:100%; object-fit:cover; display:block; }
+@media (max-width:720px){ .conoce-hero { aspect-ratio:16 / 9; } }
+
+/* ── MOSAICO DE COMUNIDADES AUTONOMAS (Conoce Espana) ── */
+.ccaa-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:14px; margin:18px 0 0; }
+.ccaa-card { position:relative; display:block; width:100%; padding:0; border:0; text-align:left; cursor:default;
+  border-radius:12px; overflow:hidden; background:#111; aspect-ratio:16/10;
+  box-shadow:0 2px 8px rgba(0,0,0,0.10); transition:transform .25s ease, box-shadow .25s ease; }
+.ccaa-card:hover { transform:translateY(-3px); box-shadow:0 12px 26px rgba(0,0,0,0.22); }
+.ccaa-card img.ccaa-foto { width:100%; height:100%; object-fit:cover; display:block; transition:transform .5s ease; }
+.ccaa-card:hover img.ccaa-foto { transform:scale(1.06); }
+.ccaa-card::after { content:''; position:absolute; inset:0; pointer-events:none;
+  background:linear-gradient(to bottom, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0) 34%, rgba(0,0,0,0.10) 52%, rgba(0,0,0,0.80) 100%); }
+.ccaa-num { position:absolute; top:10px; left:12px; z-index:2;
+  font-family:'Libre Baskerville',Georgia,serif; font-size:26px; line-height:1; color:#fff;
+  text-shadow:0 2px 6px rgba(0,0,0,0.55); opacity:.92; }
+.ccaa-escudo { position:absolute; top:10px; right:12px; z-index:2; width:46px; height:46px;
+  object-fit:contain; filter:drop-shadow(0 2px 5px rgba(0,0,0,0.5)); transition:transform .25s ease; }
+.ccaa-card:hover .ccaa-escudo { transform:scale(1.08); }
+.ccaa-txt { position:absolute; left:14px; right:14px; bottom:12px; z-index:2; }
+.ccaa-nom { font-family:'DM Sans',sans-serif; font-size:15.5px; font-weight:700; letter-spacing:.3px;
+  color:#fff; text-shadow:0 1px 4px rgba(0,0,0,0.6); line-height:1.25; }
+.ccaa-mon { font-family:'DM Sans',sans-serif; font-size:12.5px; color:rgba(255,255,255,0.88);
+  text-shadow:0 1px 4px rgba(0,0,0,0.6); margin-top:3px; line-height:1.35; }
+.ccaa-sub { font-family:'DM Sans',sans-serif; font-size:12px; font-weight:700; letter-spacing:1.4px;
+  text-transform:uppercase; color:var(--dorado-oscuro); margin:26px 0 2px; }
+.ccaa-creditos { font-family:'DM Sans',sans-serif; font-size:12.5px; color:#8a8a8a; line-height:1.7; margin-top:14px; }
+.ccaa-creditos a { color:#7a7a7a; }
+@media (max-width:720px){
+  .ccaa-grid { grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:10px; }
+  .ccaa-num { font-size:20px; top:7px; left:9px; }
+  .ccaa-escudo { width:34px; height:34px; top:7px; right:9px; }
+  .ccaa-nom { font-size:13px; }
+  .ccaa-mon { font-size:11px; }
+}
+@media (prefers-reduced-motion: reduce){
+  .ccaa-card, .ccaa-card img.ccaa-foto, .ccaa-escudo { transition:none; }
+  .ccaa-card:hover { transform:none; }
+  .ccaa-card:hover img.ccaa-foto { transform:none; }
+}
+
+/* Atribución de imágenes con licencia CC — discreta pero legible */
+.creditos-img {
+  font-family: 'DM Sans', sans-serif; font-size: 12px; color: #999;
+  line-height: 1.8; margin: 22px 0 0; padding-top: 14px;
+  border-top: 1px solid var(--borde);
+}
+.creditos-img strong { color: #777; font-weight: 700; }
+.creditos-img a { color: #888; text-decoration: underline; }
+.creditos-img a:hover { color: var(--rojo); }
+
+/* ── GLOSARIO (FAQ) ── */
+.glosario-wrap { margin-top: 40px; max-width: 800px; }
+.glosario-wrap h2 { font-family: 'Libre Baskerville', Georgia, serif; font-size: 24px; color: var(--texto); margin-bottom: 8px; }
+.glosario-table { width: 100%; border-collapse: collapse; border: 1px solid var(--borde); border-radius: 9px; overflow: hidden; }
+.glosario-table th {
+  font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase;
+  text-align: left; padding: 12px 16px; background: #faf8f4; color: var(--rojo); border-bottom: 1px solid var(--borde);
+}
+.glosario-table td { font-family: 'DM Sans', sans-serif; font-size: 14.5px; color: #444; padding: 11px 16px; border-bottom: 1px solid #f0ede8; line-height: 1.5; }
+.glosario-table tr:last-child td { border-bottom: none; }
+.glosario-table tr:nth-child(even) td { background: #fdfcfa; }
+.glosario-table td:first-child { font-weight: 600; color: var(--texto); }
+
+@media (max-width: 768px) {
+  .nav-dropdown { display: block; width: 100%; }
+  /* En movil el submenu se despliega al tocar, no va siempre abierto: con dos
+     desplegables el menu llegaba a 15 filas y "Emergencia" quedaba fuera de
+     pantalla. Plegado son 7 filas y se ve entero sin desplazar. */
+  .nav-dropdown-menu { position: static; box-shadow: none; border: none; border-radius: 0; padding: 0 0 0 14px; min-width: 0; }
+  .com-grid { grid-template-columns: 1fr; }
+  .conoce-folleto { gap: 40px; }
+  .conoce-row, .conoce-row.reverse { grid-template-columns: 1fr; gap: 18px; }
+  .conoce-figure, .conoce-row.reverse .conoce-figure { grid-column: 1; grid-row: auto; aspect-ratio: 16 / 10; }
+  .conoce-body, .conoce-row.reverse .conoce-body { grid-column: 1; grid-row: auto; }
+  .conoce-body .conoce-sub { font-size: 24px; }
+  .glosario-table th, .glosario-table td { padding: 10px 12px; font-size: 13.5px; }
+}
 
 /* ── FAQ ACCORDION ── */
 .faq-intro { font-family:'DM Sans'; font-size:16px; color:#555; line-height:1.85; margin-bottom:28px; max-width:680px; }
@@ -911,13 +1327,15 @@ footer { background: #1a1a1a; margin-top: 60px; }
   position: fixed; bottom: 24px; right: 24px;
   z-index: 150;
 }
+/* Menú móvil abierto: ocultar los FAB para que no se superpongan */
+body.nav-open .sticky-cta, body.nav-open .sticky-wa { opacity: 0 !important; pointer-events: none !important; }
 .sticky-cta-btn {
   font-family: 'DM Sans'; font-weight: 700; font-size: 15px;
   background: var(--rojo); color: white;
   border: none; border-radius: 30px;
   padding: 14px 22px;
   display: flex; align-items: center; gap: 8px;
-  box-shadow: 0 4px 20px rgba(170,21,27,0.40);
+  box-shadow: 0 4px 20px rgba(var(--marca-rgb),0.40);
   cursor: pointer;
   opacity: 0;
   transform: translateY(16px) scale(0.85);
@@ -925,7 +1343,7 @@ footer { background: #1a1a1a; margin-top: 60px; }
   transition: opacity 0.4s ease, transform 0.45s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s;
   text-decoration: none;
 }
-.sticky-cta-btn:hover { box-shadow: 0 6px 24px rgba(170,21,27,0.50); }
+.sticky-cta-btn:hover { box-shadow: 0 6px 24px rgba(var(--marca-rgb),0.50); }
 .sticky-cta.visible .sticky-cta-btn {
   opacity: 1;
   transform: translateY(0) scale(1);
@@ -1022,6 +1440,20 @@ footer { background: #1a1a1a; margin-top: 60px; }
   </defs>
 </svg>
 
+<!-- BARRA SUPERIOR DE UTILIDADES (solo escritorio) -->
+<div class="topbar">
+  <div class="topbar-inner">
+    <a class="topbar-emergencia" href="tel:+584242090264">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 010 1.18 2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg>
+      Emergencias 24 h · +58 424 209 0264
+    </a>
+    <a class="topbar-sep" href="https://wa.me/584248429665" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+    <a href="#" onclick="showSection('citas');return false;">Solicitar cita</a>
+    <a href="https://maps.app.goo.gl/d9gfnNzqo79YbMp48" target="_blank" rel="noopener noreferrer">Ubicación</a>
+    <a href="mailto:ch.porlamar@maec.es">ch.porlamar@maec.es</a>
+  </div>
+</div>
+
 <!-- NAV -->
 <nav class="nav">
   <div class="nav-inner">
@@ -1037,12 +1469,29 @@ footer { background: #1a1a1a; margin-top: 60px; }
     </a>
     <div class="nav-links" id="navLinks">
       <button class="nav-btn active" data-section="inicio">Inicio</button>
-      <button class="nav-btn" data-section="tramites">Servicios Consulares</button>
-      <button class="nav-btn" data-section="citas">Citas</button>
-      <a class="nav-btn" href="https://sutramiteconsular.maec.es" target="_blank" rel="noopener noreferrer">Estado de Trámite</a>
-      <button class="nav-btn" data-section="ubicacion">Nosotros</button>
+      <div class="nav-dropdown" id="tramitesDropdown">
+        <button class="nav-btn nav-dropdown-toggle" onclick="toggleDropdown(this)" aria-haspopup="true" aria-expanded="false">Trámites<span class="nav-caret">▾</span></button>
+        <div class="nav-dropdown-menu">
+          <button class="nav-btn" data-section="tramites">Servicios Consulares</button>
+          <button class="nav-btn" data-section="citas">Citas</button>
+          <a class="nav-btn" href="https://sutramiteconsular.maec.es" target="_blank" rel="noopener noreferrer">Estado de Trámite ↗</a>
+          <button class="nav-btn" data-section="descargas">Descargas</button>
+        </div>
+      </div>
       <button class="nav-btn" data-section="faq">FAQ</button>
-      <button class="nav-btn" onclick="document.getElementById('emergencia-anchor').scrollIntoView({behavior:'smooth'});closeMenu()">Contacto de emergencia</button>
+      <button class="nav-btn" data-section="ubicacion">Nosotros</button>
+      <div class="nav-dropdown" id="comunidadDropdown">
+        <button class="nav-btn nav-dropdown-toggle" onclick="toggleDropdown(this)" aria-haspopup="true" aria-expanded="false">Comunidad Española<span class="nav-caret">▾</span></button>
+        <div class="nav-dropdown-menu">
+          <button class="nav-btn" data-section="comunidad">Ver todas</button>
+          <button class="nav-btn" data-section="cre">CRE</button>
+          <button class="nav-btn" data-section="consejeria">Consejería Laboral</button>
+          <button class="nav-btn" data-section="cavespa">CAVESPA</button>
+          <button class="nav-btn" data-section="feceve">FECEVE</button>
+        </div>
+      </div>
+      <button class="nav-btn" data-section="conoce">Conoce</button>
+      <button class="nav-btn nav-btn--emergencia" data-section="emergencias">Emergencia</button>
     </div>
     <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Abrir menú">
       <span></span><span></span><span></span>
@@ -1070,6 +1519,45 @@ footer { background: #1a1a1a; margin-top: 60px; }
 
 <!-- ==================== INICIO ==================== -->
 <div id="sec-inicio" class="section active">
+
+  <!-- ACCESOS RÁPIDOS (propuesta, pantalla 1) -->
+  <div class="accesos" style="padding:0;margin-bottom:34px">
+    <div class="com-kicker">Accesos rápidos</div>
+    <div class="accesos-grid">
+      <button class="acceso" onclick="irATramite('pasaportes')">
+        <span class="acceso-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg></span>
+        <span class="acceso-label">Pasaportes</span>
+      </button>
+      <button class="acceso" onclick="irATramite('nacimiento')">
+        <span class="acceso-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/></svg></span>
+        <span class="acceso-label">Registro Civil</span>
+      </button>
+      <button class="acceso" onclick="irATramite('otros')">
+        <span class="acceso-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6"/><path d="M23 11h-6"/></svg></span>
+        <span class="acceso-label">Inscripción consular</span>
+      </button>
+      <button class="acceso" onclick="irATramite('fevida')">
+        <span class="acceso-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M17 11l2 2 4-4"/></svg></span>
+        <span class="acceso-label">Fe de Vida</span>
+      </button>
+      <button class="acceso" onclick="showSection('citas')">
+        <span class="acceso-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></svg></span>
+        <span class="acceso-label">Solicitar cita</span>
+      </button>
+      <button class="acceso" onclick="showSection('descargas')">
+        <span class="acceso-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg></span>
+        <span class="acceso-label">Descargas</span>
+      </button>
+      <button class="acceso" onclick="showSection('faq')">
+        <span class="acceso-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></span>
+        <span class="acceso-label">Preguntas frecuentes</span>
+      </button>
+      <button class="acceso" onclick="showSection('emergencias')">
+        <span class="acceso-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 010 1.18 2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg></span>
+        <span class="acceso-label">Emergencias 24 h</span>
+      </button>
+    </div>
+  </div>
 
   <!-- CARRUSEL DE AVISOS — carga dinámicamente desde /api/banners -->
   <div class="carousel-section" id="carousel-section" style="display:none;">
@@ -1100,17 +1588,11 @@ footer { background: #1a1a1a; margin-top: 60px; }
       <div class="bio-photo-carousel" id="bioCarousel">
         <div class="bio-photo-track" id="bioPhotoTrack">
           <div class="bio-photo-slide">
-            <img src="images/Edif1.jpeg" alt="Oficina del Viceconsulado — vista exterior">
+            <picture>
+              <source srcset="images/VicecConsulado.webp" type="image/webp">
+              <img src="images/VicecConsulado.jpeg" alt="Sede del Viceconsulado Honorario de España en Nueva Esparta">
+            </picture>
           </div>
-          <div class="bio-photo-slide">
-            <img src="images/Edif2.jpeg" alt="Oficina del Viceconsulado — acceso">
-          </div>
-        </div>
-        <button type="button" class="bio-photo-btn bio-photo-prev" onclick="bioPhotoPrev()" aria-label="Anterior">&#8249;</button>
-        <button type="button" class="bio-photo-btn bio-photo-next" onclick="bioPhotoNext()" aria-label="Siguiente">&#8250;</button>
-        <div class="bio-photo-dots">
-          <button type="button" class="bio-photo-dot active" onclick="bioPhotoGoTo(0)" aria-label="Foto 1"></button>
-          <button type="button" class="bio-photo-dot" onclick="bioPhotoGoTo(1)" aria-label="Foto 2"></button>
         </div>
       </div>
     </div>
@@ -1129,10 +1611,22 @@ footer { background: #1a1a1a; margin-top: 60px; }
   <h1 class="page-title">Servicios Consulares</h1>
   <p class="page-desc">Seleccione un servicio para ver los requisitos completos y los documentos necesarios para su cita.</p>
 
-  <div class="tramite-list">
+  <!-- Buscador + pestañas por categoría (propuesta, pantalla 3) -->
+  <div class="dl-toolbar">
+    <input class="dl-search" id="trSearch" type="search" placeholder="Buscar trámite…" oninput="filtrarTramites()" aria-label="Buscar trámite">
+    <span class="dl-count" id="trCount"></span>
+  </div>
+  <div class="dl-cats" id="trCats">
+    <button class="dl-cat active" data-cat="todos"        onclick="catTramites(this)">Todos</button>
+    <button class="dl-cat"        data-cat="documentacion" onclick="catTramites(this)">Documentación</button>
+    <button class="dl-cat"        data-cat="registro"      onclick="catTramites(this)">Registro Civil</button>
+    <button class="dl-cat"        data-cat="certificados"  onclick="catTramites(this)">Certificados y otros</button>
+  </div>
+
+  <div class="tramite-list" id="tramitesList">
 
     <!-- PASAPORTES -->
-    <div class="tramite-item" id="tramite-pasaportes">
+    <div class="tramite-item" data-cat="documentacion" id="tramite-pasaportes">
       <div class="tramite-header" onclick="toggleTramite('pasaportes')">
         <div class="tramite-left">
           <div class="tramite-badge">PAS</div>
@@ -1183,7 +1677,7 @@ footer { background: #1a1a1a; margin-top: 60px; }
     </div>
 
     <!-- NACIMIENTO -->
-    <div class="tramite-item" id="tramite-nacimiento">
+    <div class="tramite-item" data-cat="registro" id="tramite-nacimiento">
       <div class="tramite-header" onclick="toggleTramite('nacimiento')">
         <div class="tramite-left">
           <div class="tramite-badge">NAC</div>
@@ -1224,14 +1718,13 @@ footer { background: #1a1a1a; margin-top: 60px; }
         <div class="tramite-links">
           <a class="tramite-link" href="https://www.exteriores.gob.es/DocumentosAuxiliaresSC/Venezuela/CARACAS%20(C)/Hoja%20declaratoria%20inscripci%C3%B3n%20nacimiento.pdf" target="_blank">Hoja declaratoria ↗</a>
           <a class="tramite-link" href="https://www.exteriores.gob.es/Documents/DocumentosSC/Inscripci%C3%B3n%20Consular/20240812%20SOLICITUD%20DE%20INSCRIPCION%20COMO%20RESIDENTE.pdf" target="_blank">Formulario residente ↗</a>
-          <a class="tramite-link" href="documentos/Requisitos inscripcion de nacimiento.pdf" download>⬇ Requisitos (PDF)</a>
         </div>
         <div style="margin-top:16px"><button class="btn btn-red btn-sm" onclick="showSection('citas')">Solicitar cita</button></div>
       </div></div>
     </div>
 
     <!-- MATRIMONIO -->
-    <div class="tramite-item" id="tramite-matrimonio">
+    <div class="tramite-item" data-cat="registro" id="tramite-matrimonio">
       <div class="tramite-header" onclick="toggleTramite('matrimonio')">
         <div class="tramite-left">
           <div class="tramite-badge">MAT</div>
@@ -1276,7 +1769,7 @@ footer { background: #1a1a1a; margin-top: 60px; }
     </div>
 
     <!-- DEFUNCIÓN -->
-    <div class="tramite-item" id="tramite-defuncion">
+    <div class="tramite-item" data-cat="registro" id="tramite-defuncion">
       <div class="tramite-header" onclick="toggleTramite('defuncion')">
         <div class="tramite-left">
           <div class="tramite-badge">DEF</div>
@@ -1308,7 +1801,7 @@ footer { background: #1a1a1a; margin-top: 60px; }
     </div>
 
     <!-- FE DE VIDA -->
-    <div class="tramite-item" id="tramite-fevida">
+    <div class="tramite-item" data-cat="documentacion" id="tramite-fevida">
       <div class="tramite-header" onclick="toggleTramite('fevida')">
         <div class="tramite-left">
           <div class="tramite-badge">FEV</div>
@@ -1332,7 +1825,7 @@ footer { background: #1a1a1a; margin-top: 60px; }
     </div>
 
     <!-- OTROS TRÁMITES -->
-    <div class="tramite-item" id="tramite-otros">
+    <div class="tramite-item" data-cat="certificados" id="tramite-otros">
       <div class="tramite-header" onclick="toggleTramite('otros')">
         <div class="tramite-left">
           <div class="tramite-badge">OTR</div>
@@ -1441,25 +1934,25 @@ footer { background: #1a1a1a; margin-top: 60px; }
       <label class="form-label">Teléfono de contacto *</label>
       <div style="display:flex;gap:8px;align-items:center;">
         <select name="codigoPais" id="codigoPaisSelect" style="flex-shrink:0;padding:10px 8px;border:1.5px solid #d1cdc7;border-radius:8px;font-family:inherit;font-size:.93rem;background:#fff;cursor:pointer;min-width:140px;">
-          <option value="+58">🇻🇪 +58</option>
-          <option value="+34">🇪🇸 +34</option>
-          <option value="+1">🇺🇸 +1</option>
-          <option value="+57">🇨🇴 +57</option>
-          <option value="+54">🇦🇷 +54</option>
-          <option value="+51">🇵🇪 +51</option>
-          <option value="+56">🇨🇱 +56</option>
-          <option value="+55">🇧🇷 +55</option>
-          <option value="+593">🇪🇨 +593</option>
-          <option value="+591">🇧🇴 +591</option>
-          <option value="+595">🇵🇾 +595</option>
-          <option value="+598">🇺🇾 +598</option>
-          <option value="+507">🇵🇦 +507</option>
-          <option value="+52">🇲🇽 +52</option>
-          <option value="+44">🇬🇧 +44</option>
-          <option value="+33">🇫🇷 +33</option>
-          <option value="+49">🇩🇪 +49</option>
-          <option value="+39">🇮🇹 +39</option>
-          <option value="+351">🇵🇹 +351</option>
+          <option value="+58">Venezuela +58</option>
+          <option value="+34">España +34</option>
+          <option value="+1">EE. UU. +1</option>
+          <option value="+57">Colombia +57</option>
+          <option value="+54">Argentina +54</option>
+          <option value="+51">Perú +51</option>
+          <option value="+56">Chile +56</option>
+          <option value="+55">Brasil +55</option>
+          <option value="+593">Ecuador +593</option>
+          <option value="+591">Bolivia +591</option>
+          <option value="+595">Paraguay +595</option>
+          <option value="+598">Uruguay +598</option>
+          <option value="+507">Panamá +507</option>
+          <option value="+52">México +52</option>
+          <option value="+44">Reino Unido +44</option>
+          <option value="+33">Francia +33</option>
+          <option value="+49">Alemania +49</option>
+          <option value="+39">Italia +39</option>
+          <option value="+351">Portugal +351</option>
         </select>
         <input class="form-input" name="telefono" type="tel" required placeholder="Ej: 4121234567" style="margin:0;" oninput="this.value=this.value.replace(/[^\d]/g,'')">
       </div>
@@ -1537,6 +2030,175 @@ footer { background: #1a1a1a; margin-top: 60px; }
   </div>
 </div>
 
+<!-- ==================== EMERGENCIAS CONSULARES ==================== -->
+<div id="sec-emergencias" class="section">
+  <button class="back-btn" onclick="showSection('inicio')">← Volver al inicio</button>
+  <h1 class="page-title">Emergencias Consulares</h1>
+  <p class="page-desc">
+    Si usted es español y necesita ayuda urgente fuera del horario de atención, el Consulado
+    General de España en Caracas mantiene un teléfono de emergencia disponible las 24 horas.
+  </p>
+
+  <div class="emg-hero">
+    <h2 class="emg-hero-title">Emergencias 24 horas</h2>
+    <div class="emg-hero-sub">
+      Atendido por el Consulado General de España en Caracas.<br>
+      Para consultas y trámites que no sean urgentes, utilice el horario de atención habitual.
+    </div>
+    <a class="emg-phone" href="tel:+584242090264">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 010 1.18 2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg>
+      +58 424 209 0264
+    </a>
+  </div>
+
+  <div class="com-kicker">Situaciones que atiende la asistencia consular</div>
+  <div class="emg-grid">
+
+    <div class="emg-card">
+      <div class="emg-card-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>
+      <div class="emg-card-title">Detención o arresto</div>
+      <p>La oficina consular puede visitar al detenido, velar por que se respeten sus derechos, informar a la familia si él lo autoriza y facilitar la lista de abogados. No puede pagar fianzas ni sacarle de prisión.</p>
+    </div>
+
+    <div class="emg-card">
+      <div class="emg-card-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M12 12v5"/><path d="M9.5 14.5h5"/></svg></div>
+      <div class="emg-card-title">Fallecimiento</div>
+      <p>Se orienta a la familia sobre la inscripción de la defunción en el Registro Civil consular y sobre los trámites de repatriación o inhumación, que corren por cuenta de los familiares.</p>
+    </div>
+
+    <div class="emg-card">
+      <div class="emg-card-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/><path d="M9 8l6 6"/><path d="M15 8l-6 6"/></svg></div>
+      <div class="emg-card-title">Pérdida o robo del pasaporte</div>
+      <p>Denuncie el hecho ante las autoridades locales y contacte con la oficina consular. Según el caso puede expedirse un salvoconducto para regresar a España o tramitarse un nuevo pasaporte.</p>
+    </div>
+
+    <div class="emg-card">
+      <div class="emg-card-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.86 2h8.28L22 7.86v8.28L16.14 22H7.86L2 16.14V7.86L7.86 2z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg></div>
+      <div class="emg-card-title">Accidente grave</div>
+      <p>Se contacta con los familiares, se orienta sobre la atención médica disponible y se acompaña en la relación con las autoridades y los centros sanitarios locales.</p>
+    </div>
+
+    <div class="emg-card">
+      <div class="emg-card-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M12 8v8"/><path d="M8 12h8"/></svg></div>
+      <div class="emg-card-title">Hospitalización</div>
+      <p>Se informa a la familia, se orienta sobre coberturas y seguros y se facilita el contacto con el centro médico. Los gastos de asistencia sanitaria corresponden al interesado o a su seguro.</p>
+    </div>
+
+    <div class="emg-card">
+      <div class="emg-card-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg></div>
+      <div class="emg-card-title">Catástrofe o desastre natural</div>
+      <p>Ante situaciones de riesgo colectivo, siga las indicaciones de las autoridades locales y mantenga el contacto con la oficina consular. Estar inscrito como residente facilita la localización.</p>
+    </div>
+
+  </div>
+
+  <div class="tramite-note" style="margin-top:26px">
+    <strong>Qué no cubre la asistencia consular:</strong> no adelanta ni presta dinero, no paga
+    facturas médicas, hoteles, multas o fianzas, no interviene en litigios privados ni sustituye
+    a las autoridades locales. Se recomienda viajar siempre con seguro médico y de repatriación.
+  </div>
+
+  <div class="tramite-note">
+    Para asuntos no urgentes: <a href="https://wa.me/584248429665" target="_blank" rel="noopener noreferrer">WhatsApp del Viceconsulado</a>
+    · <a href="mailto:ch.porlamar@maec.es">ch.porlamar@maec.es</a>
+    · <button type="button" class="inline-link" onclick="showSection('citas')">Solicitar cita</button>
+  </div>
+</div>
+
+<!-- ==================== CENTRO DE DESCARGAS ==================== -->
+<div id="sec-descargas" class="section">
+  <button class="back-btn" onclick="showSection('inicio')">← Volver al inicio</button>
+  <h1 class="page-title">Centro de Descargas</h1>
+  <p class="page-desc">
+    Formularios y documentos disponibles para los trámites que se gestionan en este
+    Viceconsulado. Los formularios oficiales se descargan de la web del Ministerio de Asuntos
+    Exteriores, Unión Europea y Cooperación; las hojas de requisitos las facilita el Viceconsulado.
+  </p>
+
+  <div class="dl-toolbar">
+    <input class="dl-search" id="dlSearch" type="search" placeholder="Buscar documento…" oninput="filtrarDescargas()" aria-label="Buscar documento">
+    <span class="dl-count" id="dlCount"></span>
+  </div>
+
+  <div class="dl-cats" id="dlCats">
+    <button class="dl-cat active" data-cat="todos"      onclick="catDescargas(this)">Todos</button>
+    <button class="dl-cat"        data-cat="formulario" onclick="catDescargas(this)">Formularios oficiales</button>
+    <button class="dl-cat"        data-cat="requisitos" onclick="catDescargas(this)">Hojas de requisitos</button>
+    <button class="dl-cat"        data-cat="registro"   onclick="catDescargas(this)">Registro Civil</button>
+    <button class="dl-cat"        data-cat="consular"   onclick="catDescargas(this)">Inscripción consular</button>
+  </div>
+
+  <div class="dl-list" id="dlList">
+
+    <div class="dl-row" data-cat="formulario consular">
+      <div class="dl-icon">PDF</div>
+      <div class="dl-body">
+        <div class="dl-title">Solicitud de inscripción como residente</div>
+        <div class="dl-meta">Formulario oficial · PDF · 204 KB · exteriores.gob.es</div>
+      </div>
+      <div class="dl-action">
+        <a class="btn btn-red btn-sm" href="https://www.exteriores.gob.es/Documents/DocumentosSC/Inscripci%C3%B3n%20Consular/20240812%20SOLICITUD%20DE%20INSCRIPCION%20COMO%20RESIDENTE.pdf" target="_blank" rel="noopener noreferrer" style="color:white;text-decoration:none">Descargar ↗</a>
+      </div>
+    </div>
+
+    <div class="dl-row" data-cat="formulario registro">
+      <div class="dl-icon">PDF</div>
+      <div class="dl-body">
+        <div class="dl-title">Hoja declaratoria — inscripción de nacimiento</div>
+        <div class="dl-meta">Formulario oficial · PDF · 93 KB · exteriores.gob.es</div>
+      </div>
+      <div class="dl-action">
+        <a class="btn btn-red btn-sm" href="https://www.exteriores.gob.es/DocumentosAuxiliaresSC/Venezuela/CARACAS%20(C)/Hoja%20declaratoria%20inscripci%C3%B3n%20nacimiento.pdf" target="_blank" rel="noopener noreferrer" style="color:white;text-decoration:none">Descargar ↗</a>
+      </div>
+    </div>
+
+    <div class="dl-row" data-cat="formulario registro">
+      <div class="dl-icon">PDF</div>
+      <div class="dl-body">
+        <div class="dl-title">Hoja declaratoria — inscripción de matrimonio</div>
+        <div class="dl-meta">Formulario oficial · PDF · 532 KB · exteriores.gob.es</div>
+      </div>
+      <div class="dl-action">
+        <a class="btn btn-red btn-sm" href="https://www.exteriores.gob.es/DocumentosAuxiliaresSC/Venezuela/CARACAS%20(C)/Hoja%20declaratoria%20inscripci%C3%B3n%20matrimonio.pdf" target="_blank" rel="noopener noreferrer" style="color:white;text-decoration:none">Descargar ↗</a>
+      </div>
+    </div>
+
+    <div class="dl-row" data-cat="formulario registro">
+      <div class="dl-icon">PDF</div>
+      <div class="dl-body">
+        <div class="dl-title">Hoja declaratoria — inscripción de defunción</div>
+        <div class="dl-meta">Formulario oficial · PDF · 78 KB · exteriores.gob.es</div>
+      </div>
+      <div class="dl-action">
+        <a class="btn btn-red btn-sm" href="https://www.exteriores.gob.es/DocumentosAuxiliaresSC/Venezuela/CARACAS%20(C)/Hoja%20declaratoria%20inscripci%C3%B3n%20defunci%C3%B3n.pdf" target="_blank" rel="noopener noreferrer" style="color:white;text-decoration:none">Descargar ↗</a>
+      </div>
+    </div>
+
+    <div class="dl-row" data-cat="requisitos registro">
+      <div class="dl-icon">PDF</div>
+      <div class="dl-body">
+        <div class="dl-title">Requisitos para la inscripción de matrimonio</div>
+        <div class="dl-meta">Hoja de requisitos del Viceconsulado · PDF · 111 KB</div>
+      </div>
+      <div class="dl-action">
+        <a class="btn btn-red btn-sm" href="documentos/Requisitos inscripcion de matrimonio.pdf" download style="color:white;text-decoration:none">Descargar</a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="dl-empty" id="dlEmpty" style="display:none">
+    No hay documentos que coincidan con la búsqueda.
+  </div>
+
+  <div class="tramite-note" style="margin-top:26px">
+    ¿No encuentra un documento? Escriba al Viceconsulado por
+    <a href="https://wa.me/584248429665" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+    o a <a href="mailto:ch.porlamar@maec.es">ch.porlamar@maec.es</a> y se le indicará el
+    formulario que corresponde a su trámite.
+  </div>
+</div>
+
 <!-- ==================== NOSOTROS ==================== -->
 <div id="sec-ubicacion" class="section">
   <button class="back-btn" onclick="showSection('inicio')">← Volver al inicio</button>
@@ -1550,9 +2212,64 @@ footer { background: #1a1a1a; margin-top: 60px; }
     de registro civil, documentación y asistencia a ciudadanos.
   </p>
 
-  <!-- Equipo -->
+  <!-- ORGANIZACIÓN INSTITUCIONAL -->
+  <!-- Orden institucional: 1 Embajada · 2 Consulado General · 3 Viceconsulado · 4 Vicecónsul -->
+  <div class="com-kicker">Organización institucional</div>
+  <h2 style="font-family:'Libre Baskerville',Georgia,serif;font-size:26px;color:var(--texto);margin:0 0 8px">La Red Consular de España en Venezuela</h2>
+  <p class="page-desc" style="margin-bottom:18px">El Viceconsulado Honorario de España en Nueva Esparta forma parte de la Red Consular de España en Venezuela y desarrolla sus funciones bajo la dirección y supervisión del Consulado General de España en Caracas.</p>
+
+  <p class="org-fuente">
+    Los datos de la Embajada y del Consulado General proceden de la web oficial del
+    <a href="https://www.exteriores.gob.es" target="_blank" rel="noopener noreferrer">Ministerio de Asuntos Exteriores, Unión Europea y Cooperación</a>.
+    Para cualquier gestión, consulte siempre sus páginas oficiales, que son la fuente vigente.
+  </p>
+
+  <div style="max-width:660px;margin:0 auto 20px">
+    <!-- 1 · EMBAJADA — datos oficiales de exteriores.gob.es -->
+    <div class="com-block" style="text-align:center;border-top:3px solid var(--rojo)">
+      <div class="org-step">1 · Representación diplomática</div>
+      <div class="info-block-title" style="color:var(--rojo)">Embajada de España en Venezuela</div>
+      <div style="font-family:'Libre Baskerville',Georgia,serif;font-size:19px;color:var(--texto);margin:6px 0 4px">D. Álvaro Enrique Albacete Perea</div>
+      <div style="font-size:13px;color:#888">Embajador de España · máxima representación diplomática del Reino de España, dirige la acción exterior del Estado en el país.</div>
+      <div class="org-datos">
+        <div>Torre España, 4ª Avenida entre 3ª y 4ª Transversal, Altamira, Caracas 1060</div>
+        <div>Tel. <a href="tel:+582126270300">+58 212 627 03 00</a> · <a href="mailto:emb.caracas@maec.es">emb.caracas@maec.es</a></div>
+        <div>Atención: lunes a viernes, 8:00 — 14:30</div>
+      </div>
+      <div style="margin-top:14px"><a class="btn btn-outline btn-sm" href="https://www.exteriores.gob.es/Embajadas/caracas" target="_blank" rel="noopener noreferrer">Web de la Embajada ↗</a></div>
+    </div>
+    <div class="org-arrow">↓</div>
+
+    <!-- 2 · CONSULADO GENERAL — datos oficiales de exteriores.gob.es -->
+    <div class="com-block" style="text-align:center;border-top:3px solid var(--rojo)">
+      <div class="org-step">2 · Oficina consular de carrera</div>
+      <div class="info-block-title" style="color:var(--alerta)">Consulado General de España en Caracas</div>
+      <div style="font-family:'Libre Baskerville',Georgia,serif;font-size:19px;color:var(--texto);margin:6px 0 4px">D. Ramón Molina Lladó</div>
+      <div style="font-size:13px;color:#888">Cónsul General · principal oficina consular; presta los servicios consulares, protege los intereses de los ciudadanos españoles y dirige, coordina y supervisa la Red de Viceconsulados Honorarios.</div>
+      <div class="org-datos">
+        <div>Edif. Bancaracas, piso 7 — Plaza La Castellana, Caracas 1060</div>
+        <div>Tel. <a href="tel:+582122660222">+58 212 266 02 22</a> · <a href="mailto:cog.caracas@maec.es">cog.caracas@maec.es</a></div>
+        <div>Atención: 8:00 — 14:00</div>
+        <div class="org-datos-emg">Emergencia consular 24 h: <a href="tel:+584242090264">+58 424 209 0264</a> · <a href="mailto:emergencia.caracas@maec.es">emergencia.caracas@maec.es</a></div>
+      </div>
+      <div style="margin-top:14px"><a class="btn btn-alerta btn-sm" href="https://www.exteriores.gob.es/Consulados/caracas/es/Paginas/index.aspx" target="_blank" rel="noopener noreferrer" style="color:white;text-decoration:none">Web del Consulado General ↗</a></div>
+    </div>
+    <div class="org-arrow">↓</div>
+
+    <!-- 3 · VICECONSULADO (la oficina) -->
+    <div class="com-block" style="text-align:center;border-top:3px solid var(--dorado-oscuro)">
+      <div class="org-step">3 · Oficina consular honoraria</div>
+      <div class="info-block-title">Viceconsulado Honorario de España en Nueva Esparta</div>
+      <div style="font-family:'Libre Baskerville',Georgia,serif;font-size:19px;color:var(--texto);margin:6px 0 4px">Porlamar, Isla de Margarita</div>
+      <div style="font-size:13px;color:#888">Circunscripción: Estado Nueva Esparta — islas de Margarita, Coche y Cubagua. Tramita los servicios consulares más comunes y canaliza hacia el Consulado General los trámites que le corresponden.</div>
+    </div>
+    <div class="org-arrow">↓</div>
+  </div>
+
+  <!-- 4 · VICECÓNSUL (la persona) -->
   <div class="team-section">
     <div class="team-card team-card--single">
+      <div class="org-step" style="text-align:center">4 · Titular del Viceconsulado</div>
       <div class="team-photo">
         <img src="images/Pic_Manuel.png" alt="Manuel Leiros">
       </div>
@@ -1612,11 +2329,1178 @@ footer { background: #1a1a1a; margin-top: 60px; }
       <div><strong>Edif. Bancaracas, Piso 7</strong> — Plaza La Castellana, Caracas 1060</div>
     </div>
     <div>
-      <div>Tel: +58 212 2660333</div>
-      <div>Emergencias 24h: <button type="button" class="inline-link" onclick="document.getElementById('emergencia-anchor').scrollIntoView({behavior:'smooth'})">+58 424 2090264</button></div>
+      <div>Tel: +58 212 266 02 22</div>
+      <div>cog.caracas@maec.es</div>
+      <div>Emergencias 24h: <button type="button" class="inline-link" onclick="showSection('emergencias')">+58 424 209 0264</button></div>
     </div>
     <div>
-      <a href="https://www.exteriores.gob.es/Consulados/caracas/es/Paginas/index.aspx" target="_blank">Web oficial del Consulado ↗</a>
+      <a class="btn btn-alerta btn-sm" href="https://www.exteriores.gob.es/Consulados/caracas/es/Paginas/index.aspx" target="_blank" rel="noopener noreferrer" style="color:white;text-decoration:none">Web oficial del Consulado General ↗</a>
+    </div>
+  </div>
+
+  <!-- Dependencias e instituciones (información complementaria) -->
+  <div style="margin-top:46px">
+    <div class="com-kicker">Dependencias e instituciones españolas en Venezuela</div>
+    <div class="com-grid">
+      <div class="com-block">
+        <div class="info-block-title">Embajada de España en Venezuela</div>
+        <div>Máxima representación diplomática del Reino de España.</div>
+        <div style="margin-top:8px"><a href="https://www.exteriores.gob.es/Embajadas/caracas" target="_blank" rel="noopener noreferrer">Web oficial de la Embajada ↗</a></div>
+      </div>
+      <div class="com-block">
+        <div class="info-block-title">Consulado General de España en Caracas</div>
+        <div>Oficina consular de carrera responsable de la coordinación de todos los Viceconsulados Honorarios de España en Venezuela.</div>
+        <div style="margin-top:8px"><a href="https://www.exteriores.gob.es/Consulados/caracas/es/Paginas/index.aspx" target="_blank" rel="noopener noreferrer">Web oficial del Consulado General ↗</a></div>
+      </div>
+      <div class="com-block">
+        <div class="info-block-title">Consejería de Trabajo, Migraciones y Seguridad Social</div>
+        <div>Atención en empleo, pensiones, Seguridad Social, ayudas asistenciales y programas para los españoles residentes en Venezuela.</div>
+        <div style="margin-top:8px"><a href="#" onclick="showSection('consejeria');return false;">Ver Consejería →</a></div>
+      </div>
+      <div class="com-block">
+        <div class="info-block-title">Consejo de Residentes Españoles (CRE)</div>
+        <div>Órgano consultivo y representativo de la comunidad española residente, que colabora con el Consulado General para trasladar sus necesidades e inquietudes.</div>
+        <div style="margin-top:8px"><a href="#" onclick="showSection('cre');return false;">Ver CRE →</a></div>
+      </div>
+      <div class="com-block">
+        <div class="info-block-title">Cámara Venezolano-Española de Industria y Comercio (CAVESPA)</div>
+        <div>Promueve las relaciones económicas, empresariales y comerciales entre España y Venezuela, fortaleciendo la cooperación entre empresas e instituciones de ambos países.</div>
+        <div style="margin-top:8px"><a href="#" onclick="showSection('cavespa');return false;">Ver CAVESPA →</a></div>
+      </div>
+      <div class="com-block">
+        <div class="info-block-title">Federación de Centros Españoles de Venezuela (FECEVE)</div>
+        <div>Federación que agrupa a los centros, hermandades y asociaciones españolas del país y promueve su cooperación cultural, social y asistencial.</div>
+        <div style="margin-top:8px"><a href="#" onclick="showSection('feceve');return false;">Ver FECEVE →</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== CONOCE ==================== -->
+<div id="sec-conoce" class="section">
+  <button class="back-btn" onclick="showSection('inicio')">← Volver al inicio</button>
+  <h1 class="page-title">Conoce nuestros destinos</h1>
+  <div class="conoce-detalle" style="margin-top:34px">
+    <div class="com-kicker">Dos países · tres islas · una historia</div>
+    <p class="page-desc" style="margin-bottom:8px">
+      España y Venezuela comparten siglos de historia, cultura y vínculos humanos. Le invitamos a
+      descubrir <strong>España</strong>, recorrer <strong>Venezuela</strong> y conocer las tres islas
+      de Nueva Esparta: <strong>Margarita, Coche y Cubagua</strong>.
+    </p>
+
+    <!-- ESPAÑA -->
+    <div class="com-kicker" style="margin-top:34px">Conoce España</div>
+    <p class="page-desc">
+      Un país de contrastes: grandes ciudades y pueblos con encanto, costas mediterráneas, montañas,
+      islas y monumentos que conservan la memoria de distintas civilizaciones.
+    </p>
+    <figure class="conoce-hero"><picture><source srcset="images/conoce-espana-det.webp" type="image/webp"><img src="images/conoce-espana-det.jpg" alt="Toledo sobre el río Tajo, con el Alcázar y el puente de Alcántara, España" loading="lazy" decoding="async"></picture></figure>
+    <div class="tramite-list">
+      <div class="tramite-item" id="tramite-conoce-esp-cul">
+        <div class="tramite-header" onclick="toggleTramite('conoce-esp-cul')">
+          <div class="tramite-left"><div class="tramite-badge">CUL</div><div>
+            <div class="tramite-title">Un país de culturas</div>
+            <div class="tramite-subtitle">Diecisiete comunidades, una identidad común</div>
+          </div></div><span class="tramite-arrow">▼</span>
+        </div>
+        <div class="tramite-body"><div class="tramite-content">
+          <div>Cada comunidad autónoma tiene personalidad propia, con tradiciones, paisajes, fiestas y expresiones culturales que enriquecen la identidad común de España. De Galicia a Andalucía, pasando por Madrid, Cataluña, el País Vasco, Castilla, Valencia, Canarias y Baleares, cada territorio ofrece una experiencia distinta.</div>
+          <div class="tramite-note">España reúne una extensa riqueza monumental, artística y cultural reconocida internacionalmente: quince ciudades cuyos conjuntos históricos o monumentos son Patrimonio Mundial.</div>
+        </div></div>
+      </div>
+      <div class="tramite-item" id="tramite-conoce-esp-sab">
+        <div class="tramite-header" onclick="toggleTramite('conoce-esp-sab')">
+          <div class="tramite-left"><div class="tramite-badge">SAB</div><div>
+            <div class="tramite-title">Sabores de España</div>
+            <div class="tramite-subtitle">La gastronomía como lugar de encuentro</div>
+          </div></div><span class="tramite-arrow">▼</span>
+        </div>
+        <div class="tramite-body"><div class="tramite-content">
+          <div>Cada región conserva recetas, ingredientes y formas de cocinar ligadas a su territorio: la paella valenciana, el pulpo a la gallega, la tortilla española, el gazpacho andaluz, la fabada asturiana, los pintxos, los quesos, los vinos y el aceite de oliva. La cocina cambia entre las zonas costeras, el interior, el norte y las huertas del sur.</div>
+        </div></div>
+      </div>
+      <div class="tramite-item" id="tramite-conoce-esp-art">
+        <div class="tramite-header" onclick="toggleTramite('conoce-esp-art')">
+          <div class="tramite-left"><div class="tramite-badge">ART</div><div>
+            <div class="tramite-title">Arte, patrimonio y tradiciones</div>
+            <div class="tramite-subtitle">De lo romano a lo contemporáneo</div>
+          </div></div><span class="tramite-arrow">▼</span>
+        </div>
+        <div class="tramite-body"><div class="tramite-content">
+          <div>En sus ciudades y pueblos conviven edificios romanos, castillos medievales, catedrales, arquitectura islámica y obras contemporáneas. Es el país de artistas universales como Velázquez, Goya, Gaudí, Picasso, Miró y Dalí. Las Fallas, el flamenco, los castells y otras celebraciones muestran una cultura viva que se transmite entre generaciones.</div>
+        </div></div>
+      </div>
+    </div>
+
+
+    <!-- MOSAICO: LAS COMUNIDADES AUTONOMAS -->
+    <div class="com-kicker" style="margin-top:34px">Las diecisiete comunidades autónomas</div>
+    <p class="page-desc">
+      Cada comunidad autónoma tiene lengua, paisaje, tradiciones y patrimonio propios. Este recorrido
+      recoge un monumento representativo de cada una, junto a su escudo oficial.
+    </p>
+    <div class="ccaa-grid">
+      <figure class="ccaa-card">
+        <picture>
+          <source srcset="images/ccaa/andalucia.webp" type="image/webp">
+          <img class="ccaa-foto" src="images/ccaa/andalucia.jpg" alt="Plaza de España, Sevilla — Andalucía" loading="lazy" decoding="async" width="900" height="562">
+        </picture>
+        <span class="ccaa-num">1</span>
+        <img class="ccaa-escudo" src="images/ccaa/escudo-andalucia.png" alt="Escudo de Andalucía" loading="lazy" decoding="async">
+        <figcaption class="ccaa-txt">
+          <div class="ccaa-nom">Andalucía</div>
+          <div class="ccaa-mon">Plaza de España, Sevilla</div>
+        </figcaption>
+      </figure>
+      <figure class="ccaa-card">
+        <picture>
+          <source srcset="images/ccaa/aragon.webp" type="image/webp">
+          <img class="ccaa-foto" src="images/ccaa/aragon.jpg" alt="Basílica del Pilar, Zaragoza — Aragón" loading="lazy" decoding="async" width="900" height="562">
+        </picture>
+        <span class="ccaa-num">2</span>
+        <img class="ccaa-escudo" src="images/ccaa/escudo-aragon.png" alt="Escudo de Aragón" loading="lazy" decoding="async">
+        <figcaption class="ccaa-txt">
+          <div class="ccaa-nom">Aragón</div>
+          <div class="ccaa-mon">Basílica del Pilar, Zaragoza</div>
+        </figcaption>
+      </figure>
+      <figure class="ccaa-card">
+        <picture>
+          <source srcset="images/ccaa/asturias.webp" type="image/webp">
+          <img class="ccaa-foto" src="images/ccaa/asturias.jpg" alt="Catedral de Oviedo — Principado de Asturias" loading="lazy" decoding="async" width="900" height="562">
+        </picture>
+        <span class="ccaa-num">3</span>
+        <img class="ccaa-escudo" src="images/ccaa/escudo-asturias.png" alt="Escudo de Principado de Asturias" loading="lazy" decoding="async">
+        <figcaption class="ccaa-txt">
+          <div class="ccaa-nom">Principado de Asturias</div>
+          <div class="ccaa-mon">Catedral de Oviedo</div>
+        </figcaption>
+      </figure>
+      <figure class="ccaa-card">
+        <picture>
+          <source srcset="images/ccaa/baleares.webp" type="image/webp">
+          <img class="ccaa-foto" src="images/ccaa/baleares.jpg" alt="Catedral de Palma (La Seu) — Illes Balears" loading="lazy" decoding="async" width="900" height="562">
+        </picture>
+        <span class="ccaa-num">4</span>
+        <img class="ccaa-escudo" src="images/ccaa/escudo-baleares.png" alt="Escudo de Illes Balears" loading="lazy" decoding="async">
+        <figcaption class="ccaa-txt">
+          <div class="ccaa-nom">Illes Balears</div>
+          <div class="ccaa-mon">Catedral de Palma (La Seu)</div>
+        </figcaption>
+      </figure>
+      <figure class="ccaa-card">
+        <picture>
+          <source srcset="images/ccaa/paisvasco.webp" type="image/webp">
+          <img class="ccaa-foto" src="images/ccaa/paisvasco.jpg" alt="Museo Guggenheim, Bilbao — País Vasco / Euskadi" loading="lazy" decoding="async" width="900" height="562">
+        </picture>
+        <span class="ccaa-num">5</span>
+        <img class="ccaa-escudo" src="images/ccaa/escudo-paisvasco.png" alt="Escudo de País Vasco / Euskadi" loading="lazy" decoding="async">
+        <figcaption class="ccaa-txt">
+          <div class="ccaa-nom">País Vasco / Euskadi</div>
+          <div class="ccaa-mon">Museo Guggenheim, Bilbao</div>
+        </figcaption>
+      </figure>
+      <figure class="ccaa-card">
+        <picture>
+          <source srcset="images/ccaa/canarias.webp" type="image/webp">
+          <img class="ccaa-foto" src="images/ccaa/canarias.jpg" alt="Parque Nacional del Teide, Tenerife — Canarias" loading="lazy" decoding="async" width="900" height="562">
+        </picture>
+        <span class="ccaa-num">6</span>
+        <img class="ccaa-escudo" src="images/ccaa/escudo-canarias.png" alt="Escudo de Canarias" loading="lazy" decoding="async">
+        <figcaption class="ccaa-txt">
+          <div class="ccaa-nom">Canarias</div>
+          <div class="ccaa-mon">Parque Nacional del Teide, Tenerife</div>
+        </figcaption>
+      </figure>
+      <figure class="ccaa-card">
+        <picture>
+          <source srcset="images/ccaa/cantabria.webp" type="image/webp">
+          <img class="ccaa-foto" src="images/ccaa/cantabria.jpg" alt="Palacio de la Magdalena, Santander — Cantabria" loading="lazy" decoding="async" width="900" height="562">
+        </picture>
+        <span class="ccaa-num">7</span>
+        <img class="ccaa-escudo" src="images/ccaa/escudo-cantabria.png" alt="Escudo de Cantabria" loading="lazy" decoding="async">
+        <figcaption class="ccaa-txt">
+          <div class="ccaa-nom">Cantabria</div>
+          <div class="ccaa-mon">Palacio de la Magdalena, Santander</div>
+        </figcaption>
+      </figure>
+      <figure class="ccaa-card">
+        <picture>
+          <source srcset="images/ccaa/clm.webp" type="image/webp">
+          <img class="ccaa-foto" src="images/ccaa/clm.jpg" alt="Alcázar de Toledo — Castilla-La Mancha" loading="lazy" decoding="async" width="900" height="562">
+        </picture>
+        <span class="ccaa-num">8</span>
+        <img class="ccaa-escudo" src="images/ccaa/escudo-clm.png" alt="Escudo de Castilla-La Mancha" loading="lazy" decoding="async">
+        <figcaption class="ccaa-txt">
+          <div class="ccaa-nom">Castilla-La Mancha</div>
+          <div class="ccaa-mon">Alcázar de Toledo</div>
+        </figcaption>
+      </figure>
+      <figure class="ccaa-card">
+        <picture>
+          <source srcset="images/ccaa/cyl.webp" type="image/webp">
+          <img class="ccaa-foto" src="images/ccaa/cyl.jpg" alt="Acueducto de Segovia — Castilla y León" loading="lazy" decoding="async" width="900" height="562">
+        </picture>
+        <span class="ccaa-num">9</span>
+        <img class="ccaa-escudo" src="images/ccaa/escudo-cyl.png" alt="Escudo de Castilla y León" loading="lazy" decoding="async">
+        <figcaption class="ccaa-txt">
+          <div class="ccaa-nom">Castilla y León</div>
+          <div class="ccaa-mon">Acueducto de Segovia</div>
+        </figcaption>
+      </figure>
+      <figure class="ccaa-card">
+        <picture>
+          <source srcset="images/ccaa/cataluna.webp" type="image/webp">
+          <img class="ccaa-foto" src="images/ccaa/cataluna.jpg" alt="Sagrada Família, Barcelona — Catalunya" loading="lazy" decoding="async" width="900" height="562">
+        </picture>
+        <span class="ccaa-num">10</span>
+        <img class="ccaa-escudo" src="images/ccaa/escudo-cataluna.png" alt="Escudo de Catalunya" loading="lazy" decoding="async">
+        <figcaption class="ccaa-txt">
+          <div class="ccaa-nom">Catalunya</div>
+          <div class="ccaa-mon">Sagrada Família, Barcelona</div>
+        </figcaption>
+      </figure>
+      <figure class="ccaa-card">
+        <picture>
+          <source srcset="images/ccaa/extremadura.webp" type="image/webp">
+          <img class="ccaa-foto" src="images/ccaa/extremadura.jpg" alt="Teatro Romano de Mérida — Extremadura" loading="lazy" decoding="async" width="900" height="562">
+        </picture>
+        <span class="ccaa-num">11</span>
+        <img class="ccaa-escudo" src="images/ccaa/escudo-extremadura.png" alt="Escudo de Extremadura" loading="lazy" decoding="async">
+        <figcaption class="ccaa-txt">
+          <div class="ccaa-nom">Extremadura</div>
+          <div class="ccaa-mon">Teatro Romano de Mérida</div>
+        </figcaption>
+      </figure>
+      <figure class="ccaa-card">
+        <picture>
+          <source srcset="images/ccaa/galicia.webp" type="image/webp">
+          <img class="ccaa-foto" src="images/ccaa/galicia.jpg" alt="Catedral de Santiago de Compostela — Galicia" loading="lazy" decoding="async" width="900" height="562">
+        </picture>
+        <span class="ccaa-num">12</span>
+        <img class="ccaa-escudo" src="images/ccaa/escudo-galicia.png" alt="Escudo de Galicia" loading="lazy" decoding="async">
+        <figcaption class="ccaa-txt">
+          <div class="ccaa-nom">Galicia</div>
+          <div class="ccaa-mon">Catedral de Santiago de Compostela</div>
+        </figcaption>
+      </figure>
+      <figure class="ccaa-card">
+        <picture>
+          <source srcset="images/ccaa/larioja.webp" type="image/webp">
+          <img class="ccaa-foto" src="images/ccaa/larioja.jpg" alt="Monasterio de Yuso, San Millán de la Cogolla — La Rioja" loading="lazy" decoding="async" width="900" height="562">
+        </picture>
+        <span class="ccaa-num">13</span>
+        <img class="ccaa-escudo" src="images/ccaa/escudo-larioja.png" alt="Escudo de La Rioja" loading="lazy" decoding="async">
+        <figcaption class="ccaa-txt">
+          <div class="ccaa-nom">La Rioja</div>
+          <div class="ccaa-mon">Monasterio de Yuso, San Millán de la Cogolla</div>
+        </figcaption>
+      </figure>
+      <figure class="ccaa-card">
+        <picture>
+          <source srcset="images/ccaa/madrid.webp" type="image/webp">
+          <img class="ccaa-foto" src="images/ccaa/madrid.jpg" alt="Puerta de Alcalá, Madrid — Comunidad de Madrid" loading="lazy" decoding="async" width="900" height="562">
+        </picture>
+        <span class="ccaa-num">14</span>
+        <img class="ccaa-escudo" src="images/ccaa/escudo-madrid.png" alt="Escudo de Comunidad de Madrid" loading="lazy" decoding="async">
+        <figcaption class="ccaa-txt">
+          <div class="ccaa-nom">Comunidad de Madrid</div>
+          <div class="ccaa-mon">Puerta de Alcalá, Madrid</div>
+        </figcaption>
+      </figure>
+      <figure class="ccaa-card">
+        <picture>
+          <source srcset="images/ccaa/murcia.webp" type="image/webp">
+          <img class="ccaa-foto" src="images/ccaa/murcia.jpg" alt="Catedral de Murcia — Región de Murcia" loading="lazy" decoding="async" width="900" height="562">
+        </picture>
+        <span class="ccaa-num">15</span>
+        <img class="ccaa-escudo" src="images/ccaa/escudo-murcia.png" alt="Escudo de Región de Murcia" loading="lazy" decoding="async">
+        <figcaption class="ccaa-txt">
+          <div class="ccaa-nom">Región de Murcia</div>
+          <div class="ccaa-mon">Catedral de Murcia</div>
+        </figcaption>
+      </figure>
+      <figure class="ccaa-card">
+        <picture>
+          <source srcset="images/ccaa/navarra.webp" type="image/webp">
+          <img class="ccaa-foto" src="images/ccaa/navarra.jpg" alt="Ciudadela de Pamplona — Comunidad Foral de Navarra" loading="lazy" decoding="async" width="900" height="562">
+        </picture>
+        <span class="ccaa-num">16</span>
+        <img class="ccaa-escudo" src="images/ccaa/escudo-navarra.png" alt="Escudo de Comunidad Foral de Navarra" loading="lazy" decoding="async">
+        <figcaption class="ccaa-txt">
+          <div class="ccaa-nom">Comunidad Foral de Navarra</div>
+          <div class="ccaa-mon">Ciudadela de Pamplona</div>
+        </figcaption>
+      </figure>
+      <figure class="ccaa-card">
+        <picture>
+          <source srcset="images/ccaa/valenciana.webp" type="image/webp">
+          <img class="ccaa-foto" src="images/ccaa/valenciana.jpg" alt="Ciudad de las Artes y las Ciencias, Valencia — Comunitat Valenciana" loading="lazy" decoding="async" width="900" height="562">
+        </picture>
+        <span class="ccaa-num">17</span>
+        <img class="ccaa-escudo" src="images/ccaa/escudo-valenciana.png" alt="Escudo de Comunitat Valenciana" loading="lazy" decoding="async">
+        <figcaption class="ccaa-txt">
+          <div class="ccaa-nom">Comunitat Valenciana</div>
+          <div class="ccaa-mon">Ciudad de las Artes y las Ciencias, Valencia</div>
+        </figcaption>
+      </figure>
+    </div>
+
+    <div class="ccaa-sub">Ciudades autónomas</div>
+    <div class="ccaa-grid">
+      <figure class="ccaa-card">
+        <picture>
+          <source srcset="images/ccaa/ceuta.webp" type="image/webp">
+          <img class="ccaa-foto" src="images/ccaa/ceuta.jpg" alt="Murallas Reales de Ceuta — Ciudad Autónoma de Ceuta" loading="lazy" decoding="async" width="900" height="562">
+        </picture>
+        <span class="ccaa-num">18</span>
+        <img class="ccaa-escudo" src="images/ccaa/escudo-ceuta.png" alt="Escudo de Ciudad Autónoma de Ceuta" loading="lazy" decoding="async">
+        <figcaption class="ccaa-txt">
+          <div class="ccaa-nom">Ciudad Autónoma de Ceuta</div>
+          <div class="ccaa-mon">Murallas Reales de Ceuta</div>
+        </figcaption>
+      </figure>
+      <figure class="ccaa-card">
+        <picture>
+          <source srcset="images/ccaa/melilla.webp" type="image/webp">
+          <img class="ccaa-foto" src="images/ccaa/melilla.jpg" alt="Melilla la Vieja — Ciudad Autónoma de Melilla" loading="lazy" decoding="async" width="900" height="562">
+        </picture>
+        <span class="ccaa-num">19</span>
+        <img class="ccaa-escudo" src="images/ccaa/escudo-melilla.png" alt="Escudo de Ciudad Autónoma de Melilla" loading="lazy" decoding="async">
+        <figcaption class="ccaa-txt">
+          <div class="ccaa-nom">Ciudad Autónoma de Melilla</div>
+          <div class="ccaa-mon">Melilla la Vieja</div>
+        </figcaption>
+      </figure>
+    </div>
+
+    <div class="tramite-list" style="margin-top:18px">
+      <div class="tramite-item" id="tramite-conoce-esp-cred">
+        <div class="tramite-header" onclick="toggleTramite('conoce-esp-cred')">
+          <div class="tramite-left"><div class="tramite-badge">IMG</div><div>
+            <div class="tramite-title">Créditos de las imágenes</div>
+            <div class="tramite-subtitle">Fotografías con licencia libre y escudos oficiales</div>
+          </div></div><span class="tramite-arrow">▼</span>
+        </div>
+        <div class="tramite-body"><div class="tramite-content">
+          <div>Las fotografías proceden de Wikimedia Commons y se reproducen bajo licencias Creative Commons, con indicación de autoría. Los escudos son las versiones oficiales de cada comunidad y ciudad autónoma.</div>
+          <div class="ccaa-creditos">
+            <div><strong>Andalucía</strong>: Plaza de España, Sevilla — Carlos Delgado, CC BY-SA 4.0 (<a href="https://commons.wikimedia.org/wiki/File%3APlaza_de_Espa%C3%B1a_%28Sevilla%29_-_01.jpg" target="_blank" rel="noopener">Wikimedia Commons</a>).</div>
+            <div><strong>Aragón</strong>: Basílica del Pilar, Zaragoza — Rab Lawrence, CC BY 2.0 (<a href="https://commons.wikimedia.org/wiki/File%3AZaragoza_-_Basilica_de_Nuestra_Se%C3%B1ora_del_Pilar_01.jpg" target="_blank" rel="noopener">Wikimedia Commons</a>).</div>
+            <div><strong>Principado de Asturias</strong>: Catedral de Oviedo — Fernando, CC BY-SA 4.0 (<a href="https://commons.wikimedia.org/wiki/File%3ACathedral_of_Oviedo_2021_-_exterior.jpg" target="_blank" rel="noopener">Wikimedia Commons</a>).</div>
+            <div><strong>Illes Balears</strong>: Catedral de Palma (La Seu) — Thomas Wolf, www.foto-tw.de, CC BY-SA 3.0 de (<a href="https://commons.wikimedia.org/wiki/File%3AKathedrale_von_Palma_II.jpg" target="_blank" rel="noopener">Wikimedia Commons</a>).</div>
+            <div><strong>País Vasco / Euskadi</strong>: Museo Guggenheim, Bilbao — Naotake Murayama, CC BY 2.0 (<a href="https://commons.wikimedia.org/wiki/File%3AMuseo_Guggenheim%2C_Bilbao_%2831273245344%29.jpg" target="_blank" rel="noopener">Wikimedia Commons</a>).</div>
+            <div><strong>Canarias</strong>: Parque Nacional del Teide, Tenerife — Photograph by Mike Peel (www.mikepeel.net)., CC BY-SA 4.0 (<a href="https://commons.wikimedia.org/wiki/File%3AAt_Tenerife_2020_689.jpg" target="_blank" rel="noopener">Wikimedia Commons</a>).</div>
+            <div><strong>Cantabria</strong>: Palacio de la Magdalena, Santander — Kokonotanloko, CC BY-SA 4.0 (<a href="https://commons.wikimedia.org/wiki/File%3APalacio_de_la_Magdalena%2C_Santander_%28Cantabria%2C_Espa%C3%B1a%29.jpg" target="_blank" rel="noopener">Wikimedia Commons</a>).</div>
+            <div><strong>Castilla-La Mancha</strong>: Alcázar de Toledo — Carlos Delgado, CC BY-SA 3.0 es (<a href="https://commons.wikimedia.org/wiki/File%3AAlc%C3%A1zar_de_Toledo_-_01.jpg" target="_blank" rel="noopener">Wikimedia Commons</a>).</div>
+            <div><strong>Castilla y León</strong>: Acueducto de Segovia — Marmontel, CC BY 2.0 (<a href="https://commons.wikimedia.org/wiki/File%3AAcqueduc_romain_%2851427728318%29.jpg" target="_blank" rel="noopener">Wikimedia Commons</a>).</div>
+            <div><strong>Catalunya</strong>: Sagrada Família, Barcelona — Canaan, CC BY-SA 4.0 (<a href="https://commons.wikimedia.org/wiki/File%3ASF_maig_2026.jpg" target="_blank" rel="noopener">Wikimedia Commons</a>).</div>
+            <div><strong>Extremadura</strong>: Teatro Romano de Mérida — Fernando, CC BY-SA 4.0 (<a href="https://commons.wikimedia.org/wiki/File%3AAncient_Roman_theatre_in_M%C3%A9rida_2023.jpg" target="_blank" rel="noopener">Wikimedia Commons</a>).</div>
+            <div><strong>Galicia</strong>: Catedral de Santiago de Compostela — Tim Adams, CC BY 3.0 (<a href="https://commons.wikimedia.org/wiki/File%3APlaza_Obradoiro_and_cathedral_in_Santiago_de_Compostela%2C_Spain.jpg" target="_blank" rel="noopener">Wikimedia Commons</a>).</div>
+            <div><strong>La Rioja</strong>: Monasterio de Yuso, San Millán de la Cogolla — xiquinhosilva from Cacau, CC BY 2.0 (<a href="https://commons.wikimedia.org/wiki/File%3A21320-San-Millan-de-la-Cogolla_%2832463907708%29.jpg" target="_blank" rel="noopener">Wikimedia Commons</a>).</div>
+            <div><strong>Comunidad de Madrid</strong>: Puerta de Alcalá, Madrid — Fernando Pascullo, CC BY-SA 4.0 (<a href="https://commons.wikimedia.org/wiki/File%3APuerta_de_Alcal%C3%A1_2025.jpg" target="_blank" rel="noopener">Wikimedia Commons</a>).</div>
+            <div><strong>Región de Murcia</strong>: Catedral de Murcia — Fernando, CC BY-SA 4.0 (<a href="https://commons.wikimedia.org/wiki/File%3AMurcia_2022_-_West_facade_1.jpg" target="_blank" rel="noopener">Wikimedia Commons</a>).</div>
+            <div><strong>Comunidad Foral de Navarra</strong>: Ciudadela de Pamplona — Jialxv, CC BY-SA 4.0 (<a href="https://commons.wikimedia.org/wiki/File%3AVista_de_la_Vuelta_del_Castillo_y_la_Ciudadela_%28Pamplona%29_04.jpg" target="_blank" rel="noopener">Wikimedia Commons</a>).</div>
+            <div><strong>Comunitat Valenciana</strong>: Ciudad de las Artes y las Ciencias, Valencia — Bybbisch94, Christian Gebhardt, CC BY-SA 4.0 (<a href="https://commons.wikimedia.org/wiki/File%3A20211115.Valencia.-019.jpg" target="_blank" rel="noopener">Wikimedia Commons</a>).</div>
+            <div><strong>Ciudad Autónoma de Ceuta</strong>: Murallas Reales de Ceuta — Diego Delso, CC BY-SA 4.0 (<a href="https://commons.wikimedia.org/wiki/File%3AMurallas_Reales%2C_Ceuta%2C_Espa%C3%B1a%2C_2015-12-10%2C_DD_09.JPG" target="_blank" rel="noopener">Wikimedia Commons</a>).</div>
+            <div><strong>Ciudad Autónoma de Melilla</strong>: Melilla la Vieja — TonioMora, CC BY-SA 4.0 (<a href="https://commons.wikimedia.org/wiki/File%3AFrente_de_La_Marina.jpg" target="_blank" rel="noopener">Wikimedia Commons</a>).</div>
+          </div>
+        </div></div>
+      </div>
+    </div>
+
+    <!-- VENEZUELA -->
+    <div class="com-kicker" style="margin-top:34px">Conoce Venezuela</div>
+    <p class="page-desc">
+      País caribeño de contrastes naturales —playas, montañas, llanuras, selvas y grandes ríos— y de
+      gente cercana y hospitalaria. Naturaleza, tradición y hospitalidad.
+    </p>
+    <figure class="conoce-hero"><picture><source srcset="images/conoce-venezuela-det.webp" type="image/webp"><img src="images/conoce-venezuela-det.jpg" alt="Los tepuyes Kukenán y Roraima sobre la Gran Sabana, Venezuela" loading="lazy" decoding="async"></picture></figure>
+    <div class="tramite-list">
+      <div class="tramite-item" id="tramite-conoce-ven-nat">
+        <div class="tramite-header" onclick="toggleTramite('conoce-ven-nat')">
+          <div class="tramite-left"><div class="tramite-badge">NAT</div><div>
+            <div class="tramite-title">Naturaleza sin límites</div>
+            <div class="tramite-subtitle">Del Caribe a los Andes</div>
+          </div></div><span class="tramite-arrow">▼</span>
+        </div>
+        <div class="tramite-body"><div class="tramite-content">
+          <div>Del Caribe a las montañas andinas, grandes sabanas, selvas tropicales e islas de aguas transparentes. Entre sus destinos más representativos:</div>
+          <ul>
+            <li>Canaima y el Salto Ángel.</li>
+            <li>Los Roques.</li>
+            <li>La Gran Sabana.</li>
+            <li>Mérida y los Andes.</li>
+            <li>Los Llanos.</li>
+            <li>El delta del Orinoco.</li>
+            <li>La península de Paraguaná.</li>
+            <li>La Isla de Margarita.</li>
+          </ul>
+        </div></div>
+      </div>
+      <div class="tramite-item" id="tramite-conoce-ven-cul">
+        <div class="tramite-header" onclick="toggleTramite('conoce-ven-cul')">
+          <div class="tramite-left"><div class="tramite-badge">CUL</div><div>
+            <div class="tramite-title">Cultura y tradiciones</div>
+            <div class="tramite-subtitle">Una identidad diversa por regiones</div>
+          </div></div><span class="tramite-arrow">▼</span>
+        </div>
+        <div class="tramite-body"><div class="tramite-content">
+          <div>El joropo, la gaita zuliana, los tambores, los bailes tradicionales, las fiestas religiosas y las celebraciones populares forman un patrimonio cultural diverso. La cultura venezolana también está en su forma de hablar, su humor, la cercanía de sus familias y su hospitalidad.</div>
+        </div></div>
+      </div>
+      <div class="tramite-item" id="tramite-conoce-ven-sab">
+        <div class="tramite-header" onclick="toggleTramite('conoce-ven-sab')">
+          <div class="tramite-left"><div class="tramite-badge">SAB</div><div>
+            <div class="tramite-title">Sabores de Venezuela</div>
+            <div class="tramite-subtitle">Herencia indígena, europea, africana y caribeña</div>
+          </div></div><span class="tramite-arrow">▼</span>
+        </div>
+        <div class="tramite-body"><div class="tramite-content">
+          <div>La <strong>arepa</strong> es uno de los alimentos más emblemáticos y se consume en casi todo el país. También destacan el pabellón criollo, las cachapas, las hallacas, las empanadas, el asado negro, los hervidos, el queso de mano y los dulces criollos: recetas familiares y productos locales transmitidos entre generaciones.</div>
+        </div></div>
+      </div>
+    </div>
+
+    <!-- NUEVA ESPARTA — Margarita, Coche y Cubagua -->
+    <div class="com-kicker" style="margin-top:34px">Conoce Nueva Esparta · Margarita, Coche y Cubagua</div>
+    <p class="page-desc">
+      El Estado Nueva Esparta es el único estado insular de Venezuela y la circunscripción que
+      atiende este Viceconsulado. Lo forman tres islas con personalidad propia:
+      <strong>Margarita</strong>, principal centro poblado y turístico; <strong>Coche</strong>,
+      de playas tranquilas y deportes de viento; y <strong>Cubagua</strong>, de gran valor
+      histórico y arqueológico (perlas y Nueva Cádiz). Unidas por el mar, la historia y la
+      identidad neoespartana.
+    </p>
+
+    <h3 style="font-family:'Libre Baskerville',Georgia,serif;font-size:22px;color:var(--texto);margin:26px 0 4px">Isla de Margarita — La Perla del Caribe</h3>
+    <p class="page-desc">
+      Playas, historia, tradiciones religiosas y pueblos marineros. Su paisaje va del cerro El Copey
+      a los manglares de La Restinga y las playas del norte y del sur, con una cultura profundamente
+      ligada al mar.
+    </p>
+    <figure class="conoce-hero"><picture><source srcset="images/conoce-margarita.webp" type="image/webp"><img src="images/conoce-margarita.jpg" alt="Castillo San Carlos de Borromeo sobre la bahía de Pampatar, Isla de Margarita" loading="lazy" decoding="async"></picture></figure>
+    <div class="tramite-list">
+      <div class="tramite-item" id="tramite-conoce-mar-pla">
+        <div class="tramite-header" onclick="toggleTramite('conoce-mar-pla')">
+          <div class="tramite-left"><div class="tramite-badge">PLA</div><div>
+            <div class="tramite-title">Playas para cada experiencia</div>
+            <div class="tramite-subtitle">Descanso, familia y deportes acuáticos</div>
+          </div></div><span class="tramite-arrow">▼</span>
+        </div>
+        <div class="tramite-body"><div class="tramite-content">
+          <div>Playa El Agua · Parguito · El Yaque · Guacuco · Manzanillo · Zaragoza · Puerto Cruz · Punta Arenas · La Caracola.</div>
+        </div></div>
+      </div>
+      <div class="tramite-item" id="tramite-conoce-mar-his">
+        <div class="tramite-header" onclick="toggleTramite('conoce-mar-his')">
+          <div class="tramite-left"><div class="tramite-badge">HIS</div><div>
+            <div class="tramite-title">Historia, fe y patrimonio</div>
+            <div class="tramite-subtitle">La Virgen del Valle y los castillos coloniales</div>
+          </div></div><span class="tramite-arrow">▼</span>
+        </div>
+        <div class="tramite-body"><div class="tramite-content">
+          <ul>
+            <li>Basílica Menor de Nuestra Señora del Valle.</li>
+            <li>Castillo San Carlos de Borromeo.</li>
+            <li>Castillo Santa Rosa de La Asunción.</li>
+            <li>Fortín de La Galera.</li>
+            <li>Catedral de Nuestra Señora de La Asunción.</li>
+            <li>Centros históricos de Pampatar y La Asunción.</li>
+          </ul>
+          <div class="tramite-note">La Virgen del Valle ocupa un lugar central en la identidad espiritual y cultural de Margarita y en la vida de pescadores, navegantes y familias de toda la región.</div>
+        </div></div>
+      </div>
+      <div class="tramite-item" id="tramite-conoce-mar-nat">
+        <div class="tramite-header" onclick="toggleTramite('conoce-mar-nat')">
+          <div class="tramite-left"><div class="tramite-badge">NAT</div><div>
+            <div class="tramite-title">Naturaleza margariteña</div>
+            <div class="tramite-subtitle">Manglares, montañas y costa</div>
+          </div></div><span class="tramite-arrow">▼</span>
+        </div>
+        <div class="tramite-body"><div class="tramite-content">
+          <div>La Laguna de La Restinga, el cerro El Copey, la península de Macanao y los paisajes costeros muestran la diversidad ambiental de la isla: entre manglares, montañas y playas se encuentra su verdadera esencia natural.</div>
+        </div></div>
+      </div>
+      <div class="tramite-item" id="tramite-conoce-mar-gas">
+        <div class="tramite-header" onclick="toggleTramite('conoce-mar-gas')">
+          <div class="tramite-left"><div class="tramite-badge">GAS</div><div>
+            <div class="tramite-title">Gastronomía margariteña</div>
+            <div class="tramite-subtitle">El sabor nace del mar</div>
+          </div></div><span class="tramite-arrow">▼</span>
+        </div>
+        <div class="tramite-body"><div class="tramite-content">
+          <div>Pastel de chucho · empanadas de cazón · pescado frito · fosforera · sancocho de pescado · mejillones y otros productos del mar · dulces de frutas locales. Cocina estrechamente vinculada con el mar y con las tradiciones familiares.</div>
+        </div></div>
+      </div>
+    </div>
+
+    <h3 style="font-family:'Libre Baskerville',Georgia,serif;font-size:22px;color:var(--texto);margin:30px 0 4px">Isla de Coche — Tranquilidad, viento y mar</h3>
+    <p class="page-desc">
+      Paisajes abiertos, aguas tranquilas y extensas playas, con buenas condiciones para el kitesurf
+      y el windsurf. Calma, horizonte y libertad.
+    </p>
+    <figure class="conoce-hero"><picture><source srcset="images/conoce-coche.webp" type="image/webp"><img src="images/conoce-coche.jpg" alt="Playa de aguas turquesas en la Isla de Coche" loading="lazy" decoding="async"></picture></figure>
+    <div class="tramite-list">
+      <div class="tramite-item" id="tramite-conoce-coche-que">
+        <div class="tramite-header" onclick="toggleTramite('conoce-coche-que')">
+          <div class="tramite-left"><div class="tramite-badge">VER</div><div>
+            <div class="tramite-title">Qué descubrir</div>
+            <div class="tramite-subtitle">Playa, viento y comunidades pesqueras</div>
+          </div></div><span class="tramite-arrow">▼</span>
+        </div>
+        <div class="tramite-body"><div class="tramite-content">
+          <ul>
+            <li>Playa La Punta.</li>
+            <li>San Pedro de Coche.</li>
+            <li>Pequeñas comunidades pesqueras.</li>
+            <li>Deportes de viento (kitesurf, windsurf).</li>
+            <li>Paseos en embarcación y atardeceres.</li>
+            <li>Pescados y mariscos frescos.</li>
+          </ul>
+        </div></div>
+      </div>
+      <div class="tramite-item" id="tramite-conoce-coche-cul">
+        <div class="tramite-header" onclick="toggleTramite('conoce-coche-cul')">
+          <div class="tramite-left"><div class="tramite-badge">CUL</div><div>
+            <div class="tramite-title">Cultura y vida local</div>
+            <div class="tramite-subtitle">Pesca, navegación y tradición familiar</div>
+          </div></div><span class="tramite-arrow">▼</span>
+        </div>
+        <div class="tramite-body"><div class="tramite-content">
+          <div>La vida cotidiana de Coche está muy vinculada con la pesca, la navegación y las tradiciones familiares. Visitarla es conocer una comunidad insular trabajadora, cercana y orgullosa de su identidad.</div>
+        </div></div>
+      </div>
+    </div>
+
+    <h3 style="font-family:'Libre Baskerville',Georgia,serif;font-size:22px;color:var(--texto);margin:30px 0 4px">Isla de Cubagua — Donde comenzó una parte de nuestra historia</h3>
+    <p class="page-desc">
+      La más pequeña y menos poblada, con enorme valor histórico: desde el siglo XVI sus costas se
+      vincularon a la explotación de perlas y a Nueva Cádiz, uno de los primeros centros urbanos
+      españoles de la región. Memoria, mar y patrimonio.
+    </p>
+    <figure class="conoce-hero"><picture><source srcset="images/conoce-cubagua.webp" type="image/webp"><img src="images/conoce-cubagua.jpg" alt="Ruinas de Nueva Cádiz, Isla de Cubagua" loading="lazy" decoding="async"></picture></figure>
+    <div class="tramite-list">
+      <div class="tramite-item" id="tramite-conoce-cub-his">
+        <div class="tramite-header" onclick="toggleTramite('conoce-cub-his')">
+          <div class="tramite-left"><div class="tramite-badge">HIS</div><div>
+            <div class="tramite-title">Nueva Cádiz y la historia de las perlas</div>
+            <div class="tramite-subtitle">Primeros capítulos de la presencia española</div>
+          </div></div><span class="tramite-arrow">▼</span>
+        </div>
+        <div class="tramite-body"><div class="tramite-content">
+          <div>En Cubagua se desarrolló una intensa actividad perlífera durante los primeros años del período colonial. Alrededor de ella surgió <strong>Nueva Cádiz</strong>, cuyos vestigios son uno de los principales referentes históricos y arqueológicos de la isla.</div>
+          <div class="tramite-note">Esta historia se presenta con una mirada responsable, reconociendo las duras condiciones y la explotación sufrida por las poblaciones indígenas vinculadas a la extracción de perlas.</div>
+        </div></div>
+      </div>
+      <div class="tramite-item" id="tramite-conoce-cub-exp">
+        <div class="tramite-header" onclick="toggleTramite('conoce-cub-exp')">
+          <div class="tramite-left"><div class="tramite-badge">EXP</div><div>
+            <div class="tramite-title">Una experiencia natural y cultural</div>
+            <div class="tramite-subtitle">Visita responsable</div>
+          </div></div><span class="tramite-arrow">▼</span>
+        </div>
+        <div class="tramite-body"><div class="tramite-content">
+          <div>Además de su importancia histórica, Cubagua ofrece paisajes abiertos, aguas transparentes y una tranquilidad difícil de encontrar. En una visita responsable pueden realizarse:</div>
+          <ul>
+            <li>Recorridos históricos y visitas guiadas a los vestigios arqueológicos.</li>
+            <li>Navegación.</li>
+            <li>Snorkel y buceo recreativo.</li>
+            <li>Observación de fauna marina.</li>
+            <li>Fotografía de paisajes.</li>
+          </ul>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="tramite-note" style="margin-top:26px">
+      El Viceconsulado promueve el conocimiento y la cercanía entre España y Venezuela, y da a
+      conocer Margarita, Coche y Cubagua, el territorio que nos recibe y fortalece los vínculos
+      entre nuestras comunidades.
+    </div>
+
+    <!-- Atribución de imágenes: obligatoria en las licencias CC BY-SA -->
+    <p class="creditos-img">
+      <strong>Créditos de las imágenes.</strong>
+      Toledo sobre el Tajo: <em>King of Hearts</em>,
+      <a href="https://commons.wikimedia.org/wiki/File:Tagus_Toledo_June_2016_panorama.jpg" target="_blank" rel="noopener noreferrer">Wikimedia Commons</a>,
+      <a href="https://creativecommons.org/licenses/by-sa/4.0" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a>.
+      Tepuyes Kukenán y Roraima: <em>Paolo Costa Baldi</em>,
+      <a href="https://commons.wikimedia.org/wiki/File:Kukenan_Roraima_GS.jpg" target="_blank" rel="noopener noreferrer">Wikimedia Commons</a>,
+      <a href="https://creativecommons.org/licenses/by-sa/3.0" target="_blank" rel="noopener noreferrer">CC BY-SA 3.0</a>.
+      Ambas se muestran recortadas y reescaladas para adaptarlas al formato de la página.
+    </p>
+  </div>
+</div>
+
+<!-- ==================== COMUNIDAD ESPAÑOLA (hub) ==================== -->
+<div id="sec-comunidad" class="section">
+  <button class="back-btn" onclick="showSection('inicio')">← Volver al inicio</button>
+  <div class="com-kicker">Instituciones y servicios</div>
+  <h1 class="page-title com-title">Comunidad Española</h1>
+  <p class="page-desc">
+    Instituciones y servicios disponibles para la comunidad española residente en Venezuela.
+    Seleccione una para ver su información y sus datos de contacto.
+  </p>
+
+  <div class="com-grid">
+    <div class="com-block">
+      <div class="info-block-title">Representación de residentes</div>
+      <div style="font-family:'Libre Baskerville',Georgia,serif;font-size:18px;color:var(--texto);margin:6px 0 8px">Consejo de Residentes Españoles (CRE)</div>
+      <div>Órgano consultivo y representativo de la comunidad española residente, que colabora con el Consulado General para trasladar sus necesidades e inquietudes.</div>
+      <div style="margin-top:12px"><a href="#" onclick="showSection('cre');return false;">Información y contacto →</a></div>
+    </div>
+
+    <div class="com-block">
+      <div class="info-block-title">Organismo de la Embajada</div>
+      <div style="font-family:'Libre Baskerville',Georgia,serif;font-size:18px;color:var(--texto);margin:6px 0 8px">Consejería de Trabajo, Migraciones y Seguridad Social</div>
+      <div>Atención en empleo, pensiones, Seguridad Social, ayudas asistenciales y programas para los españoles residentes en Venezuela.</div>
+      <div style="margin-top:12px"><a href="#" onclick="showSection('consejeria');return false;">Información y contacto →</a></div>
+    </div>
+
+    <div class="com-block">
+      <div class="info-block-title">Comercio e industria</div>
+      <div style="font-family:'Libre Baskerville',Georgia,serif;font-size:18px;color:var(--texto);margin:6px 0 8px">Cámara Venezolano-Española de Industria y Comercio (CAVESPA)</div>
+      <div>Promueve las relaciones económicas, empresariales y comerciales entre España y Venezuela, fortaleciendo la cooperación entre empresas e instituciones de ambos países.</div>
+      <div style="margin-top:12px"><a href="#" onclick="showSection('cavespa');return false;">Información y contacto →</a></div>
+    </div>
+
+    <div class="com-block">
+      <div class="info-block-title">Red de centros españoles</div>
+      <div style="font-family:'Libre Baskerville',Georgia,serif;font-size:18px;color:var(--texto);margin:6px 0 8px">Federación de Centros Españoles de Venezuela (FECEVE)</div>
+      <div>Reúne a los centros, hermandades, clubes y asociaciones españolas del país, y promueve la cultura, la acción social y la cooperación entre sus instituciones.</div>
+      <div style="margin-top:12px"><a href="#" onclick="showSection('feceve');return false;">Información y contacto →</a></div>
+    </div>
+  </div>
+
+  <div class="tramite-note">
+    El Viceconsulado actúa como <strong>enlace institucional</strong>: orienta y canaliza, y no
+    sustituye a los organismos indicados en sus funciones propias.
+  </div>
+</div>
+
+<!-- ==================== CRE ==================== -->
+<div id="sec-cre" class="section">
+  <button class="back-btn" onclick="showSection('comunidad')">← Volver a Comunidad Española</button>
+  <div class="com-kicker">Comunidad · Representación de residentes</div>
+  <h1 class="page-title com-title">Consejo de Residentes Españoles (CRE)</h1>
+  <p class="com-intro">
+    El Consejo de Residentes Españoles (CRE) es el órgano oficial de representación, consulta y
+    participación de los ciudadanos españoles residentes en el exterior. Está adscrito al Consulado
+    General de España en Caracas y actúa como interlocutor entre la comunidad española residente en
+    Venezuela y la Administración General del Estado. Ejerce funciones consultivas y asesoras, sin
+    sustituir las competencias del Cónsul General ni de la Oficina Consular.
+  </p>
+
+  <div class="com-grid">
+    <div class="com-block">
+      <div class="info-block-title">Qué es</div>
+      <div>Órgano de representación, consulta y participación de los españoles residentes en el exterior. Conoce las necesidades de la colectividad, formula propuestas de mejora y colabora con las autoridades consulares.</div>
+    </div>
+    <div class="com-block">
+      <div class="info-block-title">Composición</div>
+      <div><strong>15 consejeros</strong> elegidos por sufragio universal, libre, directo y secreto entre los inscritos en el Censo Electoral de Residentes Ausentes (CERA).</div>
+      <div style="margin-top:8px">Mandato de <strong>4 años</strong>. Últimas elecciones: mayo de 2026.</div>
+    </div>
+    <div class="com-block">
+      <div class="info-block-title">Junta Directiva</div>
+      <div>Presidenta: <strong>Isabel Jara Noda</strong>.</div>
+      <div style="margin-top:8px">Secretaria: <strong>Ana María Navarro Rodríguez</strong>.</div>
+    </div>
+    <div class="com-block">
+      <div class="info-block-title">Marco jurídico</div>
+      <div>Real Decreto 1960/2009, de 18 de diciembre.</div>
+      <div style="margin-top:8px">Orden AEC/2172/2010, de 13 de julio.</div>
+    </div>
+  </div>
+
+  <div class="com-block" style="margin-bottom:18px">
+    <div class="info-block-title">Principales funciones</div>
+    <ul>
+      <li><strong>Representación</strong> de los intereses de los españoles residentes ante el Consulado y la Administración española.</li>
+      <li><strong>Comunicación</strong>: canal permanente entre la comunidad y el Consulado General de España en Caracas.</li>
+      <li><strong>Asesoramiento</strong> al Consulado sobre los asuntos que afectan a los residentes.</li>
+      <li><strong>Propuestas de mejora</strong> de los servicios consulares y la atención ciudadana.</li>
+      <li><strong>Acción social</strong>: personas mayores, situaciones de vulnerabilidad e integración de nuevos residentes.</li>
+      <li><strong>Cultura y educación</strong>: actividades que mantienen los vínculos con España.</li>
+      <li><strong>Participación democrática</strong>: fomento del voto y de la representación institucional.</li>
+      <li><strong>Colaboración institucional</strong>: coopera con el Consulado General, el Consejo General de la Ciudadanía Española en el Exterior, asociaciones e instituciones públicas y privadas en proyectos para la comunidad española.</li>
+    </ul>
+  </div>
+
+  <div class="com-grid">
+    <div class="com-block">
+      <div class="info-block-title">Cuándo acudir al CRE</div>
+      <ul>
+        <li>Presentar propuestas para mejorar los servicios a la colectividad.</li>
+        <li>Exponer necesidades o problemáticas que afecten a un grupo de ciudadanos.</li>
+        <li>Orientación sobre iniciativas comunitarias, culturales o de acción social.</li>
+        <li>Canalizar inquietudes de mayores, jóvenes, familias o colectivos vulnerables.</li>
+      </ul>
+    </div>
+    <div class="com-block">
+      <div class="info-block-title">Cuándo acudir al Consulado General</div>
+      <ul>
+        <li>Pasaporte, DNI, salvoconductos y certificados consulares.</li>
+        <li>Registro Civil: nacimientos, matrimonios, defunciones, nacionalidad, fe de vida.</li>
+        <li>Registro de matrícula consular (alta/baja, cambio de datos).</li>
+        <li>Censo CERA y voto exterior; asistencia consular; notaría y legalizaciones.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="com-block" style="margin-bottom:18px">
+    <div class="info-block-title">Contacto</div>
+    <div>Correo: <a href="mailto:info@credevenezuela.com">info@credevenezuela.com</a></div>
+    <div style="margin-top:8px">Instagram: <a href="https://www.instagram.com/credevenezuela" target="_blank" rel="noopener">@CreDeVenezuela</a> · X: <a href="https://x.com/creVenezuela" target="_blank" rel="noopener">@creVenezuela</a> · Facebook: CRE de Venezuela</div>
+  </div>
+
+  <div class="consulado-block com-official">
+    <div>
+      <div style="font-family:'DM Sans';font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--dorado);margin-bottom:8px">Información oficial</div>
+      <div>Página del CRE en el Consulado General de España en Caracas.</div>
+    </div>
+    <div>
+      <a href="https://www.exteriores.gob.es/Consulados/caracas/es/Consulado/Paginas/Consejo-de-Residentes-Espa%C3%B1oles-(CRE).aspx" target="_blank" rel="noopener">Ver página oficial del CRE ↗</a>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== CAVESPA ==================== -->
+<div id="sec-cavespa" class="section">
+  <button class="back-btn" onclick="showSection('comunidad')">← Volver a Comunidad Española</button>
+  <div class="com-kicker">Comunidad · Comercio e industria</div>
+  <h1 class="page-title com-title">CAVESPA</h1>
+  <p class="com-intro">
+    La Cámara Venezolano-Española de Industria y Comercio (CAVESPA) es una institución empresarial
+    binacional cuya misión es fortalecer las relaciones económicas y comerciales entre España y
+    Venezuela. No presta servicios consulares ni administrativos, pero representa un aliado
+    estratégico para ciudadanos, empresas, emprendedores y profesionales vinculados a España.
+  </p>
+
+  <div class="com-grid">
+    <div class="com-block">
+      <div class="info-block-title">Qué es</div>
+      <div>Cámara de comercio binacional que conecta el tejido empresarial español y venezolano y promueve la inversión, la formación y la cooperación entre ambos países.</div>
+    </div>
+    <div class="com-block">
+      <div class="info-block-title">Sede</div>
+      <div>Av. Francisco de Miranda, Edif. Parque Cristal, Torre Este, Piso 9, Of. TOP 9-9, Los Palos Grandes, Caracas 1060.</div>
+      <div style="margin-top:8px">Horario: lunes a viernes, 8:00 a. m. – 4:00 p. m.</div>
+    </div>
+    <div class="com-block">
+      <div class="info-block-title">Contacto</div>
+      <div>Tel.: (+58 212) 285-5231 · (+58 212) 286-3703 · (+58 414) 231-5070</div>
+      <div style="margin-top:8px">Correo: <a href="mailto:somoscavespa@cavespa.org">somoscavespa@cavespa.org</a></div>
+      <div style="margin-top:8px">Web: <a href="https://cavespa.org" target="_blank" rel="noopener">cavespa.org</a></div>
+    </div>
+    <div class="com-block">
+      <div class="info-block-title">Redes sociales</div>
+      <div>Instagram: <a href="https://www.instagram.com/cavespa.ve" target="_blank" rel="noopener">@cavespa.ve</a></div>
+      <div style="margin-top:8px">X: @cavespa · Facebook: CAVESPA – Cámara Venezolano-Española de Industria y Comercio</div>
+    </div>
+  </div>
+
+  <div class="com-grid">
+    <div class="com-block">
+      <div class="info-block-title">Junta Directiva (2025–2027)</div>
+      <div>Presidenta: <strong>Felicitas Sánchez</strong>.</div>
+      <div style="margin-top:6px">1.er Vicepresidente: Fernando Alonso Turiño.</div>
+      <div style="margin-top:6px">2.º Vicepresidente: José Luis Rodríguez.</div>
+      <div style="margin-top:6px">Tesorero: Rodrigo Nogueroles.</div>
+    </div>
+    <div class="com-block">
+      <div class="info-block-title">Equipo ejecutivo</div>
+      <div>Director Ejecutivo: <strong>Robert Concepción Camacho</strong>.</div>
+      <div style="margin-top:6px">Asistente de Dirección: José Manuel Valiña.</div>
+      <div style="margin-top:6px">Administración: Francia Magallanes.</div>
+      <div style="margin-top:6px">Comunicación y Diseño: Keisy Jordan.</div>
+      <div style="margin-top:6px">Servicios Generales: Adalsi Coromoto Castillo.</div>
+    </div>
+  </div>
+
+  <div class="com-block" style="margin-bottom:18px">
+    <div class="info-block-title">Directores</div>
+    <div>Jesús María Vicuña · Luis García Sánchez · Liliana Nión Bello · Roberto Rodríguez de León · José Gabriel De Martin · Julio Hernández · Juan Carlos González · Darwin Ferrera · Félix Hidalgo · Enrique Bercowski · Maricarmen Paz Miranda · Diego Gibelli.</div>
+  </div>
+
+  <div class="com-grid">
+    <div class="com-block">
+      <div class="info-block-title">Cuándo acudir a CAVESPA</div>
+      <ul>
+        <li>Emprender en Venezuela: orientación e información del entorno de negocios.</li>
+        <li>Relaciones comerciales: ruedas de negocios, alianzas y promoción.</li>
+        <li>Networking profesional: foros, desayunos y encuentros empresariales.</li>
+        <li>Formación: seminarios, cursos y talleres especializados.</li>
+        <li>Responsabilidad social empresarial y cooperación institucional.</li>
+      </ul>
+    </div>
+    <div class="com-block">
+      <div class="info-block-title">Cuándo acudir al Consulado / Viceconsulado</div>
+      <div>Trámites de pasaporte, nacionalidad, Registro Civil, inscripción consular, fe de vida, visados, asistencia y protección de ciudadanos españoles.</div>
+      <div style="margin-top:8px">CAVESPA no sustituye las funciones de las autoridades consulares ni interviene en procedimientos administrativos del Estado español.</div>
+    </div>
+  </div>
+
+  <div class="consulado-block com-official">
+    <div>
+      <div style="font-family:'DM Sans';font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--dorado);margin-bottom:8px">Información oficial</div>
+      <div>Sitio web institucional de CAVESPA.</div>
+    </div>
+    <div>
+      <a href="https://cavespa.org" target="_blank" rel="noopener">Visitar cavespa.org ↗</a>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== FECEVE ==================== -->
+<div id="sec-feceve" class="section">
+  <button class="back-btn" onclick="showSection('comunidad')">← Volver a Comunidad Española</button>
+  <div class="com-kicker">Comunidad · Red de centros españoles</div>
+  <h1 class="page-title com-title">FECEVE</h1>
+  <p class="com-intro">
+    La Federación de Centros Españoles de Venezuela (FECEVE) reúne a centros, hermandades, clubes y
+    asociaciones españolas presentes en distintas regiones del país. Desde su fundación, el 25 de
+    octubre de 1974, trabaja para representar a la colectividad española organizada, fortalecer la
+    cooperación entre sus instituciones y promover el bienestar social, cultural y humano de los
+    españoles, sus descendientes y las comunidades vinculadas con estos centros. Una red de
+    instituciones que mantiene vivas las raíces comunes y fortalece los vínculos entre España y
+    Venezuela.
+  </p>
+
+  <div class="info-strip" style="margin-bottom:28px">
+    <div class="info-block">
+      <div class="info-block-title">Entidades federadas</div>
+      <div class="info-highlight">42 entidades</div>
+      <div class="info-muted">Centros y asociaciones integrados en la Federación, según la información divulgada por FECEVE.</div>
+    </div>
+    <div class="info-block">
+      <div class="info-block-title">Trayectoria</div>
+      <div class="info-highlight">Más de 50 años</div>
+      <div class="info-muted">Fundada el 25 de octubre de 1974.</div>
+    </div>
+    <div class="info-block">
+      <div class="info-block-title">Alcance</div>
+      <div class="info-highlight">Presencia nacional</div>
+      <div class="info-muted">Instituciones españolas distribuidas por distintas regiones de Venezuela.</div>
+    </div>
+  </div>
+
+  <div class="com-grid">
+    <div class="com-block">
+      <div class="info-block-title">Qué es</div>
+      <div>Espacio de encuentro y coordinación de los centros españoles establecidos en Venezuela. A través de la Federación, estas instituciones comparten experiencias, desarrollan proyectos conjuntos, buscan soluciones a sus necesidades y colaboran en iniciativas sociales, asistenciales, culturales, educativas y deportivas.</div>
+      <div style="margin-top:8px">Además de preservar las tradiciones de España, muchos centros se han convertido en espacios de atención, solidaridad, convivencia e integración para españoles, descendientes y ciudadanos venezolanos vinculados con la comunidad.</div>
+    </div>
+    <div class="com-block">
+      <div class="info-block-title">Presidencia</div>
+      <div>Presidente: <strong>D. Roberto González Pérez</strong>.</div>
+      <div style="margin-top:8px">Ha encabezado los procesos de recuperación institucional, integración de centros y fortalecimiento de la red asociativa española en Venezuela.</div>
+    </div>
+    <div class="com-block">
+      <div class="info-block-title">Sede</div>
+      <div>Centro Andrés Bello, Torre Este, piso 3, oficina 32-E, avenida Andrés Bello, Maripérez, Caracas 1050.</div>
+      <div class="info-muted" style="margin-top:8px;font-size:13px;color:#999">Dirección recogida en publicaciones institucionales de la Federación.</div>
+    </div>
+    <div class="com-block">
+      <div class="info-block-title">Contacto</div>
+      <div>Correo: <a href="mailto:feceve1@gmail.com">feceve1@gmail.com</a></div>
+      <div style="margin-top:8px">Instagram: <a href="https://www.instagram.com/feceve1" target="_blank" rel="noopener">@feceve1</a></div>
+      <div style="margin-top:8px">También puede acudir al centro español de su localidad para conocer actividades, programas y formas de participación.</div>
+    </div>
+  </div>
+
+  <div class="com-block" style="margin-bottom:18px">
+    <div class="info-block-title">Lo que representa FECEVE</div>
+    <ul>
+      <li><strong>Unión institucional</strong>: facilita la comunicación y el trabajo conjunto entre los centros españoles de todo el territorio venezolano.</li>
+      <li><strong>Cultura y tradiciones</strong>: promueve la música, la danza, la gastronomía, las festividades y el patrimonio cultural de las comunidades autónomas españolas.</li>
+      <li><strong>Acción social</strong>: apoya iniciativas dirigidas al bienestar de la comunidad española, especialmente de las personas mayores o en situación de vulnerabilidad.</li>
+      <li><strong>Juventud y futuro</strong>: impulsa la integración de las nuevas generaciones para garantizar la continuidad y la renovación de los centros.</li>
+      <li><strong>Cooperación</strong>: favorece las alianzas entre centros, instituciones españolas, organizaciones sociales y entidades privadas.</li>
+      <li><strong>Sostenibilidad</strong>: ayuda a los centros a encontrar nuevas fórmulas de gestión, colaboración y generación de recursos para seguir prestando servicio a sus comunidades.</li>
+    </ul>
+  </div>
+
+  <div class="com-grid">
+    <div class="com-block">
+      <div class="info-block-title">El Congreso de Centros Españoles</div>
+      <div>El Congreso Anual de FECEVE es uno de los principales espacios de reunión de la comunidad española organizada en Venezuela. En su cuarta edición, celebrada en 2026 en el Centro Gallego de Barquisimeto, participaron representantes de 37 centros, junto con autoridades consulares y de la Consejería de Trabajo, Migraciones y Seguridad Social. En el tercer Congreso participaron 28 centros afiliados.</div>
+    </div>
+    <div class="com-block">
+      <div class="info-block-title">Qué se aborda en los congresos</div>
+      <ul>
+        <li>El futuro y la sostenibilidad de los centros españoles.</li>
+        <li>La atención social a la comunidad y los programas de ayuda del Gobierno de España.</li>
+        <li>La integración de las nuevas generaciones.</li>
+        <li>La cooperación con consulados y viceconsulados.</li>
+        <li>Las alianzas entre instituciones y el desarrollo de proyectos culturales y asistenciales.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="com-kicker" style="margin-top:34px">Centros españoles vinculados a FECEVE</div>
+  <p class="page-desc" style="margin-bottom:8px">
+    La Federación agrupa instituciones de carácter gallego, canario, catalán, asturiano, vasco,
+    regional y cultural, además de centros hispano-venezolanos distribuidos en distintas ciudades.
+  </p>
+
+  <div class="com-grid">
+    <div class="com-block">
+      <div class="info-block-title">Caracas y área metropolitana</div>
+      <ul>
+        <li>Hermandad Gallega de Venezuela.</li>
+        <li>Hogar Canario Venezolano de Caracas.</li>
+        <li>Centre Català de Caracas.</li>
+        <li>Centro Asturiano de Caracas.</li>
+        <li>Centro Vasco de Caracas.</li>
+        <li>Asociación Cultural Santiago de León de Caracas.</li>
+        <li>Asociación Benéfico Cultural Hijos de Galicia.</li>
+        <li>Asociación Civil Amigos de Canarias.</li>
+        <li>Asociación Española de Beneficencia.</li>
+        <li>Fundación España Salud.</li>
+        <li>Fundación de Ayuda a la Ciudadanía Española en Venezuela.</li>
+      </ul>
+    </div>
+    <div class="com-block">
+      <div class="info-block-title">Estado Carabobo</div>
+      <ul>
+        <li>Hermandad Gallega de Valencia.</li>
+        <li>Centro Social Madeirense.</li>
+        <li>Casa Canaria de Valencia.</li>
+        <li>Centro Asturiano de Valencia.</li>
+        <li>Centro Hispano Venezolano de Valencia.</li>
+      </ul>
+    </div>
+    <div class="com-block">
+      <div class="info-block-title">Estado Aragua</div>
+      <ul>
+        <li>Centro Hispano Venezolano del Estado Aragua.</li>
+        <li>Casa Canaria de Aragua.</li>
+        <li>Centro Gallego de Maracay.</li>
+      </ul>
+    </div>
+    <div class="com-block">
+      <div class="info-block-title">Estado Lara</div>
+      <ul>
+        <li>Centro Gallego de Barquisimeto.</li>
+        <li>Hogar Canario Larense.</li>
+        <li>Club Hispano Venezolano de Barquisimeto.</li>
+        <li>Casa de España de Barquisimeto.</li>
+      </ul>
+    </div>
+    <div class="com-block">
+      <div class="info-block-title">Estado Anzoátegui</div>
+      <ul>
+        <li>Centro Gallego de Puerto La Cruz.</li>
+        <li>Centro Cultural Español Cervantes de El Tigre.</li>
+        <li>Casa Canaria de Anzoátegui.</li>
+        <li>Centro Hispano de Puerto La Cruz.</li>
+      </ul>
+    </div>
+    <div class="com-block">
+      <div class="info-block-title">Estado Bolívar</div>
+      <ul>
+        <li>Centro Español de Puerto Ordaz.</li>
+        <li>Casa de España de Ciudad Bolívar.</li>
+        <li>Centro Hispano Venezolano de Guayana.</li>
+      </ul>
+    </div>
+    <div class="com-block">
+      <div class="info-block-title">Estado Guárico</div>
+      <ul>
+        <li>Casa de España de Calabozo.</li>
+        <li>Centro Hispano Venezolano de San Juan de los Morros.</li>
+        <li>Centro Hispano de El Sombrero.</li>
+      </ul>
+    </div>
+    <div class="com-block">
+      <div class="info-block-title">Estado Zulia</div>
+      <ul>
+        <li>Centro Gallego de Maracaibo.</li>
+        <li>Casa de España de Maracaibo.</li>
+        <li>Hogar Canario del Zulia.</li>
+        <li>Centro Asturiano del Zulia.</li>
+      </ul>
+    </div>
+    <div class="com-block">
+      <div class="info-block-title">Estado Nueva Esparta</div>
+      <div>Entidades y asociaciones vinculadas con la comunidad española residente en Nueva Esparta, en coordinación con el Viceconsulado Honorario de España en Nueva Esparta.</div>
+    </div>
+    <div class="com-block">
+      <div class="info-block-title">Otras regiones</div>
+      <div>La Federación mantiene vínculos con centros, asociaciones y comunidades españolas presentes en otros estados del país.</div>
+    </div>
+  </div>
+
+  <div class="tramite-note" style="margin-bottom:28px">
+    <strong>Nota:</strong> FECEVE comunica públicamente que está integrada por 42 entidades. La
+    relación anterior es <strong>orientativa</strong> y se ofrece a título informativo: el directorio
+    oficial y actualizado, así como la composición completa de la Junta Directiva, deben solicitarse
+    directamente a la Federación.
+  </div>
+
+  <div class="com-grid">
+    <div class="com-block">
+      <div class="info-block-title">Cultura viva en los centros</div>
+      <ul>
+        <li><strong>Música y danza</strong>: agrupaciones folclóricas, corales, gaitas, rondallas y escuelas de baile.</li>
+        <li><strong>Gastronomía</strong>: encuentros, festivales y celebraciones de las distintas regiones españolas.</li>
+        <li><strong>Deporte y convivencia</strong>: actividades deportivas, recreativas y familiares entre generaciones.</li>
+        <li><strong>Solidaridad</strong>: programas de acompañamiento, salud y atención social.</li>
+        <li><strong>Formación</strong>: conferencias, talleres y actividades educativas sobre la historia, las instituciones y la actualidad de España.</li>
+      </ul>
+    </div>
+    <div class="com-block">
+      <div class="info-block-title">Cómo participar</div>
+      <ul>
+        <li>Participar en celebraciones, festivales y actividades culturales.</li>
+        <li>Formar parte de agrupaciones folclóricas, corales o deportivas.</li>
+        <li>Acceder a iniciativas sociales y asistenciales de los centros.</li>
+        <li>Colaborar como voluntario o incorporarse a proyectos juveniles.</li>
+        <li>Conectar con otras familias y personas de raíces españolas.</li>
+      </ul>
+      <div style="margin-top:10px">Los residentes en Nueva Esparta pueden dirigirse al Viceconsulado para recibir orientación sobre las entidades y actividades disponibles en la región.</div>
+    </div>
+  </div>
+
+  <div class="com-grid">
+    <div class="com-block">
+      <div class="info-block-title">Naturaleza y cooperación institucional</div>
+      <div>FECEVE es una organización <strong>independiente</strong> y no forma parte de la Administración General del Estado español. Mantiene relaciones de cooperación y participación con la Embajada de España en Venezuela, el Consulado General en Caracas, la Red de Viceconsulados Honorarios, la Consejería de Trabajo, Migraciones y Seguridad Social, el Consejo de Residentes Españoles, las comunidades autónomas, fundaciones y organizaciones asistenciales, y entidades colaboradoras.</div>
+    </div>
+    <div class="com-block">
+      <div class="info-block-title">FECEVE y el Viceconsulado</div>
+      <div>El Viceconsulado Honorario de España en Nueva Esparta reconoce el trabajo de FECEVE y de los centros españoles, y promueve la colaboración con la Federación y con las asociaciones españolas para desarrollar actividades en beneficio de los ciudadanos españoles residentes en el estado.</div>
+      <div style="margin-top:8px">Estas instituciones ayudan a mantener la identidad y las tradiciones, acercar información de interés, detectar necesidades sociales, promover la integración de jóvenes y familias y fortalecer los vínculos entre España y Venezuela.</div>
+    </div>
+  </div>
+
+  <div class="com-block" style="margin-bottom:18px">
+    <div class="info-block-title">Ficha institucional</div>
+    <div style="overflow-x:auto;margin-top:10px"><table class="glosario-table">
+      <thead><tr><th scope="col">Información</th><th scope="col">Detalle</th></tr></thead>
+      <tbody>
+        <tr><td>Nombre oficial</td><td>Federación de Centros Españoles de Venezuela</td></tr>
+        <tr><td>Siglas</td><td>FECEVE</td></tr>
+        <tr><td>Fundación</td><td>25 de octubre de 1974</td></tr>
+        <tr><td>Presidente</td><td>D. Roberto González Pérez</td></tr>
+        <tr><td>Naturaleza</td><td>Federación de centros, asociaciones, hermandades y entidades españolas</td></tr>
+        <tr><td>Ámbito de actuación</td><td>Todo el territorio venezolano</td></tr>
+        <tr><td>Entidades vinculadas</td><td>42 entidades, según informa la propia Federación</td></tr>
+        <tr><td>Misión</td><td>Representar, integrar y fortalecer a los centros españoles de Venezuela</td></tr>
+        <tr><td>Áreas de actuación</td><td>Cultura, acción social, juventud, deporte, formación y cooperación</td></tr>
+        <tr><td>Comunidad atendida</td><td>Españoles, descendientes, socios y comunidades vinculadas a los centros</td></tr>
+        <tr><td>Sede</td><td>Centro Andrés Bello, Torre Este, piso 3, oficina 32-E, av. Andrés Bello, Maripérez, Caracas 1050</td></tr>
+        <tr><td>Correo</td><td><a href="mailto:feceve1@gmail.com">feceve1@gmail.com</a></td></tr>
+        <tr><td>Instagram</td><td><a href="https://www.instagram.com/feceve1" target="_blank" rel="noopener">@feceve1</a></td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="tramite-links" style="margin-bottom:22px">
+    <a class="btn btn-red btn-sm" href="mailto:feceve1@gmail.com">Escribir a FECEVE</a>
+    <a class="btn btn-outline btn-sm" href="https://www.instagram.com/feceve1" target="_blank" rel="noopener">Seguir a FECEVE en Instagram ↗</a>
+    <button type="button" class="btn btn-outline btn-sm" onclick="showSection('ubicacion')">Contactar con el Viceconsulado</button>
+  </div>
+
+  <div class="consulado-block com-official">
+    <div>
+      <div style="font-family:'DM Sans';font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--dorado);margin-bottom:8px">Canal oficial</div>
+      <div>Perfil institucional de FECEVE, donde publica congresos, encuentros y actividades de los centros.</div>
+    </div>
+    <div>
+      <a href="https://www.instagram.com/feceve1" target="_blank" rel="noopener">Ver @feceve1 en Instagram ↗</a>
+    </div>
+  </div>
+
+  <div class="tramite-note">
+    El Viceconsulado actúa como <strong>enlace institucional</strong>: orienta y canaliza. FECEVE es
+    una entidad independiente y no presta servicios consulares ni administrativos del Estado español.
+  </div>
+</div>
+
+<!-- ==================== CONSEJERÍA LABORAL ==================== -->
+<div id="sec-consejeria" class="section">
+  <button class="back-btn" onclick="showSection('comunidad')">← Volver a Comunidad Española</button>
+  <div class="com-kicker">Comunidad · Organismo de la Embajada</div>
+  <h1 class="page-title com-title">Consejería de Trabajo, Migraciones y Seguridad Social</h1>
+  <p class="com-intro">
+    La Consejería de Trabajo, Migraciones y Seguridad Social de la Embajada de España en Venezuela
+    es la unidad administrativa especializada del Gobierno de España encargada de las políticas de
+    trabajo, migraciones, Seguridad Social y protección social, y de la atención a la ciudadanía
+    española residente en el exterior. Depende del Ministerio de Inclusión, Seguridad Social y
+    Migraciones.
+  </p>
+
+  <div class="com-grid">
+    <div class="com-block">
+      <div class="info-block-title">Qué es</div>
+      <div>Órgano técnico de la Embajada de España, orientado a la asistencia, información y protección de los españoles residentes en el exterior en materia de prestaciones, pensiones y trámites administrativos.</div>
+    </div>
+    <div class="com-block">
+      <div class="info-block-title">Ámbito de actuación</div>
+      <div>Venezuela, con acreditación también en Colombia y República Dominicana. Presta sus servicios desde su sede en Caracas.</div>
+    </div>
+    <div class="com-block">
+      <div class="info-block-title">Dirección</div>
+      <div>Av. Mohedano, entre Primera y Segunda Transversal, Quinta La Castellana, Urb. La Castellana, Municipio Chacao, Caracas.</div>
+    </div>
+    <div class="com-block">
+      <div class="info-block-title">Contacto</div>
+      <div>Correo: <a href="mailto:venezuela@mites.gob.es">venezuela@mites.gob.es</a></div>
+      <div style="margin-top:8px">Web: <a href="https://consejeria.mites.gob.es/venezuela" target="_blank" rel="noopener">consejeria.mites.gob.es/venezuela</a></div>
+      <div style="margin-top:8px">Embajada: <a href="https://www.exteriores.gob.es/Embajadas/caracas" target="_blank" rel="noopener">exteriores.gob.es/Embajadas/caracas</a></div>
+    </div>
+  </div>
+
+  <div class="com-grid">
+    <div class="com-block">
+      <div class="info-block-title">Representación</div>
+      <div>Consejero: <strong>Don Julio Cruz Hernández</strong>, Consejero de Trabajo, Migraciones y Seguridad Social de la Embajada de España en Venezuela.</div>
+    </div>
+    <div class="com-block">
+      <div class="info-block-title">Oficinas Itinerantes</div>
+      <div>Atención descentralizada en distintas regiones del país, que acerca los servicios a la ciudadanía y reduce las dificultades de desplazamiento.</div>
+    </div>
+  </div>
+
+  <div class="com-block" style="margin-bottom:18px">
+    <div class="info-block-title">Principales funciones</div>
+    <ul>
+      <li>Representar al Gobierno de España en trabajo, migraciones, Seguridad Social y protección social.</li>
+      <li>Informar y orientar sobre derechos y obligaciones en materia de Seguridad Social y asistencia social.</li>
+      <li>Gestionar y coordinar programas de protección social para españoles en el exterior.</li>
+      <li>Tramitar las Prestaciones por Razón de Necesidad (PRN) y otras ayudas asistenciales.</li>
+      <li>Informar sobre pensiones y convenios internacionales de Seguridad Social.</li>
+      <li>Apoyar a pensionistas, personas mayores y ciudadanos en situación de vulnerabilidad.</li>
+      <li>Jornadas informativas y Oficinas Itinerantes por el territorio.</li>
+    </ul>
+  </div>
+
+  <div class="com-grid">
+    <div class="com-block">
+      <div class="info-block-title">En qué le puede ayudar</div>
+      <ul>
+        <li>Pensiones y prestaciones de la Seguridad Social española.</li>
+        <li>Prestaciones por Razón de Necesidad (PRN) y ayudas extraordinarias.</li>
+        <li>Actualización de la fe de vida para beneficiarios de prestaciones.</li>
+        <li>Orientación administrativa y asistencia en trámites vinculados con España.</li>
+      </ul>
+    </div>
+    <div class="com-block">
+      <div class="info-block-title">Coordinación institucional</div>
+      <div>Embajada de España · Consulado General en Caracas · Viceconsulados Honorarios · Consejo de Residentes Españoles (CRE) · Fundación España Salud · centros y asociaciones españolas · instituciones públicas y privadas vinculadas con la atención a la ciudadanía.</div>
+    </div>
+  </div>
+
+  <div class="consulado-block com-official">
+    <div>
+      <div style="font-family:'DM Sans';font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--dorado);margin-bottom:8px">Información oficial</div>
+      <div>Consejería en el portal oficial del Ministerio.</div>
+    </div>
+    <div>
+      <a href="https://consejeria.mites.gob.es/venezuela" target="_blank" rel="noopener">Ver web de la Consejería ↗</a>
     </div>
   </div>
 </div>
@@ -1731,6 +3615,302 @@ footer { background: #1a1a1a; margin-top: 60px; }
 
   </div>
 
+  <!-- GLOSARIO España–Venezuela -->
+  <div class="glosario-wrap">
+    <h2>Palabras de España y Venezuela que conviene conocer</h2>
+    <p class="faq-intro">Aunque en España y Venezuela hablamos el mismo idioma, algunas palabras cambian según el país, lo que puede generar dudas al rellenar un formulario, acudir a una cita o realizar un trámite. Este glosario reúne términos de la vida diaria, la administración y el Registro Civil. <strong>Importante:</strong> las palabras de ambos países son correctas; solo pertenecen a distintas formas de hablar español.</p>
+
+    <div class="tramite-list">
+
+      <div class="tramite-item" id="tramite-glo-diario">
+        <div class="tramite-header" onclick="toggleTramite('glo-diario')">
+          <div class="tramite-left"><div class="tramite-badge">DIA</div><div>
+            <div class="tramite-title">Palabras de uso diario</div>
+            <div class="tramite-subtitle">Vida cotidiana</div>
+          </div></div><span class="tramite-arrow">▼</span>
+        </div>
+        <div class="tramite-body"><div class="tramite-content">
+          <div style="overflow-x:auto"><table class="glosario-table">
+            <thead><tr><th scope="col">En España</th><th scope="col">En Venezuela</th><th scope="col">¿Qué significa?</th></tr></thead>
+            <tbody>
+              <tr><td>Coche</td><td>Carro</td><td>Automóvil</td></tr>
+              <tr><td>Móvil</td><td>Celular</td><td>Teléfono</td></tr>
+              <tr><td>Ordenador</td><td>Computadora</td><td>Equipo informático</td></tr>
+              <tr><td>Piso</td><td>Apartamento</td><td>Vivienda</td></tr>
+              <tr><td>Portal</td><td>Entrada del edificio</td><td>Acceso principal</td></tr>
+              <tr><td>Ascensor</td><td>Ascensor</td><td>Elevador del edificio</td></tr>
+              <tr><td>Maletero</td><td>Maleta o baúl</td><td>Compartimento trasero del carro</td></tr>
+              <tr><td>Conducir</td><td>Manejar</td><td>Usar un vehículo</td></tr>
+              <tr><td>Carné de conducir</td><td>Licencia de conducir</td><td>Permiso para manejar</td></tr>
+              <tr><td>Acera</td><td>Acera</td><td>Espacio para caminar junto a la calle</td></tr>
+              <tr><td>Rotonda</td><td>Redoma</td><td>Cruce circular</td></tr>
+              <tr><td>Autobús</td><td>Autobús o bus</td><td>Transporte público</td></tr>
+              <tr><td>Billete</td><td>Pasaje o boleto</td><td>Documento para viajar</td></tr>
+              <tr><td>Cola</td><td>Cola o fila</td><td>Personas esperando</td></tr>
+              <tr><td>Grifo</td><td>Llave</td><td>Salida de agua</td></tr>
+              <tr><td>Fregadero</td><td>Lavaplatos</td><td>Lugar donde se lavan los platos</td></tr>
+              <tr><td>Frigorífico</td><td>Nevera</td><td>Electrodoméstico para conservar alimentos</td></tr>
+              <tr><td>Zumo</td><td>Jugo</td><td>Bebida de frutas</td></tr>
+              <tr><td>Patata</td><td>Papa</td><td>Tubérculo</td></tr>
+              <tr><td>Melocotón</td><td>Durazno</td><td>Fruta</td></tr>
+              <tr><td>Judías verdes</td><td>Vainitas</td><td>Vegetal</td></tr>
+              <tr><td>Guisantes</td><td>Arvejas</td><td>Legumbre</td></tr>
+              <tr><td>Pajita</td><td>Pitillo</td><td>Tubo para beber</td></tr>
+              <tr><td>Bocadillo</td><td>Sándwich</td><td>Pan con algún relleno</td></tr>
+            </tbody>
+          </table></div>
+        </div></div>
+      </div>
+
+      <div class="tramite-item" id="tramite-glo-expr">
+        <div class="tramite-header" onclick="toggleTramite('glo-expr')">
+          <div class="tramite-left"><div class="tramite-badge">EXP</div><div>
+            <div class="tramite-title">Expresiones frecuentes</div>
+            <div class="tramite-subtitle">Lo que escuchará a menudo</div>
+          </div></div><span class="tramite-arrow">▼</span>
+        </div>
+        <div class="tramite-body"><div class="tramite-content">
+          <div style="overflow-x:auto"><table class="glosario-table">
+            <thead><tr><th scope="col">En España</th><th scope="col">Equivalente en Venezuela</th></tr></thead>
+            <tbody>
+              <tr><td>Vale</td><td>Está bien / De acuerdo</td></tr>
+              <tr><td>Qué guay</td><td>Qué chévere</td></tr>
+              <tr><td>Tío o tía</td><td>Pana / Amigo o amiga</td></tr>
+              <tr><td>Curro</td><td>Trabajo</td></tr>
+              <tr><td>Currar</td><td>Trabajar</td></tr>
+              <tr><td>Pasta</td><td>Dinero / Plata</td></tr>
+              <tr><td>Quedar con alguien</td><td>Reunirse con alguien</td></tr>
+              <tr><td>Dar de alta</td><td>Registrar o activar</td></tr>
+              <tr><td>Dar de baja</td><td>Cancelar o desactivar</td></tr>
+              <tr><td>Echar una firma</td><td>Firmar</td></tr>
+              <tr><td>Pedir cita</td><td>Solicitar una cita</td></tr>
+              <tr><td>Hacer una gestión</td><td>Realizar un trámite</td></tr>
+              <tr><td>Empadronarse</td><td>Registrarse como residente</td></tr>
+              <tr><td>Presentar un documento</td><td>Entregar un documento</td></tr>
+              <tr><td>Aportar documentación</td><td>Llevar o entregar documentos adicionales</td></tr>
+              <tr><td>Subsanar</td><td>Corregir o completar algo que falta</td></tr>
+              <tr><td>Recoger un documento</td><td>Retirar un documento</td></tr>
+              <tr><td>Comparecer</td><td>Presentarse personalmente</td></tr>
+              <tr><td>Abonar una tasa</td><td>Pagar un importe oficial</td></tr>
+              <tr><td>Cumplimentar un formulario</td><td>Llenar un formulario</td></tr>
+            </tbody>
+          </table></div>
+        </div></div>
+      </div>
+
+      <div class="tramite-item" id="tramite-glo-form">
+        <div class="tramite-header" onclick="toggleTramite('glo-form')">
+          <div class="tramite-left"><div class="tramite-badge">FOR</div><div>
+            <div class="tramite-title">Palabras en formularios</div>
+            <div class="tramite-subtitle">Solicitudes y cuestionarios</div>
+          </div></div><span class="tramite-arrow">▼</span>
+        </div>
+        <div class="tramite-body"><div class="tramite-content">
+          <div style="overflow-x:auto"><table class="glosario-table">
+            <thead><tr><th scope="col">Término</th><th scope="col">Explicación sencilla</th></tr></thead>
+            <tbody>
+              <tr><td>Nombre</td><td>Primer nombre</td></tr>
+              <tr><td>Apellidos</td><td>Los dos apellidos, cuando corresponda</td></tr>
+              <tr><td>Segundo apellido</td><td>Apellido materno</td></tr>
+              <tr><td>Fecha de nacimiento</td><td>Día, mes y año de nacimiento</td></tr>
+              <tr><td>Lugar de nacimiento</td><td>Ciudad o municipio donde nació</td></tr>
+              <tr><td>País de nacimiento</td><td>País donde nació</td></tr>
+              <tr><td>Nacionalidad</td><td>País del que es ciudadano</td></tr>
+              <tr><td>Estado civil</td><td>Soltero, casado, divorciado, viudo, etc.</td></tr>
+              <tr><td>Domicilio</td><td>Dirección donde vive</td></tr>
+              <tr><td>Residencia habitual</td><td>Lugar donde vive normalmente</td></tr>
+              <tr><td>Código postal</td><td>Número que identifica la zona de la dirección</td></tr>
+              <tr><td>Municipio</td><td>Localidad administrativa</td></tr>
+              <tr><td>Provincia</td><td>División territorial española</td></tr>
+              <tr><td>Comunidad Autónoma</td><td>Región de España</td></tr>
+              <tr><td>Teléfono de contacto</td><td>Número donde pueden localizarle</td></tr>
+              <tr><td>Correo electrónico</td><td>Dirección de email</td></tr>
+              <tr><td>Representante legal</td><td>Persona autorizada para actuar por otra</td></tr>
+              <tr><td>Progenitor</td><td>Padre o madre</td></tr>
+              <tr><td>Cónyuge</td><td>Esposo o esposa</td></tr>
+              <tr><td>Pareja de hecho</td><td>Pareja registrada legalmente sin matrimonio</td></tr>
+              <tr><td>Menor de edad</td><td>Persona que todavía no ha cumplido 18 años</td></tr>
+              <tr><td>Mayor de edad</td><td>Persona de 18 años o más</td></tr>
+              <tr><td>Persona a cargo</td><td>Familiar que depende de otra persona</td></tr>
+              <tr><td>Declarante</td><td>Persona que aporta o comunica la información</td></tr>
+              <tr><td>Interesado</td><td>Persona a quien corresponde el trámite</td></tr>
+              <tr><td>Solicitante</td><td>Persona que presenta la solicitud</td></tr>
+            </tbody>
+          </table></div>
+        </div></div>
+      </div>
+
+      <div class="tramite-item" id="tramite-glo-doc">
+        <div class="tramite-header" onclick="toggleTramite('glo-doc')">
+          <div class="tramite-left"><div class="tramite-badge">DOC</div><div>
+            <div class="tramite-title">Documentos y trámites</div>
+            <div class="tramite-subtitle">Términos administrativos</div>
+          </div></div><span class="tramite-arrow">▼</span>
+        </div>
+        <div class="tramite-body"><div class="tramite-content">
+          <div style="overflow-x:auto"><table class="glosario-table">
+            <thead><tr><th scope="col">En España</th><th scope="col">Explicación</th></tr></thead>
+            <tbody>
+              <tr><td>DNI</td><td>Documento de identidad de los ciudadanos españoles</td></tr>
+              <tr><td>NIE</td><td>Número de identificación de una persona extranjera en España</td></tr>
+              <tr><td>TIE</td><td>Tarjeta física de identidad de extranjero</td></tr>
+              <tr><td>Pasaporte en vigor</td><td>Pasaporte vigente</td></tr>
+              <tr><td>Documento caducado</td><td>Documento vencido</td></tr>
+              <tr><td>Fotocopia compulsada</td><td>Copia revisada oficialmente frente al original</td></tr>
+              <tr><td>Copia auténtica</td><td>Copia con validez oficial</td></tr>
+              <tr><td>Original y copia</td><td>Documento original acompañado de una fotocopia</td></tr>
+              <tr><td>Justificante</td><td>Comprobante</td></tr>
+              <tr><td>Resguardo</td><td>Constancia de haber presentado o pagado algo</td></tr>
+              <tr><td>Certificado</td><td>Documento oficial que confirma un hecho</td></tr>
+              <tr><td>Certificación literal</td><td>Copia completa de una inscripción oficial</td></tr>
+              <tr><td>Cita previa</td><td>Cita solicitada antes de acudir</td></tr>
+              <tr><td>Sede electrónica</td><td>Página oficial para realizar trámites por internet</td></tr>
+              <tr><td>Clave o Cl@ve</td><td>Sistema de identificación digital en España</td></tr>
+              <tr><td>Firma electrónica</td><td>Firma digital</td></tr>
+              <tr><td>Tasa</td><td>Pago oficial necesario para algunos trámites</td></tr>
+              <tr><td>Expediente</td><td>Conjunto de documentos de un trámite</td></tr>
+              <tr><td>Número de expediente</td><td>Código con el que se identifica el caso</td></tr>
+              <tr><td>Plazo</td><td>Tiempo disponible para realizar una gestión</td></tr>
+              <tr><td>Requerimiento</td><td>Solicitud oficial para aportar o corregir información</td></tr>
+              <tr><td>Notificación</td><td>Comunicación oficial</td></tr>
+              <tr><td>Resolución</td><td>Decisión final sobre una solicitud</td></tr>
+              <tr><td>Recurso</td><td>Solicitud para revisar una decisión</td></tr>
+            </tbody>
+          </table></div>
+        </div></div>
+      </div>
+
+      <div class="tramite-item" id="tramite-glo-rc">
+        <div class="tramite-header" onclick="toggleTramite('glo-rc')">
+          <div class="tramite-left"><div class="tramite-badge">CIV</div><div>
+            <div class="tramite-title">Registro Civil</div>
+            <div class="tramite-subtitle">Nacimiento, matrimonio, nacionalidad</div>
+          </div></div><span class="tramite-arrow">▼</span>
+        </div>
+        <div class="tramite-body"><div class="tramite-content">
+          <div style="overflow-x:auto"><table class="glosario-table">
+            <thead><tr><th scope="col">Término</th><th scope="col">¿Qué significa?</th></tr></thead>
+            <tbody>
+              <tr><td>Registro Civil</td><td>Oficina donde se inscriben nacimientos, matrimonios, defunciones y otros hechos civiles</td></tr>
+              <tr><td>Inscripción de nacimiento</td><td>Registro oficial del nacimiento de una persona</td></tr>
+              <tr><td>Certificado de nacimiento</td><td>Documento que acredita el nacimiento</td></tr>
+              <tr><td>Certificación literal de nacimiento</td><td>Copia completa de la inscripción de nacimiento</td></tr>
+              <tr><td>Tomo, página y sección</td><td>Datos utilizados para localizar una inscripción</td></tr>
+              <tr><td>Matrimonio civil</td><td>Matrimonio celebrado ante una autoridad civil</td></tr>
+              <tr><td>Inscripción de matrimonio</td><td>Registro oficial del matrimonio</td></tr>
+              <tr><td>Capitulaciones matrimoniales</td><td>Acuerdo sobre los bienes del matrimonio</td></tr>
+              <tr><td>Régimen económico matrimonial</td><td>Forma en que se organizan los bienes de los esposos</td></tr>
+              <tr><td>Separación de bienes</td><td>Cada esposo conserva sus propios bienes</td></tr>
+              <tr><td>Gananciales</td><td>Bienes compartidos durante el matrimonio</td></tr>
+              <tr><td>Divorcio</td><td>Disolución legal del matrimonio</td></tr>
+              <tr><td>Sentencia firme de divorcio</td><td>Decisión definitiva de un tribunal</td></tr>
+              <tr><td>Defunción</td><td>Fallecimiento</td></tr>
+              <tr><td>Certificado de defunción</td><td>Documento que acredita el fallecimiento</td></tr>
+              <tr><td>Libro de Familia</td><td>Documento familiar tradicional español, hoy sustituido en muchos trámites por registros digitales</td></tr>
+              <tr><td>Filiación</td><td>Relación legal entre una persona y sus padres</td></tr>
+              <tr><td>Reconocimiento de filiación</td><td>Declaración legal de maternidad o paternidad</td></tr>
+              <tr><td>Cambio de nombre</td><td>Modificación oficial del nombre</td></tr>
+              <tr><td>Rectificación registral</td><td>Corrección de un dato en el Registro Civil</td></tr>
+              <tr><td>Fe de vida</td><td>Documento que acredita que una persona está viva</td></tr>
+              <tr><td>Fe de vida y estado</td><td>Acredita que una persona está viva y señala su estado civil</td></tr>
+              <tr><td>Nacionalidad por opción</td><td>Forma de adquirir la nacionalidad española en ciertos casos familiares</td></tr>
+              <tr><td>Jura o promesa</td><td>Acto necesario en algunos procesos de nacionalidad</td></tr>
+              <tr><td>Conservación de la nacionalidad</td><td>Declaración para mantener la nacionalidad española en determinados casos</td></tr>
+              <tr><td>Recuperación de la nacionalidad</td><td>Procedimiento para volver a obtener la nacionalidad española</td></tr>
+              <tr><td>Doble nacionalidad</td><td>Situación de quien posee dos nacionalidades</td></tr>
+            </tbody>
+          </table></div>
+        </div></div>
+      </div>
+
+      <div class="tramite-item" id="tramite-glo-conf">
+        <div class="tramite-header" onclick="toggleTramite('glo-conf')">
+          <div class="tramite-left"><div class="tramite-badge">OJO</div><div>
+            <div class="tramite-title">Palabras que pueden causar confusión</div>
+            <div class="tramite-subtitle">Mismo término, distinto sentido</div>
+          </div></div><span class="tramite-arrow">▼</span>
+        </div>
+        <div class="tramite-body"><div class="tramite-content">
+          <p class="subsection-label">Coger</p>
+          <div>En España se usa con normalidad: coger el autobús, coger una cita, coger un documento. En Venezuela suele decirse <strong>tomar, agarrar o recoger</strong>, porque la palabra puede tener otro sentido coloquial.</div>
+          <p class="subsection-label" style="margin-top:14px">Apellidos</p>
+          <div>Los formularios españoles suelen pedir <strong>primer apellido</strong> y <strong>segundo apellido</strong> (normalmente el del padre y el de la madre). Si usa un solo apellido, escríbalo según su documentación oficial.</div>
+          <p class="subsection-label" style="margin-top:14px">Piso</p>
+          <div>Puede significar un apartamento o la planta de un edificio. «Vivo en un piso» = vive en un apartamento; «Vivo en el tercer piso» = indica la planta.</div>
+          <p class="subsection-label" style="margin-top:14px">Baja</p>
+          <div>No siempre es una enfermedad: puede ser baja médica, cancelación de un servicio, salida de un registro o fin de una relación laboral.</div>
+          <p class="subsection-label" style="margin-top:14px">Alta</p>
+          <div>Puede ser inscripción en un sistema, activación de un servicio, inicio de una relación laboral o autorización médica para volver a la actividad.</div>
+          <p class="subsection-label" style="margin-top:14px">Pendiente</p>
+          <div>En un trámite significa que falta una revisión, una respuesta o algún documento.</div>
+          <p class="subsection-label" style="margin-top:14px">Conforme</p>
+          <div>Significa que la persona está de acuerdo con la información indicada.</div>
+          <p class="subsection-label" style="margin-top:14px">Antecedentes</p>
+          <div>Según el formulario puede referirse a hechos anteriores o al historial administrativo, médico o penal. Lea bien la pregunta antes de responder.</div>
+          <p class="subsection-label" style="margin-top:14px">Unión de hecho</p>
+          <div>Relación de pareja estable registrada legalmente. En España suele usarse la expresión <strong>pareja de hecho</strong>.</div>
+          <p class="subsection-label" style="margin-top:14px">Natural de</p>
+          <div>Indica dónde nació la persona. «Natural de Caracas» = nacido en Caracas.</div>
+          <p class="subsection-label" style="margin-top:14px">Vecino de</p>
+          <div>En documentos administrativos indica el lugar donde vive la persona, no que sea vecino de otra vivienda.</div>
+          <p class="subsection-label" style="margin-top:14px">En vigor</p>
+          <div>Significa que un documento sigue siendo válido y no está vencido.</div>
+          <p class="subsection-label" style="margin-top:14px">Compulsa</p>
+          <div>Comprobación oficial de que una copia coincide con el documento original.</div>
+        </div></div>
+      </div>
+
+      <div class="tramite-item" id="tramite-glo-frases">
+        <div class="tramite-header" onclick="toggleTramite('glo-frases')">
+          <div class="tramite-left"><div class="tramite-badge">OFI</div><div>
+            <div class="tramite-title">Frases habituales en oficinas y citas</div>
+            <div class="tramite-subtitle">Qué significan</div>
+          </div></div><span class="tramite-arrow">▼</span>
+        </div>
+        <div class="tramite-body"><div class="tramite-content">
+          <div><strong>«Le falta documentación»</strong> — debe entregar uno o más documentos adicionales.</div>
+          <div style="margin-top:8px"><strong>«Debe aportar el original»</strong> — presentar el documento original, no solo una copia.</div>
+          <div style="margin-top:8px"><strong>«Tiene que pedir cita previa»</strong> — reservar una cita antes de acudir.</div>
+          <div style="margin-top:8px"><strong>«Su expediente está en trámite»</strong> — la solicitud todavía está siendo revisada.</div>
+          <div style="margin-top:8px"><strong>«Está pendiente de resolución»</strong> — todavía no existe una decisión final.</div>
+          <div style="margin-top:8px"><strong>«Debe subsanar la solicitud»</strong> — corregir un error o entregar algo que falta.</div>
+          <div style="margin-top:8px"><strong>«La documentación no está en vigor»</strong> — algún documento está vencido.</div>
+          <div style="margin-top:8px"><strong>«Debe firmar en todas las hojas»</strong> — firmar cada página indicada.</div>
+          <div style="margin-top:8px"><strong>«Marque la casilla correspondiente»</strong> — seleccionar la opción que aplica a su situación.</div>
+          <div style="margin-top:8px"><strong>«No procede»</strong> — esa opción o trámite no corresponde en ese caso.</div>
+          <div style="margin-top:8px"><strong>«Se tendrá por desistida la solicitud»</strong> — puede considerarse abandonada si no se presenta lo solicitado dentro del plazo.</div>
+        </div></div>
+      </div>
+
+      <div class="tramite-item" id="tramite-glo-consejos">
+        <div class="tramite-header" onclick="toggleTramite('glo-consejos')">
+          <div class="tramite-left"><div class="tramite-badge">TIP</div><div>
+            <div class="tramite-title">Consejos para responder un formulario</div>
+            <div class="tramite-subtitle">Antes de rellenar</div>
+          </div></div><span class="tramite-arrow">▼</span>
+        </div>
+        <div class="tramite-body"><div class="tramite-content">
+          <div>Lea toda la pregunta y fíjese especialmente en palabras como:</div>
+          <ul>
+            <li>sí o no;</li>
+            <li>actualmente / anteriormente;</li>
+            <li>residencia habitual;</li>
+            <li>nacionalidad de origen;</li>
+            <li>estado civil;</li>
+            <li>fecha de expedición / fecha de caducidad;</li>
+            <li>domicilio a efectos de notificaciones.</li>
+          </ul>
+          <div class="tramite-note">Cuando una pregunta no esté clara, es preferible pedir una explicación antes de responder: una palabra puede tener un uso distinto en España y Venezuela, especialmente en documentos administrativos.</div>
+        </div></div>
+      </div>
+
+    </div>
+
+    <div class="tramite-note" style="margin-top:20px">
+      <strong>Un idioma que nos une.</strong> Las diferencias entre el español de España y el de Venezuela forman parte de la riqueza de nuestro idioma. Conocerlas facilita la comunicación, evita confusiones y ayuda a realizar trámites con mayor seguridad. Desde el Viceconsulado Honorario de España en Nueva Esparta queremos acercar la información de una manera sencilla, útil y comprensible.
+    </div>
+  </div>
+
   <div style="margin-top:32px;background:#f8f7f4;border-radius:10px;padding:24px;text-align:center">
     <p style="font-family:'DM Sans';font-size:15px;color:#555;margin-bottom:16px">¿Su pregunta no está aquí? Contáctenos directamente.</p>
     <a class="btn btn-green" href="https://wa.me/584248429665?text=Hola%2C%20tengo%20una%20consulta%20sobre%20trámites%20consulares" target="_blank">
@@ -1789,7 +3969,7 @@ footer { background: #1a1a1a; margin-top: 60px; }
           </a>
         </div>
         <div id="emergencia-anchor" style="margin-top:8px">
-          <a class="btn btn-red btn-sm" href="tel:+584242090264" style="display:inline-flex;align-items:center;gap:8px;color:white;text-decoration:none">
+          <a class="btn btn-alerta btn-sm" href="tel:+584242090264" style="display:inline-flex;align-items:center;gap:8px;color:white;text-decoration:none">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.02 1.18 2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg>
             Contacto de emergencia
           </a>
@@ -1798,21 +3978,76 @@ footer { background: #1a1a1a; margin-top: 60px; }
     </div>
   </div>
 
+  <!-- Mapa del sitio: marca · accesos rápidos · comunidad · institucional -->
+  <div class="footer-nav">
+    <div class="footer-nav-inner">
+
+      <div class="footer-nav-col footer-nav-col--marca">
+        <div class="footer-brand-row">
+          <img class="footer-shield" src="images/Logo.jpeg" alt="Logo Viceconsulado">
+          <span class="footer-brand-name">Viceconsulado Honorario de España<br>en Nueva Esparta</span>
+        </div>
+        <p class="footer-brand-desc">
+          Dependiente del Consulado General de España en Caracas y de la Embajada de España
+          en Venezuela. Ministerio de Asuntos Exteriores, Unión Europea y Cooperación.
+        </p>
+        <div class="footer-social">
+          <a href="https://wa.me/584248429665" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp del Viceconsulado">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+          </a>
+          <a href="https://www.instagram.com/viceconsulado_espana_ne" target="_blank" rel="noopener noreferrer" aria-label="Instagram del Viceconsulado">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41-.56-.22-.96-.48-1.38-.9-.42-.42-.68-.82-.9-1.38-.16-.42-.36-1.06-.41-2.23C2.17 15.58 2.16 15.2 2.16 12s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16m0-2.16C8.74 0 8.33.01 7.05.07 5.78.13 4.9.33 4.14.63c-.79.3-1.46.72-2.13 1.38C1.35 2.68.93 3.35.63 4.14.33 4.9.13 5.78.07 7.05.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.27.26 2.15.56 2.91.3.79.72 1.46 1.38 2.13.67.66 1.34 1.08 2.13 1.38.76.3 1.64.5 2.91.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.27-.06 2.15-.26 2.91-.56.79-.3 1.46-.72 2.13-1.38.66-.67 1.08-1.34 1.38-2.13.3-.76.5-1.64.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.27-.26-2.15-.56-2.91-.3-.79-.72-1.46-1.38-2.13C21.32 1.35 20.65.93 19.86.63c-.76-.3-1.64-.5-2.91-.56C15.67.01 15.26 0 12 0m0 5.84a6.16 6.16 0 100 12.32 6.16 6.16 0 000-12.32m0 10.16a4 4 0 110-8 4 4 0 010 8m7.85-10.4a1.44 1.44 0 11-2.88 0 1.44 1.44 0 012.88 0"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-nav-col">
+        <div class="footer-col-title">Accesos rápidos</div>
+        <a href="#" onclick="showSection('inicio');return false;">Inicio</a>
+        <a href="#" onclick="showSection('tramites');return false;">Servicios Consulares</a>
+        <a href="#" onclick="showSection('citas');return false;">Citas</a>
+        <a href="https://sutramiteconsular.maec.es" target="_blank" rel="noopener noreferrer">Estado de Trámite ↗</a>
+        <a href="#" onclick="showSection('descargas');return false;">Centro de Descargas</a>
+        <a href="#" onclick="showSection('emergencias');return false;">Emergencias 24 h</a>
+        <a href="#" onclick="showSection('faq');return false;">Preguntas Frecuentes</a>
+        <a href="#" onclick="showSection('ubicacion');return false;">Nosotros</a>
+        <a href="#" onclick="showSection('conoce');return false;">Conoce</a>
+      </div>
+
+      <div class="footer-nav-col">
+        <div class="footer-col-title">Comunidad española</div>
+        <a href="#" onclick="showSection('comunidad');return false;">Ver todas las instituciones</a>
+        <a href="#" onclick="showSection('cre');return false;">Consejo de Residentes Españoles</a>
+        <a href="#" onclick="showSection('consejeria');return false;">Consejería Laboral</a>
+        <a href="#" onclick="showSection('cavespa');return false;">CAVESPA</a>
+        <a href="#" onclick="showSection('feceve');return false;">FECEVE — Centros Españoles</a>
+      </div>
+
+      <div class="footer-nav-col">
+        <div class="footer-col-title">Enlaces institucionales</div>
+        <a href="https://www.exteriores.gob.es/Consulados/caracas/es/Paginas/index.aspx" target="_blank" rel="noopener noreferrer">Consulado General en Caracas ↗</a>
+        <a href="https://www.exteriores.gob.es/Embajadas/caracas" target="_blank" rel="noopener noreferrer">Embajada de España en Venezuela ↗</a>
+        <a href="https://www.exteriores.gob.es" target="_blank" rel="noopener noreferrer">Ministerio de Asuntos Exteriores (MAEC) ↗</a>
+        <a href="https://www.lamoncloa.gob.es" target="_blank" rel="noopener noreferrer">Gobierno de España ↗</a>
+      </div>
+
+    </div>
+  </div>
+
   <!-- Legal -->
   <div class="footer-legal">
-    <div class="footer-logo-row">
-      <img class="footer-shield" src="images/Logo.jpeg" alt="Logo Viceconsulado">
-      <span class="footer-name">Viceconsulado Honorario de España en Nueva Esparta</span>
+    <!-- Enlace destacado al Consulado General (botón rojo) -->
+    <div class="footer-cta">
+      <a class="btn btn-alerta btn-sm" href="https://www.exteriores.gob.es/Consulados/caracas/es/Paginas/index.aspx" target="_blank" rel="noopener noreferrer">Web del Consulado General en Caracas ↗</a>
     </div>
     <p class="footer-text">
-      Ministerio de Asuntos Exteriores, Unión Europea y Cooperación<br>
       Los datos facilitados serán tratados conforme a la normativa de protección de datos vigente.
     </p>
     <div class="foot-links">
       <a href="politica-privacidad.html">Política de Privacidad</a>
       <a href="aviso-legal.html">Aviso Legal</a>
-      <a href="https://www.exteriores.gob.es/Consulados/caracas/es/Paginas/index.aspx" target="_blank">Consulado General en Caracas</a>
     </div>
+    <div class="footer-copy">© 2026 Viceconsulado Honorario de España en Nueva Esparta · Todos los derechos reservados</div>
   </div>
 </footer>
 
@@ -1858,13 +4093,39 @@ function toggleMenu() {
   var open = links.classList.toggle('open');
   ham.classList.toggle('open', open);
   ham.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
+  // Bloquea el scroll de la página de fondo + oculta los FAB mientras el menú está abierto (móvil)
+  document.body.style.overflow = open ? 'hidden' : '';
+  document.body.classList.toggle('nav-open', open);
 }
 function closeMenu() {
   document.getElementById('navLinks').classList.remove('open');
   document.getElementById('hamburger').classList.remove('open');
+  document.body.style.overflow = '';
+  document.body.classList.remove('nav-open');
+  document.querySelectorAll('.nav-dropdown.open').forEach(function(d) {
+    d.classList.remove('open');
+    var t = d.querySelector('.nav-dropdown-toggle');
+    if (t) t.setAttribute('aria-expanded', 'false');
+  });
+}
+function toggleDropdown(btn) {
+  var dd = btn.closest('.nav-dropdown');
+  var willOpen = !dd.classList.contains('open');
+  document.querySelectorAll('.nav-dropdown.open').forEach(function(d) { if (d !== dd) d.classList.remove('open'); });
+  dd.classList.toggle('open', willOpen);
+  btn.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
 }
 document.addEventListener('click', function(e) {
   if (!e.target.closest('.nav-inner')) closeMenu();
+});
+// Escape cierra el dropdown Comunidad y devuelve el foco a su botón (a11y teclado)
+document.addEventListener('keydown', function(e) {
+  if (e.key !== 'Escape') return;
+  var open = document.querySelector('.nav-dropdown.open');
+  if (!open) return;
+  var toggle = open.querySelector('.nav-dropdown-toggle');
+  open.classList.remove('open');
+  if (toggle) { toggle.setAttribute('aria-expanded', 'false'); toggle.focus(); }
 });
 
 // STICKY HEADER — scroll listener
@@ -1880,6 +4141,98 @@ document.addEventListener('click', function(e) {
   window._updateNav = updateNav;
   updateNav();
 })();
+
+// ============================================
+// ACCESOS RÁPIDOS — abrir un trámite concreto desde el inicio
+// ============================================
+function irATramite(id) {
+  showSection('tramites');
+  // Si hay un filtro puesto, se limpia para que el trámite pedido sea visible
+  var buscador = document.getElementById('trSearch');
+  if (buscador) buscador.value = '';
+  var todos = document.querySelector('#trCats .dl-cat[data-cat="todos"]');
+  if (todos) catTramites(todos);
+
+  var item = document.getElementById('tramite-' + id);
+  if (!item) return;
+  document.querySelectorAll('#tramitesList .tramite-item').forEach(function(i) { i.classList.remove('open'); });
+  item.classList.add('open');
+  // showSection hace scroll arriba: esperamos a que termine antes de bajar al trámite
+  setTimeout(function() { item.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 420);
+}
+
+// ============================================
+// SERVICIOS CONSULARES — filtro por categoría + búsqueda
+// ============================================
+function catTramites(btn) {
+  document.querySelectorAll('#trCats .dl-cat').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  filtrarTramites();
+}
+function filtrarTramites() {
+  var buscador = document.getElementById('trSearch');
+  if (!buscador) return;
+  var texto  = buscador.value.trim().toLowerCase();
+  var activa = document.querySelector('#trCats .dl-cat.active');
+  var cat    = activa ? activa.dataset.cat : 'todos';
+  // Solo los trámites de Servicios Consulares: los acordeones de Conoce comparten clase
+  var items  = document.querySelectorAll('#tramitesList .tramite-item');
+  var visibles = 0;
+
+  items.forEach(function(item) {
+    var coincideCat   = (cat === 'todos') || item.dataset.cat === cat;
+    var coincideTexto = !texto || item.textContent.toLowerCase().indexOf(texto) !== -1;
+    var mostrar = coincideCat && coincideTexto;
+    item.style.display = mostrar ? '' : 'none';
+    if (mostrar) visibles++;
+  });
+
+  var contador = document.getElementById('trCount');
+  if (contador) {
+    contador.textContent = visibles === items.length
+      ? items.length + ' servicios'
+      : visibles + ' de ' + items.length + ' servicios';
+  }
+}
+document.addEventListener('DOMContentLoaded', filtrarTramites);
+
+// ============================================
+// CENTRO DE DESCARGAS — filtro por categoría + búsqueda
+// ============================================
+function catDescargas(btn) {
+  document.querySelectorAll('#dlCats .dl-cat').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  filtrarDescargas();
+}
+function filtrarDescargas() {
+  var buscador = document.getElementById('dlSearch');
+  if (!buscador) return;
+  var texto  = buscador.value.trim().toLowerCase();
+  var activa = document.querySelector('#dlCats .dl-cat.active');
+  var cat    = activa ? activa.dataset.cat : 'todos';
+  var filas  = document.querySelectorAll('#dlList .dl-row');
+  var visibles = 0;
+
+  filas.forEach(function(fila) {
+    var cats  = (fila.dataset.cat || '').split(/\s+/);
+    var coincideCat   = (cat === 'todos') || cats.indexOf(cat) !== -1;
+    var coincideTexto = !texto || fila.textContent.toLowerCase().indexOf(texto) !== -1;
+    var mostrar = coincideCat && coincideTexto;
+    fila.style.display = mostrar ? '' : 'none';
+    if (mostrar) visibles++;
+  });
+
+  var vacio = document.getElementById('dlEmpty');
+  if (vacio) vacio.style.display = visibles ? 'none' : 'block';
+
+  var contador = document.getElementById('dlCount');
+  if (contador) {
+    contador.textContent = visibles === filas.length
+      ? filas.length + ' documentos disponibles'
+      : visibles + ' de ' + filas.length + ' documentos';
+  }
+}
+document.addEventListener('DOMContentLoaded', filtrarDescargas);
 
 // ============================================
 // ACORDEONES DE TRÁMITES
@@ -2436,6 +4789,53 @@ function toggleFaq(btn) {
       }
     })
     .catch(function(err) { console.error('Error config:', err); });
+})();
+</script>
+
+<!-- GSAP + ScrollTrigger (local) — reveal folleto "Conoce" al bajar -->
+<script src="js/gsap.min.js"></script>
+<script src="js/ScrollTrigger.min.js"></script>
+<script>
+(function(){
+  if (!window.gsap || !window.ScrollTrigger) return;   // sin GSAP => contenido visible normal
+  document.documentElement.classList.add('gsap-on');
+  gsap.registerPlugin(ScrollTrigger);
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var ready = false;
+
+  function initConoce(){
+    if (ready) return; ready = true;
+    document.querySelectorAll('.conoce-row').forEach(function(row){
+      var fig = row.querySelector('.conoce-figure');
+      var body = row.querySelector('.conoce-body');
+      var mid = row.querySelector('.conoce-layer--mid');
+      var near = row.querySelector('.conoce-layer--near');
+      if (reduce) { gsap.set([fig, body], { opacity: 1, x: 0 }); if (mid) gsap.set(mid, {opacity: 0}); if (near) gsap.set(near, {opacity: 0}); return; }
+      var dir = row.classList.contains('reverse') ? 1 : -1;   // imagen entra desde su lado
+      gsap.timeline({
+        scrollTrigger: { trigger: row, start: 'top 85%', once: true },
+        defaults: { ease: 'power2.out', duration: 1.5 }
+      })
+      .fromTo(fig,  { x: 90 * dir,  opacity: 0 }, { x: 0, opacity: 1 })
+      .fromTo(body, { x: -34 * dir, opacity: 0 }, { x: 0, opacity: 1 }, '-=1.05');
+
+      // Parallax de profundidad 2.5D: base (foto) casi fija, medio se mueve, frente se mueve más
+      var st = { trigger: row, start: 'top bottom', end: 'bottom top', scrub: true };
+      if (mid)  gsap.fromTo(mid,  { yPercent: -3, scale: 1.03 }, { yPercent: 6,  scale: 1.03, ease: 'none', scrollTrigger: st });
+      if (near) gsap.fromTo(near, { yPercent: -7, scale: 1.05 }, { yPercent: 13, scale: 1.05, ease: 'none', scrollTrigger: st });
+    });
+    ScrollTrigger.refresh();
+  }
+
+  // SPA: crear/recalcular triggers cuando la sección "Nosotros" se hace visible
+  var _show = window.showSection;
+  if (typeof _show === 'function') {
+    window.showSection = function(id){
+      _show.apply(this, arguments);
+      if (id === 'ubicacion') setTimeout(initConoce, 80);
+      else if (ready) setTimeout(function(){ ScrollTrigger.refresh(); }, 80);
+    };
+  }
 })();
 </script>
 
