@@ -1383,6 +1383,69 @@ body.nav-open .sticky-cta, body.nav-open .sticky-wa { opacity: 0 !important; poi
 
 /* ── CHANNEL DESCRIPTIONS (contacto) ── */
 .channel-label { font-family:'DM Sans'; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1.1px; color:#aaa; margin-bottom:3px; }
+
+/* ===============================================================
+   LORCA 2026 · banda de difusión cultural — BLOQUE TEMPORAL
+   Retirar entero (este CSS + el <aside> del hero + el <script> final)
+   después del 19-09-2026. No modifica ninguna regla existente.
+   =============================================================== */
+#lorca-band { max-width: 1200px; margin: 0 auto; padding: 22px 20px 0; }
+.lorca-card {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  grid-template-areas: "media body" "media foot";
+  align-content: start;
+  gap: 8px 20px;
+  background: #fff;
+  border: 1px solid var(--borde);
+  border-top: 3px solid var(--dorado-oscuro);
+  border-radius: 12px;
+  padding: 20px 22px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+.lorca-media { grid-area: media; transform-origin: top left; }
+.lorca-body  { grid-area: body;  min-width: 0; transform-origin: top left; }
+.lorca-foot  { grid-area: foot;  min-width: 0; transform-origin: top left; }
+.lorca-video {
+  display: block; width: 100%; height: auto;
+  aspect-ratio: 9 / 16;
+  border-radius: 8px; background: #000;
+  border: 1px solid var(--borde);
+}
+.lorca-card.is-playing { grid-template-columns: 300px 1fr; }
+.lorca-title { font-size: 22px; line-height: 1.25; margin: 0 0 6px; }
+.lorca-meta  { font-family:'DM Sans',sans-serif; font-size:14px; color:var(--gris); margin:0 0 4px; }
+.lorca-prod  { font-family:'DM Sans',sans-serif; font-size:13px; color:var(--gris-claro); margin:0 0 14px; }
+.lorca-cta   { display:flex; flex-wrap:wrap; gap:12px; align-items:center; }
+.lorca-nota  {
+  font-family:'DM Sans',sans-serif; font-size:12px; line-height:1.55;
+  color:var(--gris-claro); margin:10px 0 0;
+  border-left:2px solid var(--borde); padding-left:10px;
+}
+.lorca-contador { font-family:'DM Sans',sans-serif; font-size:12.5px; color:var(--gris); margin:10px 0 0; }
+.lorca-contador strong { color:var(--rojo); font-weight:700; font-size:15px; }
+.lorca-contador-nota { color:var(--gris-claro); }
+.lorca-sr { position:absolute; width:1px; height:1px; overflow:hidden;
+            clip:rect(0 0 0 0); clip-path:inset(50%); white-space:nowrap; }
+
+@media (max-width: 768px) {
+  #lorca-band { padding: 16px 16px 0; }
+  .lorca-card {
+    grid-template-columns: 100px 1fr;
+    grid-template-areas: "media body" "foot foot";
+    gap: 12px 14px; padding: 16px;
+  }
+  .lorca-card.is-playing {
+    grid-template-columns: 1fr;
+    grid-template-areas: "media" "body" "foot";
+    justify-items: center; text-align: center;
+  }
+  .lorca-card.is-playing .lorca-media { width: min(72vw, 260px); }
+  .lorca-card.is-playing .lorca-cta   { justify-content: center; }
+  .lorca-title { font-size: 18px; }
+  .lorca-cta .btn { width: 100%; justify-content: center; }
+}
+
 </style>
 </head>
 <body>
@@ -1515,6 +1578,49 @@ body.nav-open .sticky-cta, body.nav-open .sticky-wa { opacity: 0 !important; poi
       </div>
     </div>
   </section>
+
+<!-- ====== LORCA 2026 · banda de difusión cultural — TEMPORAL: retirar tras el 19-09-2026 ====== -->
+<aside id="lorca-band" aria-labelledby="lorca-title">
+  <div class="lorca-card">
+    <div class="lorca-media">
+      <video class="lorca-video" id="lorca-video"
+             controls preload="none" playsinline
+             poster="images/lorca-cartel.jpg"
+             width="720" height="1280"
+             controlslist="nodownload noremoteplayback"
+             disablepictureinpicture>
+        <source src="media/lorca-2026.mp4" type='video/mp4; codecs="avc1.64001F, mp4a.40.2"'>
+        <p class="lorca-nota">Su navegador no puede reproducir este vídeo.
+          <a href="media/lorca-2026.mp4">Descargar el vídeo (3,3 MB)</a>.</p>
+      </video>
+    </div>
+    <div class="lorca-body">
+      <div class="com-kicker">Difusión cultural</div>
+      <p class="lorca-title" id="lorca-title"><strong>LORCA</strong> — La Casa de Bernarda Alba</p>
+      <p class="lorca-meta">Sábado 19 de septiembre de 2026 · 5:00 p. m. · Cines Unidos C.C. La Vela, Porlamar</p>
+      <p class="lorca-prod">Producción de Spectros Teatro y Fuego Gitano, con artistas neoespartanos.</p>
+      <div class="lorca-cta">
+        <a class="btn btn-red btn-sm" id="lorca-entradas"
+           href="https://www.cinesunidos.com/pelicula/HO00006226?city=margarita&amp;utm_source=viceconsulado&amp;utm_medium=web&amp;utm_campaign=lorca-2026"
+           target="_blank" rel="noopener noreferrer">
+          Compra tus entradas <span aria-hidden="true">&#8599;</span>
+          <span class="lorca-sr">(enlace externo, se abre en una ventana nueva)</span>
+        </a>
+      </div>
+    </div>
+    <div class="lorca-foot">
+      <p class="lorca-nota">Enlace externo. La venta de entradas la gestiona íntegramente la productora
+        en la plataforma de Cines Unidos. El Viceconsulado Honorario difunde esta actividad cultural con
+        carácter informativo: no interviene en la venta, no trata datos de los compradores y no percibe
+        ingreso alguno.</p>
+      <p class="lorca-contador" id="lorca-contador" hidden>
+        <strong id="lorca-contador-n">0</strong> pulsaciones registradas en este enlace desde esta web.
+        <span class="lorca-contador-nota">Recuento propio y agregado, sin cookies ni identificación de visitantes.</span>
+      </p>
+    </div>
+  </div>
+</aside>
+
 </div>
 
 <!-- ==================== INICIO ==================== -->
@@ -4844,6 +4950,152 @@ function toggleFaq(btn) {
       if (id === 'ubicacion') setTimeout(initConoce, 80);
       else if (ready) setTimeout(function(){ ScrollTrigger.refresh(); }, 80);
     };
+  }
+})();
+</script>
+
+
+<!-- ====== LORCA 2026 · TEMPORAL: retirar tras el 19-09-2026 ====== -->
+<script>
+(function () {
+  var band = document.getElementById('lorca-band');
+  if (!band) return;
+
+  var card = band.querySelector('.lorca-card');
+  var vid  = document.getElementById('lorca-video');
+  var link = document.getElementById('lorca-entradas');
+  var box  = document.getElementById('lorca-contador');
+  var num  = document.getElementById('lorca-contador-n');
+
+  // Umbral para publicar la cifra. Estaba en 25 y eso la habria dejado INVISIBLE
+  // durante toda la campana (13 dias): justo lo contrario de lo que se pidio.
+  // A 1 se ve desde la primera pulsacion. Subirlo solo si se decide lo contrario.
+  var UMBRAL = 1;
+  var EP = (typeof API_URL === 'string' ? API_URL : '') + '/api/evento/lorca-2026';
+
+  // 1 - el cartel se expande al reproducir y vuelve a su sitio al terminar.
+  //
+  //     La expansion se anima con FLIP (First - Last - Invert - Play): se mide la
+  //     posicion antes y despues de cambiar la clase y se anima SOLO con transform
+  //     y opacity, que el navegador compone en GPU sin recalcular layout.
+  //
+  //     Por que no basta un transition de CSS: en movil .is-playing cambia
+  //     grid-template-areas de dos columnas a una, y grid-template-areas NO es
+  //     animable. El navegador reflowea de golpe. Eso era el salto seco.
+  var medio  = band.querySelector('.lorca-media');
+  var cuerpo = band.querySelector('.lorca-body');
+  var pie    = band.querySelector('.lorca-foot');
+
+  var mqReduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var DUR  = 260;                              // corto a proposito: rapido, no lento
+  var EASE = 'cubic-bezier(.2,.7,.3,1)';       // arranca decidido y frena suave
+
+  function hayWAAPI() {
+    return typeof Element !== 'undefined' && typeof Element.prototype.animate === 'function';
+  }
+
+  function expandir(activar) {
+    if (!card) return;
+
+    // Sin Web Animations API o con movimiento reducido: se cambia y punto.
+    if (!hayWAAPI() || mqReduce.matches) {
+      card.classList.toggle('is-playing', activar);
+      return;
+    }
+    var piezas = [medio, cuerpo, pie].filter(Boolean);
+
+    // Si hay una animacion a medias (play/pause rapido, o el video termina justo
+    // al abrirse) se cancela antes de medir. Bloquear con una bandera dejaba el
+    // cartel expandido para siempre: llegaba el 'ended' y se ignoraba.
+    piezas.forEach(function (el) {
+      if (el.getAnimations) { el.getAnimations().forEach(function (a) { a.cancel(); }); }
+    });
+
+    var antes = piezas.map(function (el) { return el.getBoundingClientRect(); });
+
+    card.classList.toggle('is-playing', activar);
+
+    var despues = piezas.map(function (el) { return el.getBoundingClientRect(); });
+
+    piezas.forEach(function (el, i) {
+      var a = antes[i], d = despues[i];
+      if (!d.width || !d.height || !a.width) return;
+
+      var dx  = a.left - d.left;
+      var dy  = a.top  - d.top;
+      var esc = a.width / d.width;
+
+      // Si esa pieza no se movio ni cambio de tamano, no se anima nada.
+      if (Math.abs(dx) < 1 && Math.abs(dy) < 1 && Math.abs(esc - 1) < 0.01) return;
+
+      // El poster si escala: es una imagen y aguanta. El texto solo se desplaza,
+      // porque escalar tipografia la deja borrosa durante la animacion.
+      var desde = (el === medio)
+        ? 'translate(' + dx + 'px,' + dy + 'px) scale(' + esc + ')'
+        : 'translate(' + dx + 'px,' + dy + 'px)';
+
+      // transform y opacity los compone el navegador en GPU sin recalcular layout,
+      // asi que no hace falta will-change. Ponerlo y quitarlo creaba una carrera
+      // entre el oncancel de una animacion y el arranque de la siguiente.
+      el.animate(
+        [ { transform: desde,   opacity: (el === medio ? 1 : 0.5) },
+          { transform: 'none',  opacity: 1 } ],
+        { duration: DUR, easing: EASE, fill: 'none' }
+      );
+    });
+  }
+
+  if (vid && card) {
+    vid.addEventListener('play',  function () { expandir(true);  });
+    vid.addEventListener('ended', function () { expandir(false); });
+  }
+
+  // 2 - display:none NO pausa un <video>. showSection oculta el hero al cambiar
+  //     de seccion y el audio seguiria sonando sobre Tramites o Emergencias.
+  function pausar() { if (vid && !vid.paused) vid.pause(); }
+
+  var _show = window.showSection;
+  if (typeof _show === 'function') {
+    window.showSection = function (id) {
+      if (id !== 'inicio') pausar();
+      return _show.apply(this, arguments);
+    };
+  }
+  document.addEventListener('visibilitychange', function () { if (document.hidden) pausar(); });
+
+  // 3 - contador de pulsaciones: sin cookies, sin terceros, sin identificadores.
+  //     Si el endpoint aun no existe, falla en silencio y la banda funciona igual.
+  function pintar(n) {
+    if (!box || !num) return;
+    if (typeof n !== 'number' || !isFinite(n) || n < UMBRAL) return;
+    num.textContent = n.toLocaleString('es-ES');
+    box.hidden = false;
+  }
+
+  fetch(EP)
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (d) { if (d) pintar(d.pulsaciones); })
+    .catch(function () {});
+
+  function contar() {
+    try {
+      fetch(EP + '/pulsacion', {
+        method: 'POST',
+        keepalive: true,
+        headers: { 'Content-Type': 'application/json' },
+        body: '{"origen":"web-publica"}'
+      })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) { if (d) pintar(d.pulsaciones); })
+      .catch(function () {});
+    } catch (e) {}
+  }
+
+  if (link) {
+    // NO se llama a preventDefault ni a stopPropagation: el enlace debe abrirse
+    // siempre, y el listener global de cierre de menu debe seguir recibiendo el evento.
+    link.addEventListener('click', contar);
+    link.addEventListener('auxclick', function (e) { if (e.button === 1) contar(); });
   }
 })();
 </script>
