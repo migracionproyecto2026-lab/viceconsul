@@ -1384,13 +1384,19 @@ body.nav-open .sticky-cta, body.nav-open .sticky-wa { opacity: 0 !important; poi
 /* ── CHANNEL DESCRIPTIONS (contacto) ── */
 .channel-label { font-family:'DM Sans'; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1.1px; color:#aaa; margin-bottom:3px; }
 
+/* Texto solo para lectores de pantalla */
+.sr-only { position:absolute !important; width:1px; height:1px; margin:-1px; padding:0; border:0;
+           overflow:hidden; clip:rect(0 0 0 0); clip-path:inset(50%); white-space:nowrap; }
+
 /* ===============================================================
-   LORCA 2026 · banda de difusión cultural — BLOQUE TEMPORAL
-   Retirar entero (este CSS + el <aside> del hero + el <script> final)
-   después del 19-09-2026. No modifica ninguna regla existente.
+   DESTACADO · bloque bajo el hero, alimentado por GET /api/destacado
+   Prefijo dst-. Nace con el atributo hidden y sin contenido: si la API
+   falla o no hay destacado vigente no ocupa ni un pixel (CLS cero).
+   Hereda el diseño de la banda de LORCA (sept. 2026).
    =============================================================== */
-#lorca-band { max-width: 1200px; margin: 0 auto; padding: 22px 20px 0; }
-.lorca-card {
+#destacado { max-width: 1200px; margin: 0 auto; padding: 22px 20px 0; }
+#destacado[hidden] { display: none; }
+.dst-card {
   display: grid;
   grid-template-columns: 150px 1fr;
   grid-template-areas: "media body" "media foot";
@@ -1403,47 +1409,306 @@ body.nav-open .sticky-cta, body.nav-open .sticky-wa { opacity: 0 !important; poi
   padding: 20px 22px;
   box-shadow: 0 1px 2px rgba(0,0,0,0.03);
 }
-.lorca-media { grid-area: media; transform-origin: top left; }
-.lorca-body  { grid-area: body;  min-width: 0; transform-origin: top left; }
-.lorca-foot  { grid-area: foot;  min-width: 0; transform-origin: top left; }
-.lorca-video {
+.dst-card.dst--cuadrada   { grid-template-columns: 170px 1fr; }
+.dst-card.dst--horizontal { grid-template-columns: 260px 1fr; }
+.dst-card.dst--sin-media  { grid-template-columns: 1fr; grid-template-areas: "body" "foot"; }
+.dst-card.is-expanded.dst--vertical { grid-template-columns: 300px 1fr; }
+.dst-card.is-expanded.dst--cuadrada { grid-template-columns: 340px 1fr; }
+.dst-card.is-expanded.dst--horizontal { grid-template-columns: 1fr; grid-template-areas: "media" "body" "foot"; }
+.dst-card.is-expanded.dst--horizontal .dst-media { width: min(100%, 760px); }
+.dst-media { grid-area: media; min-width: 0; transform-origin: top left; }
+.dst-body  { grid-area: body;  min-width: 0; transform-origin: top left; }
+.dst-foot  { grid-area: foot;  min-width: 0; transform-origin: top left; }
+.dst-video, .dst-img {
   display: block; width: 100%; height: auto;
-  aspect-ratio: 9 / 16;
+  aspect-ratio: 9 / 16; object-fit: cover;
   border-radius: 8px; background: #000;
   border: 1px solid var(--borde);
 }
-.lorca-card.is-playing { grid-template-columns: 300px 1fr; }
-.lorca-title { font-size: 22px; line-height: 1.25; margin: 0 0 6px; }
-.lorca-meta  { font-family:'DM Sans',sans-serif; font-size:14px; color:var(--gris); margin:0 0 4px; }
-.lorca-prod  { font-family:'DM Sans',sans-serif; font-size:13px; color:var(--gris-claro); margin:0 0 14px; }
-.lorca-cta   { display:flex; flex-wrap:wrap; gap:12px; align-items:center; }
-.lorca-nota  {
+.dst--horizontal .dst-video, .dst--horizontal .dst-img { aspect-ratio: 16 / 9; }
+.dst--cuadrada .dst-video,   .dst--cuadrada .dst-img   { aspect-ratio: 1 / 1; }
+.dst-img { background: #f1efe9; }
+.dst-img-btn { display: block; position: relative; width: 100%; padding: 0; border: 0; background: none; border-radius: 8px; cursor: zoom-in; }
+.dst-img-btn:focus-visible { outline: 3px solid var(--dorado-oscuro); outline-offset: 3px; }
+.dst-zoom {
+  position: absolute; right: 8px; bottom: 8px; width: 30px; height: 30px; border-radius: 50%;
+  background: rgba(0,0,0,0.55); color: #fff; display: flex; align-items: center; justify-content: center;
+}
+.dst-zoom svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; }
+.dst-title { font-size: 22px; line-height: 1.25; margin: 0 0 6px; }
+.dst-meta  { font-family:'DM Sans',sans-serif; font-size:14px; color:var(--gris); margin:0 0 4px; }
+.dst-desc  { font-family:'DM Sans',sans-serif; font-size:14px; line-height:1.6; color:var(--gris); margin:0 0 14px; }
+.dst-cta   { display:flex; flex-wrap:wrap; align-items:center; margin-bottom:-12px; }   /* márgenes en vez de gap: iOS < 14.5 */
+.dst-cta > * { margin: 0 12px 12px 0; }
+.dst-nota  {
   font-family:'DM Sans',sans-serif; font-size:12px; line-height:1.55;
   color:var(--gris-claro); margin:10px 0 0;
   border-left:2px solid var(--borde); padding-left:10px;
 }
-.lorca-contador { font-family:'DM Sans',sans-serif; font-size:12.5px; color:var(--gris); margin:10px 0 0; }
-.lorca-contador strong { color:var(--rojo); font-weight:700; font-size:15px; }
-.lorca-contador-nota { color:var(--gris-claro); }
-.lorca-sr { position:absolute; width:1px; height:1px; overflow:hidden;
-            clip:rect(0 0 0 0); clip-path:inset(50%); white-space:nowrap; }
+.dst-lightbox { border: 0; padding: 0; background: transparent; max-width: 94vw; max-height: 94vh; overflow: visible; margin: auto; }
+.dst-lightbox::backdrop { background: rgba(10,10,10,0.84); }
+.dst-lightbox img { display: block; max-width: 94vw; max-height: 84vh; width: auto; height: auto; border-radius: 8px; box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
+.dst-lightbox-close {
+  position: absolute; top: -46px; right: 0;
+  font-family:'DM Sans',sans-serif; font-size:14px; font-weight:600; color:#fff;
+  background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.35); border-radius: 6px;
+  padding: 7px 14px; cursor: pointer;
+}
+.dst-lightbox-close:hover { background: rgba(255,255,255,0.22); }
+.dst-lightbox-close:focus-visible { outline: 3px solid var(--dorado); outline-offset: 2px; }
 
 @media (max-width: 768px) {
-  #lorca-band { padding: 16px 16px 0; }
-  .lorca-card {
+  #destacado { padding: 16px 16px 0; }
+  .dst-card, .dst-card.dst--cuadrada {
     grid-template-columns: 100px 1fr;
     grid-template-areas: "media body" "foot foot";
     gap: 12px 14px; padding: 16px;
   }
-  .lorca-card.is-playing {
+  .dst-card.dst--horizontal, .dst-card.is-expanded.dst--horizontal { grid-template-columns: 1fr; grid-template-areas: "media" "body" "foot"; }
+  .dst-card.dst--sin-media { grid-template-columns: 1fr; grid-template-areas: "body" "foot"; }
+  .dst-card.is-expanded.dst--vertical, .dst-card.is-expanded.dst--cuadrada {
     grid-template-columns: 1fr;
     grid-template-areas: "media" "body" "foot";
     justify-items: center; text-align: center;
   }
-  .lorca-card.is-playing .lorca-media { width: min(72vw, 260px); }
-  .lorca-card.is-playing .lorca-cta   { justify-content: center; }
-  .lorca-title { font-size: 18px; }
-  .lorca-cta .btn { width: 100%; justify-content: center; }
+  .dst-card.is-expanded.dst--vertical .dst-media { width: min(72vw, 260px); }
+  .dst-card.is-expanded.dst--cuadrada .dst-media { width: min(84vw, 320px); }
+  .dst-card.is-expanded .dst-cta { justify-content: center; }
+  .dst-title { font-size: 18px; }
+  .dst-cta .btn { width: 100%; justify-content: center; margin-right: 0; }
+  .dst-lightbox-close { top: auto; bottom: -48px; right: 50%; transform: translateX(50%); }
+}
+
+/* Sin aspect-ratio (Safari < 15): caja con padding-top y el medio en absoluto */
+@supports not (aspect-ratio: 1 / 1) {
+  .dst-media { position: relative; }
+  .dst-media::before { content: ''; display: block; padding-top: 177.78%; }
+  .dst--horizontal .dst-media::before { padding-top: 56.25%; }
+  .dst--cuadrada .dst-media::before { padding-top: 100%; }
+  .dst-media > .dst-video, .dst-media > .dst-img-btn { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+  .dst-img { height: 100%; }
+}
+/* Marco neutro que reserva el hueco mientras responde /api/destacado (sin contenido).
+   El alto exacto lo pone el script si la visita anterior lo midió. */
+.dst-reserva {
+  min-height: 312px; border: 1px solid var(--borde); border-top: 3px solid var(--borde);
+  border-radius: 12px; background: #fff;
+}
+.dst-reserva--horizontal { min-height: 250px; }
+.dst-reserva--cuadrada   { min-height: 256px; }
+.dst-reserva--sin-media  { min-height: 200px; }
+@media (max-width: 768px) {
+  .dst-reserva { min-height: 300px; }
+  .dst-reserva--horizontal { min-height: 460px; }
+  .dst-reserva--sin-media  { min-height: 230px; }
+}
+.dst-reserva[style*="height"] { min-height: 0; }
+
+/* ===============================================================
+   ESPAÑA · PASADO Y PRESENTE — carrusel "cover flow" de tarjetas 1:1
+   Alimentado por GET /api/portada (respaldo: PORTADA_FALLBACK).
+   Prefijo pf-. Solo se anima transform / opacity / filter (GPU).
+   La posicion de cada tarjeta la da data-pos (-3 … 3), que pone el JS.
+   =============================================================== */
+.pf-section { max-width: 1200px; margin: 0 auto; padding: 40px 20px 0; }
+.pf-section[hidden] { display: none; }
+.pf-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 16px; }
+.pf-head .com-kicker { margin: 0; }
+.pf-sub { font-family:'DM Sans',sans-serif; font-size:13px; color:var(--gris-claro); margin:0; letter-spacing:.2px; }
+.pf-carousel {
+  --pf-size: 330px;          /* lado de la tarjeta central */
+  --pf-o1: 0.66;             /* desplazamiento de las vecinas, en tarjetas */
+  --pf-o2: 1.12;             /* desplazamiento de las segundas vecinas */
+  --pf-fondo-rgb: 250,250,247;   /* = --fondo, para los degradados con alfa */
+  --pf-ease: cubic-bezier(.22,.61,.36,1);
+  position: relative;
+  margin-top: 6px;
+}
+.pf-stage {
+  position: relative;
+  width: min(100%, calc(var(--pf-size) * 3.1));
+  height: calc(var(--pf-size) + 44px);
+  margin: 0 auto;
+  overflow: hidden;
+  perspective: 1100px;
+  perspective-origin: 50% 45%;
+  touch-action: pan-y;
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 21%, #000 79%, transparent 100%);
+          mask-image: linear-gradient(to right, transparent 0, #000 21%, #000 79%, transparent 100%);
+}
+.pf-card {
+  position: absolute;
+  top: 16px; left: 50%;
+  width: var(--pf-size); height: var(--pf-size);
+  margin-left: calc(var(--pf-size) / -2);
+  border-radius: 12px;
+  overflow: hidden;
+  background: #efece5;
+  box-shadow: 0 16px 28px -18px rgba(0,0,0,0.30), 0 1px 6px rgba(0,0,0,0.05);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(0) scale(.5);
+  transition: transform .55s var(--pf-ease), opacity .55s var(--pf-ease), filter .55s var(--pf-ease);
+  -webkit-backface-visibility: hidden; backface-visibility: hidden;
+  z-index: 1;
+}
+/* velo blanco de las laterales */
+.pf-card::after {
+  content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0; z-index: 4; pointer-events: none;
+  background: rgb(var(--pf-fondo-rgb)); opacity: 0;
+  transition: opacity .55s var(--pf-ease);
+}
+.pf-card[data-pos="0"]  { transform: none; opacity: 1; pointer-events: auto; z-index: 5; }
+.pf-card[data-pos="1"]  { transform: translateX(calc(var(--pf-size) * var(--pf-o1)))      scale(.78) rotateY(-38deg); opacity: 1; pointer-events: auto; z-index: 4; filter: blur(.4px); cursor: pointer; }
+.pf-card[data-pos="-1"] { transform: translateX(calc(var(--pf-size) * var(--pf-o1) * -1)) scale(.78) rotateY(38deg);  opacity: 1; pointer-events: auto; z-index: 4; filter: blur(.4px); cursor: pointer; }
+.pf-card[data-pos="2"]  { transform: translateX(calc(var(--pf-size) * var(--pf-o2)))      scale(.62) rotateY(-44deg); opacity: 1; pointer-events: auto; z-index: 3; filter: blur(1px); cursor: pointer; }
+.pf-card[data-pos="-2"] { transform: translateX(calc(var(--pf-size) * var(--pf-o2) * -1)) scale(.62) rotateY(44deg);  opacity: 1; pointer-events: auto; z-index: 3; filter: blur(1px); cursor: pointer; }
+.pf-card[data-pos="3"]  { transform: translateX(calc(var(--pf-size) * 1.5))  scale(.5) rotateY(-50deg); z-index: 2; }
+.pf-card[data-pos="-3"] { transform: translateX(calc(var(--pf-size) * -1.5)) scale(.5) rotateY(50deg);  z-index: 2; }
+.pf-card[data-pos="1"]::after, .pf-card[data-pos="-1"]::after { opacity: .30; }
+.pf-card[data-pos="2"]::after, .pf-card[data-pos="-2"]::after { opacity: .52; }
+.pf-card[data-pos="1"]:hover::after, .pf-card[data-pos="-1"]:hover::after { opacity: .16; }
+
+.pf-card picture, .pf-card .pf-foto {
+  position: absolute; top: 0; left: 0; display: block; width: 100%; height: 100%;
+}
+.pf-card .pf-foto { object-fit: cover; }
+/* fundido al color de la pagina: la tarjeta "se sumerge" en la portada */
+.pf-shade {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 74%; z-index: 1; pointer-events: none;
+  background: linear-gradient(to bottom,
+    rgba(var(--pf-fondo-rgb),0) 0%,
+    rgba(var(--pf-fondo-rgb),.55) 16%,
+    rgba(var(--pf-fondo-rgb),.9) 32%,
+    rgba(var(--pf-fondo-rgb),.98) 46%,
+    rgb(var(--pf-fondo-rgb)) 62%);
+}
+.pf-body {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 2;
+  padding: 0 20px 16px;
+  transition: opacity .35s var(--pf-ease);
+}
+.pf-card:not([data-pos="0"]) .pf-body { opacity: 0; }
+.pf-cat {
+  font-family:'DM Sans',sans-serif; font-size:10.5px; font-weight:700; letter-spacing:1.4px;
+  text-transform:uppercase; color:var(--rojo); margin:0 0 5px; line-height:1.4;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.pf-fecha { color: var(--gris-claro); font-weight: 600; }
+.pf-fecha::before { content: '·'; margin: 0 7px; color: var(--dorado-oscuro); }
+.pf-title {
+  font-family:'Libre Baskerville',Georgia,serif; font-size:18px; line-height:1.3; font-weight:700;
+  color:var(--texto); margin:0 0 5px;
+  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+}
+.pf-text {
+  font-family:'DM Sans',sans-serif; font-size:13.5px; line-height:1.5; color:#4a4a4a; margin:0;
+  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+}
+.pf-link {
+  display:inline-block; margin-top:7px;
+  font-family:'DM Sans',sans-serif; font-size:13px; font-weight:700; color:var(--rojo);
+  text-decoration:none; border-bottom:1px solid transparent; transition:border-color .2s;
+}
+.pf-link:hover { border-bottom-color: currentColor; }
+.pf-link:focus-visible { outline: 2px solid var(--dorado-oscuro); outline-offset: 3px; border-radius: 2px; }
+
+/* Tarjeta institucional (sin foto): rojo profundo con banda gualda */
+.pf-card--inst { background: linear-gradient(155deg, var(--marca) 0%, var(--marca-oscuro) 52%, var(--hero-b) 100%); }
+.pf-card--inst.pf-alt { background: linear-gradient(200deg, var(--marca-oscuro) 0%, var(--hero-a) 48%, var(--hero-b) 100%); }
+.pf-deco { position: absolute; top: 0; right: 0; bottom: 0; left: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.pf-deco::before {             /* banda diagonal gualda */
+  content: ''; position: absolute; top: -30%; right: -30%; bottom: -30%; left: -30%;
+  background: linear-gradient(118deg,
+    transparent 47%, rgba(var(--realce-rgb),.16) 47%, rgba(var(--realce-rgb),.16) 53%,
+    transparent 53%, transparent 55.5%, rgba(var(--realce-rgb),.10) 55.5%, rgba(var(--realce-rgb),.10) 56.5%, transparent 56.5%);
+}
+.pf-alt .pf-deco::before { transform: scaleX(-1); }
+.pf-deco::after {              /* filete rojo-gualda como la franja del hero */
+  content: ''; position: absolute; left: 0; right: 0; top: 0; height: 4px;
+  background: linear-gradient(to right, var(--dorado-oscuro), var(--dorado), var(--dorado-oscuro));
+}
+.pf-marca {                    /* icono grande de fondo, casi invisible */
+  position: absolute; right: -22px; top: -10px; width: 170px; height: 170px;
+  stroke: rgba(255,255,255,.07); fill: none; stroke-width: 1.2;
+}
+.pf-alt .pf-marca { right: auto; left: -26px; top: auto; bottom: 64px; }
+.pf-icono {
+  position: absolute; left: 20px; top: 26px; z-index: 2;
+  width: 52px; height: 52px; border-radius: 50%;
+  border: 1.5px solid rgba(var(--realce-rgb),.55);
+  background: rgba(0,0,0,.12);
+  display: flex; align-items: center; justify-content: center;
+}
+.pf-alt .pf-icono { left: auto; right: 20px; }
+.pf-icono svg { width: 25px; height: 25px; stroke: var(--dorado); fill: none; stroke-width: 1.8; }
+.pf-card--inst .pf-shade { height: 60%; background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(30,0,0,.28) 100%); }
+.pf-card--inst .pf-cat   { color: var(--dorado); }
+.pf-card--inst .pf-fecha { color: rgba(255,255,255,.72); }
+.pf-card--inst .pf-fecha::before { color: rgba(var(--realce-rgb),.7); }
+.pf-card--inst .pf-title { color: #fff; }
+.pf-card--inst .pf-text  { color: rgba(255,255,255,.86); }
+.pf-card--inst .pf-link  { color: #fff; border-bottom-color: rgba(var(--realce-rgb),.6); }
+.pf-card--inst .pf-link:hover { border-bottom-color: var(--dorado); }
+.pf-card--inst .pf-link:focus-visible { outline-color: var(--dorado); }
+
+/* Controles */
+.pf-arrow {
+  position: absolute; top: calc(16px + var(--pf-size) / 2); z-index: 10;
+  width: 42px; height: 42px; margin-top: -21px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: #fff; color: var(--rojo); border: 1px solid var(--borde); cursor: pointer;
+  box-shadow: 0 3px 12px rgba(0,0,0,.08);
+  transition: background .2s, box-shadow .2s, color .2s;
+}
+.pf-arrow:hover { background: var(--rojo); color: #fff; box-shadow: 0 4px 14px rgba(var(--marca-rgb),.28); }
+.pf-arrow:focus-visible, .pf-dot:focus-visible, .pf-pausa:focus-visible { outline: 3px solid var(--dorado-oscuro); outline-offset: 2px; }
+.pf-arrow svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2.2; }
+.pf-prev { left:  max(0px, calc(50% - var(--pf-size) * 1.2 - 21px)); }
+.pf-next { right: max(0px, calc(50% - var(--pf-size) * 1.2 - 21px)); }
+.pf-controls { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 2px; }
+.pf-dots { display: flex; flex-wrap: wrap; justify-content: center; }
+.pf-dot { width: 22px; height: 22px; padding: 0; border: 0; background: none; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
+.pf-dot::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--borde); transition: background .3s, transform .3s; }
+.pf-dot:hover::before { background: #ccc; }
+.pf-dot[aria-current="true"]::before { background: var(--rojo); transform: scale(1.35); }
+.pf-pausa {
+  width: 28px; height: 28px; border-radius: 50%; padding: 0; cursor: pointer;
+  border: 1px solid var(--borde); background: #fff; color: var(--gris);
+  display: flex; align-items: center; justify-content: center;
+}
+.pf-pausa:hover { color: var(--rojo); border-color: var(--rojo); }
+.pf-pausa svg { width: 12px; height: 12px; fill: currentColor; }
+.pf--solo .pf-stage { -webkit-mask-image: none; mask-image: none; }
+.pf--solo .pf-arrow, .pf--solo .pf-controls { display: none; }
+
+@media (max-width: 768px) {
+  .pf-section { padding: 28px 16px 0; }
+  .pf-carousel { --pf-size: 260px; --pf-o1: .56; --pf-o2: .92; }
+  .pf-stage {
+    width: 100%;
+    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 13%, #000 87%, transparent 100%);
+            mask-image: linear-gradient(to right, transparent 0, #000 13%, #000 87%, transparent 100%);
+  }
+  .pf-body { padding: 0 16px 13px; }
+  .pf-title { font-size: 16px; }
+  .pf-text  { font-size: 13px; }
+  .pf-icono { top: 20px; left: 16px; width: 46px; height: 46px; }
+  .pf-alt .pf-icono { right: 16px; }
+  .pf-icono svg { width: 22px; height: 22px; }
+  .pf-arrow { width: 36px; height: 36px; margin-top: -18px; top: calc(16px + var(--pf-size) * 0.26); background: rgba(255,255,255,.92); }
+  .pf-prev { left: 0; }
+  .pf-next { right: 0; }
+}
+@media (max-width: 360px) {
+  .pf-carousel { --pf-size: 236px; }
+}
+/* Sin movimiento: nada de 3D ni autoplay, fundido simple entre tarjetas */
+@media (prefers-reduced-motion: reduce) {
+  .pf-stage { perspective: none; -webkit-mask-image: none; mask-image: none; }
+  .pf-card, .pf-card[data-pos] { transform: none; filter: none; transition: opacity .3s linear; }
+  .pf-card:not([data-pos="0"]) { opacity: 0; pointer-events: none; }
+  .pf-pausa { display: none; }
 }
 
 </style>
@@ -1579,47 +1844,30 @@ body.nav-open .sticky-cta, body.nav-open .sticky-wa { opacity: 0 !important; poi
     </div>
   </section>
 
-<!-- ====== LORCA 2026 · banda de difusión cultural — TEMPORAL: retirar tras el 19-09-2026 ====== -->
-<aside id="lorca-band" aria-labelledby="lorca-title">
-  <div class="lorca-card">
-    <div class="lorca-media">
-      <video class="lorca-video" id="lorca-video"
-             controls preload="none" playsinline
-             poster="images/lorca-cartel.jpg"
-             width="720" height="1280"
-             controlslist="nodownload noremoteplayback"
-             disablepictureinpicture>
-        <source src="media/lorca-2026.mp4" type='video/mp4; codecs="avc1.64001F, mp4a.40.2"'>
-        <p class="lorca-nota">Su navegador no puede reproducir este vídeo.
-          <a href="media/lorca-2026.mp4">Descargar el vídeo (3,3 MB)</a>.</p>
-      </video>
-    </div>
-    <div class="lorca-body">
-      <div class="com-kicker">Difusión cultural</div>
-      <p class="lorca-title" id="lorca-title"><strong>LORCA</strong> — La Casa de Bernarda Alba</p>
-      <p class="lorca-meta">Sábado 19 de septiembre de 2026 · 5:00 p. m. · Cines Unidos C.C. La Vela, Porlamar</p>
-      <p class="lorca-prod">Producción de Spectros Teatro y Fuego Gitano, con artistas neoespartanos.</p>
-      <div class="lorca-cta">
-        <a class="btn btn-red btn-sm" id="lorca-entradas"
-           href="https://www.cinesunidos.com/pelicula/HO00006226?city=margarita&amp;utm_source=viceconsulado&amp;utm_medium=web&amp;utm_campaign=lorca-2026"
-           target="_blank" rel="noopener noreferrer">
-          Compra tus entradas <span aria-hidden="true">&#8599;</span>
-          <span class="lorca-sr">(enlace externo, se abre en una ventana nueva)</span>
-        </a>
-      </div>
-    </div>
-    <div class="lorca-foot">
-      <p class="lorca-nota">Enlace externo. La venta de entradas la gestiona íntegramente la productora
-        en la plataforma de Cines Unidos. El Viceconsulado Honorario difunde esta actividad cultural con
-        carácter informativo: no interviene en la venta, no trata datos de los compradores y no percibe
-        ingreso alguno.</p>
-      <p class="lorca-contador" id="lorca-contador" hidden>
-        <strong id="lorca-contador-n">0</strong> pulsaciones registradas en este enlace desde esta web.
-        <span class="lorca-contador-nota">Recuento propio y agregado, sin cookies ni identificación de visitantes.</span>
-      </p>
-    </div>
-  </div>
-</aside>
+  <!-- DESTACADO — lo pinta el script "Destacado" desde GET /api/destacado.
+       Oculto (hidden) y vacío por defecto: sin respaldo estático, a propósito. -->
+  <aside id="destacado" aria-labelledby="dst-titulo" hidden></aside>
+  <script>
+  /* Reserva de hueco del destacado (anti-CLS). Solo se guarda una BANDERA, nunca el
+     contenido: si el panel lo retira no puede aparecer ni un instante. Si la última
+     visita vio un destacado activo, se reserva su alto con un marco neutro vacío
+     hasta que responde /api/destacado; si ya no está activo, el marco se retira. */
+  (function () {
+    try {
+      var f = JSON.parse(localStorage.getItem('vc-destacado') || 'null');
+      if (!f || typeof f.o !== 'string') return;
+      var a = document.getElementById('destacado');
+      var movil = window.matchMedia && window.matchMedia('(max-width: 768px)').matches;
+      var h = Number(movil ? f.hm : f.hd);
+      var s = document.createElement('div');
+      s.className = 'dst-reserva dst-reserva--' + f.o.replace(/[^a-z-]/g, '');
+      if (h > 80 && h < 1400) s.style.height = Math.round(h) + 'px';
+      a.appendChild(s);
+      a.setAttribute('aria-busy', 'true');
+      a.hidden = false;
+    } catch (e) {}
+  })();
+  </script>
 
 </div>
 
@@ -1664,6 +1912,18 @@ body.nav-open .sticky-cta, body.nav-open .sticky-wa { opacity: 0 !important; poi
       </button>
     </div>
   </div>
+  <!-- ESPAÑA · PASADO Y PRESENTE — tarjetas desde GET /api/portada (respaldo: PORTADA_FALLBACK).
+       Oculta hasta que hay al menos una tarjeta vigente. -->
+  <section class="pf-section" id="portada-section" aria-labelledby="pf-heading" hidden>
+    <div class="pf-head">
+      <h2 class="com-kicker" id="pf-heading">España · Pasado y Presente</h2>
+      <p class="pf-sub">Historia, cultura y actualidad</p>
+    </div>
+    <div class="pf-carousel" id="pfCarousel" role="region" aria-roledescription="carrusel" aria-label="España · Pasado y Presente">
+      <div class="pf-stage" id="pfStage"></div>
+      <p class="sr-only" id="pfEstado" aria-live="off" aria-atomic="true"></p>
+    </div>
+  </section>
 
   <!-- CARRUSEL DE AVISOS — carga dinámicamente desde /api/banners -->
   <div class="carousel-section" id="carousel-section" style="display:none;">
@@ -4955,147 +5215,837 @@ function toggleFaq(btn) {
 </script>
 
 
-<!-- ====== LORCA 2026 · TEMPORAL: retirar tras el 19-09-2026 ====== -->
+<!-- ====== DESTACADO + ESPAÑA · PASADO Y PRESENTE — contenido del panel ======
+     GET /api/destacado y GET /api/portada (contrato del 25-09-2026).
+     Todo lo que llega del panel se pinta con createElement + textContent. -->
 <script>
+/* ------------------------------------------------------------------
+   PORTADA_FALLBACK — tarjetas de "España · Pasado y Presente" que se usan
+   SOLO si la API no responde o si el panel aún no tiene ninguna tarjeta
+   (configurado:false). Mismo formato que GET /api/portada -> tarjetas[].
+   Se filtran por desde/hasta (inclusivos, hora de Venezuela) en el navegador
+   y se ordenan por prioridad y luego por orden.
+   Vista previa de otra fecha: ?portada_fecha=AAAA-MM-DD (usa este respaldo).
+   ------------------------------------------------------------------ */
+var PORTADA_FALLBACK = [
+  { id: 'f01', categoria: 'EFEMÉRIDE', fecha: '7 OCT · 1571',
+    titulo: '455 años de la Batalla de Lepanto',
+    texto: 'El 7 de octubre de 1571 la Liga Santa, con la Monarquía Hispánica, se enfrentó al Imperio otomano. Cervantes participó en la batalla.',
+    imagen: { url: 'images/portada/lepanto-800.webp', urlJpg: 'images/portada/lepanto-800.jpg',
+              alt: 'Escena de la Batalla de Lepanto, pintura histórica de colección pública española' },
+    enlace: { texto: 'Conocer la historia', url: 'https://www.museodelprado.es/' },
+    desde: '2026-09-25', hasta: '2026-10-09', prioridad: 3, orden: 0 },
+
+  { id: 'f02', categoria: 'EFEMÉRIDE', fecha: '12 OCT',
+    titulo: 'Fiesta Nacional de España',
+    texto: 'Cada 12 de octubre se celebra la Fiesta Nacional, establecida por la Ley 18/1987 por su dimensión histórica y su proyección cultural.',
+    imagen: { url: 'images/portada/fiesta-nacional-800.webp', urlJpg: 'images/portada/fiesta-nacional-800.jpg',
+              alt: 'Bandera de España ondeando' },
+    enlace: { texto: 'Conocer más', url: 'https://www.boe.es/buscar/doc.php?id=BOE-A-1987-22831' },
+    desde: '2026-09-25', hasta: '2026-10-13', prioridad: 3, orden: 1 },
+
+  { id: 'f03', categoria: 'EFEMÉRIDE', fecha: '25 OCT · 1881',
+    titulo: 'Picasso: 145 años de su nacimiento',
+    texto: 'Pablo Ruiz Picasso nació en Málaga el 25 de octubre de 1881. Su obra transformó el arte del siglo XX y su ciudad natal conserva su legado.',
+    imagen: { url: 'images/portada/picasso-malaga-800.webp', urlJpg: 'images/portada/picasso-malaga-800.jpg',
+              alt: 'Estatua de bronce de Pablo Picasso sentado en un banco de una plaza de Málaga' },
+    enlace: { texto: 'Descubrir su historia', url: 'https://www.museopicassomalaga.org/' },
+    desde: '2026-09-25', hasta: '2026-10-27', prioridad: 3, orden: 2 },
+
+  { id: 'f04', categoria: 'EFEMÉRIDE', fecha: '31 OCT · 1978',
+    titulo: 'Un momento decisivo de la Constitución de 1978',
+    texto: 'El 31 de octubre de 1978 Congreso y Senado votaron el dictamen sobre el proyecto de Constitución, sometido a referéndum el 6 de diciembre.',
+    imagen: { url: 'images/portada/constitucion-1978-800.webp', urlJpg: 'images/portada/constitucion-1978-800.jpg',
+              alt: 'Ejemplar original de la Constitución Española de 1978 con las firmas' },
+    enlace: { texto: 'Conocer el proceso', url: 'https://www.congreso.es/' },
+    desde: '2026-09-25', hasta: '2026-11-01', prioridad: 3, orden: 3 },
+
+  { id: 'f05', categoria: 'AHORA EN ESPAÑA', fecha: '10–18 OCT',
+    titulo: 'Zaragoza celebra las Fiestas del Pilar',
+    texto: 'Del 10 al 18 de octubre Zaragoza vive sus fiestas mayores, de Interés Turístico Internacional, con la Ofrenda de Flores el día 12.',
+    imagen: { url: 'images/portada/ofrenda-pilar-800.webp', urlJpg: 'images/portada/ofrenda-pilar-800.jpg',
+              alt: 'Ofrenda de Flores a la Virgen del Pilar en la plaza del Pilar de Zaragoza' },
+    enlace: { texto: 'Descubrir las fiestas', url: 'https://www.spain.info/es/' },
+    desde: '2026-09-25', hasta: '2026-10-18', prioridad: 4, orden: 4 },
+
+  { id: 'f06', categoria: 'CULTURA', fecha: '8–18 OCT',
+    titulo: 'Sitges vuelve a ser capital del cine fantástico',
+    texto: 'La 59.ª edición del Festival Internacional de Cinema Fantàstic de Catalunya se celebra del 8 al 18 de octubre de 2026 en Sitges.',
+    imagen: { url: 'images/portada/sitges-3-800.webp', urlJpg: 'images/portada/sitges-3-800.jpg',
+              alt: 'Cartel oficial del Festival de Sitges 2026, del 8 al 18 de octubre' },
+    enlace: { texto: 'Descubrir Sitges 2026', url: 'https://sitgesfilmfestival.com/' },
+    desde: '2026-09-25', hasta: '2026-10-18', prioridad: 6, orden: 5 },
+
+  { id: 'f07', categoria: 'DEPORTE', fecha: '3 OCT · 20:45 H',
+    titulo: 'España juega en casa: España–República Checa',
+    texto: 'La Selección absoluta recibe a República Checa en el Carlos Tartiere de Oviedo (UEFA Nations League). El 6 de octubre, Croacia en Split.',
+    imagen: { url: 'images/portada/seleccion-oviedo-800.webp', urlJpg: 'images/portada/seleccion-oviedo-800.jpg',
+              alt: 'Estadio Carlos Tartiere de Oviedo, sede del partido de la Selección Española' },
+    enlace: { texto: 'Agenda de la Selección', url: 'https://www.rfef.es/' },
+    desde: '2026-09-25', hasta: '2026-10-03', prioridad: 7, orden: 6 },
+
+  { id: 'f08', categoria: 'ESPAÑA POR DESCUBRIR', fecha: '1–12 OCT',
+    titulo: 'Galicia celebra el mar: Fiesta del Marisco de O Grove',
+    texto: 'O Grove, en Pontevedra, celebra del 1 al 12 de octubre la Fiesta del Marisco, de Interés Turístico Nacional, en las Rías Baixas.',
+    imagen: { url: 'images/portada/o-grove-800.webp', urlJpg: 'images/portada/o-grove-800.jpg',
+              alt: 'Puerto de O Grove, en las Rías Baixas de Pontevedra' },
+    enlace: { texto: 'Descubrir O Grove', url: 'https://www.spain.info/es/' },
+    desde: '2026-09-25', hasta: '2026-10-12', prioridad: 8, orden: 7 },
+
+  { id: 'f09', categoria: 'CONSULAR', fecha: 'AVISO DE SERVICIO',
+    titulo: 'Atención presencial en el Consulado General de Caracas',
+    texto: 'El Consulado General sigue prestando determinados servicios presenciales con limitaciones operativas. Consulte la información oficial.',
+    imagen: null,
+    enlace: { texto: 'Información oficial', url: 'https://www.exteriores.gob.es/Consulados/caracas/es/Paginas/index.aspx' },
+    desde: '2026-09-25', hasta: '2026-10-31', prioridad: 2, orden: 8 },
+
+  { id: 'f10', categoria: 'CONSULAR', fecha: 'ACTUALIZADO · 17 SEP 2026',
+    titulo: 'Recomendaciones para viajar a Venezuela',
+    texto: 'El Ministerio de Asuntos Exteriores mantiene actualizadas sus recomendaciones de viaje a Venezuela: documentación, seguridad y emergencias.',
+    imagen: null,
+    enlace: { texto: 'Ver recomendaciones', url: 'https://www.exteriores.gob.es/es/ServiciosAlCiudadano/Paginas/Detalle-recomendaciones-de-viaje.aspx?trc=Venezuela' },
+    desde: '2026-09-25', hasta: '2026-10-31', prioridad: 4, orden: 9 },
+
+  { id: 'f11', categoria: 'CONSULAR', fecha: 'INFORMACIÓN DE SERVICIO',
+    titulo: 'Asistencia consular urgente las 24 horas',
+    texto: 'El Consulado General de Caracas mantiene una línea de emergencia consular 24 horas para situaciones graves que afecten a españoles.',
+    imagen: null,
+    enlace: { texto: 'Emergencias consulares', url: '#emergencias' },
+    desde: '2026-09-25', hasta: '2026-10-31', prioridad: 2, orden: 10 },
+
+  { id: 'f12', categoria: 'EMBAJADA', fecha: 'ESPAÑA EN VENEZUELA',
+    titulo: 'Embajada de España en Venezuela',
+    texto: 'La Embajada desarrolla actividad institucional, cultural y de cooperación, y cuenta con una Oficina Cultural para la cultura española.',
+    imagen: null,
+    enlace: { texto: 'Actualidad Embajada', url: 'https://www.exteriores.gob.es/Embajadas/caracas/es/Paginas/index.aspx' },
+    desde: '2026-09-25', hasta: '2026-10-31', prioridad: 5, orden: 11 },
+
+  { id: 'f13', categoria: 'CONSULAR', fecha: 'TABLÓN DE ANUNCIOS',
+    titulo: 'Convocatorias de interés para la comunidad española',
+    texto: 'El Consulado General publica convocatorias, ayudas y oportunidades, como proyectos asistenciales para la emigración y selección de personal.',
+    imagen: null,
+    enlace: { texto: 'Ver tablón de anuncios', url: 'https://www.exteriores.gob.es/Consulados/caracas/es/Consulado/Paginas/Tabl%c3%b3n-de-anuncios.aspx' },
+    desde: '2026-09-25', hasta: '2026-10-31', prioridad: 5, orden: 12 },
+
+  { id: 'f14', categoria: 'COMUNIDAD', fecha: '19 SEP 2026',
+    titulo: 'La Casa de Bernarda Alba llegó a Margarita',
+    texto: 'Cines Unidos La Vela acogió la obra de Lorca, con artistas neoespartanos y la presencia del Embajador de España y del Vicecónsul Honorario.',
+    imagen: { url: 'images/portada/lorca-cartel-800.webp', urlJpg: 'images/portada/lorca-cartel-800.jpg',
+              alt: 'Cartel de La Casa de Bernarda Alba, Cines Unidos La Vela, Porlamar, 19 de septiembre de 2026' },
+    enlace: { texto: 'Ver la crónica', url: '#comunidad' },
+    desde: '2026-09-25', hasta: '2026-10-31', prioridad: 6, orden: 13 }
+];
+
 (function () {
-  var band = document.getElementById('lorca-band');
-  if (!band) return;
+  'use strict';
 
-  var card = band.querySelector('.lorca-card');
-  var vid  = document.getElementById('lorca-video');
-  var link = document.getElementById('lorca-entradas');
-  var box  = document.getElementById('lorca-contador');
-  var num  = document.getElementById('lorca-contador-n');
+  var BASE = (typeof API_URL === 'string') ? API_URL : '';
+  var mqReduce = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : { matches: false };
+  var FECHA_RE = /^\d{4}-\d{2}-\d{2}$/;
+  var SVGNS = 'http://www.w3.org/2000/svg';
 
-  // Umbral para publicar la cifra. Estaba en 25 y eso la habria dejado INVISIBLE
-  // durante toda la campana (13 dias): justo lo contrario de lo que se pidio.
-  // A 1 se ve desde la primera pulsacion. Subirlo solo si se decide lo contrario.
-  var UMBRAL = 1;
-  var EP = (typeof API_URL === 'string' ? API_URL : '') + '/api/evento/lorca-2026';
+  // Vista previa de otra fecha (solo filtra el respaldo estático): ?portada_fecha=AAAA-MM-DD
+  var FECHA_FORZADA = (function () {
+    try {
+      var m = /[?&]portada_fecha=(\d{4}-\d{2}-\d{2})(?:&|$)/.exec(window.location.search);
+      return m ? m[1] : null;
+    } catch (e) { return null; }
+  })();
 
-  // 1 - el cartel se expande al reproducir y vuelve a su sitio al terminar.
-  //
-  //     La expansion se anima con FLIP (First - Last - Invert - Play): se mide la
-  //     posicion antes y despues de cambiar la clase y se anima SOLO con transform
-  //     y opacity, que el navegador compone en GPU sin recalcular layout.
-  //
-  //     Por que no basta un transition de CSS: en movil .is-playing cambia
-  //     grid-template-areas de dos columnas a una, y grid-template-areas NO es
-  //     animable. El navegador reflowea de golpe. Eso era el salto seco.
-  var medio  = band.querySelector('.lorca-media');
-  var cuerpo = band.querySelector('.lorca-body');
-  var pie    = band.querySelector('.lorca-foot');
-
-  var mqReduce = window.matchMedia('(prefers-reduced-motion: reduce)');
-  var DUR  = 260;                              // corto a proposito: rapido, no lento
-  var EASE = 'cubic-bezier(.2,.7,.3,1)';       // arranca decidido y frena suave
-
-  function hayWAAPI() {
-    return typeof Element !== 'undefined' && typeof Element.prototype.animate === 'function';
+  // ---------- utilidades ----------
+  function hoyCaracas(real) {
+    if (FECHA_FORZADA && !real) return FECHA_FORZADA;
+    try {
+      var s = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Caracas', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+      if (FECHA_RE.test(s)) return s;
+    } catch (e) {}
+    // Venezuela: UTC-4 todo el año, sin horario de verano
+    return new Date(Date.now() - 4 * 3600 * 1000).toISOString().slice(0, 10);
   }
 
-  function expandir(activar) {
-    if (!card) return;
+  // desde/hasta inclusivos, opcionales. Una fecha mal formada deja la pieza fuera.
+  function vigente(o, hoy) {
+    if (o.desde != null && o.desde !== '') { if (!FECHA_RE.test(o.desde) || hoy < o.desde) return false; }
+    if (o.hasta != null && o.hasta !== '') { if (!FECHA_RE.test(o.hasta) || hoy > o.hasta) return false; }
+    return true;
+  }
 
-    // Sin Web Animations API o con movimiento reducido: se cambia y punto.
-    if (!hayWAAPI() || mqReduce.matches) {
-      card.classList.toggle('is-playing', activar);
-      return;
-    }
-    var piezas = [medio, cuerpo, pie].filter(Boolean);
+  function txt(v, max) {
+    if (typeof v !== 'string') return '';
+    v = v.replace(/\s+/g, ' ').trim();
+    return (max && v.length > max) ? v.slice(0, max - 1) + '…' : v;
+  }
 
-    // Si hay una animacion a medias (play/pause rapido, o el video termina justo
-    // al abrirse) se cancela antes de medir. Bloquear con una bandera dejaba el
-    // cartel expandido para siempre: llegaba el 'ended' y se ignoraba.
-    piezas.forEach(function (el) {
-      if (el.getAnimations) { el.getAnimations().forEach(function (a) { a.cancel(); }); }
+  function el(tag, clase, texto) {
+    var n = document.createElement(tag);
+    if (clase) n.className = clase;
+    if (texto) n.textContent = texto;
+    return n;
+  }
+
+  // Iconos: [etiqueta, atributos] construidos con createElementNS (nada de innerHTML)
+  function svg(partes, clase) {
+    var s = document.createElementNS(SVGNS, 'svg');
+    s.setAttribute('viewBox', '0 0 24 24');
+    s.setAttribute('aria-hidden', 'true');
+    s.setAttribute('focusable', 'false');
+    if (clase) s.setAttribute('class', clase);
+    partes.forEach(function (p) {
+      var n = document.createElementNS(SVGNS, p[0]);
+      for (var k in p[1]) { if (Object.prototype.hasOwnProperty.call(p[1], k)) n.setAttribute(k, p[1][k]); }
+      s.appendChild(n);
     });
+    return s;
+  }
+  function P(d) { return ['path', { d: d }]; }
 
-    var antes = piezas.map(function (el) { return el.getBoundingClientRect(); });
+  var ICONOS = {
+    pasaporte:  [P('M4 19.5A2.5 2.5 0 016.5 17H20'), P('M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z'), ['circle', { cx: '12.5', cy: '9', r: '3' }]],
+    telefono:   [P('M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 010 1.18 2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z')],
+    edificio:   [P('M3 21h18'), P('M4 10h16'), P('M12 3l9 5H3z'), P('M6 10v8'), P('M10 10v8'), P('M14 10v8'), P('M18 10v8'), P('M4 18h16')],
+    mundo:      [['circle', { cx: '12', cy: '12', r: '10' }], P('M2 12h20'), P('M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z')],
+    tablon:     [['rect', { x: '8', y: '2', width: '8', height: '4', rx: '1' }], P('M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2'), P('M8 12h8'), P('M8 16h5')],
+    calendario: [['rect', { x: '3', y: '4', width: '18', height: '18', rx: '2' }], P('M16 2v4'), P('M8 2v4'), P('M3 10h18')],
+    libro:      [P('M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z'), P('M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z')],
+    medalla:    [['circle', { cx: '12', cy: '8', r: '6' }], P('M15.48 12.89L17 22l-5-3-5 3 1.52-9.11')],
+    lugar:      [P('M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z'), ['circle', { cx: '12', cy: '10', r: '3' }]],
+    personas:   [P('M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2'), ['circle', { cx: '9', cy: '7', r: '4' }], P('M23 21v-2a4 4 0 00-3-3.87'), P('M16 3.13a4 4 0 010 7.75')],
+    info:       [['circle', { cx: '12', cy: '12', r: '10' }], P('M12 16v-4'), P('M12 8h.01')]
+  };
+  var ICONO_CATEGORIA = {
+    'EFEMERIDE': 'calendario', 'AHORA EN ESPANA': 'mundo', 'CULTURA': 'libro', 'DEPORTE': 'medalla',
+    'CONSULAR': 'pasaporte', 'EMBAJADA': 'edificio', 'ESPANA POR DESCUBRIR': 'lugar', 'COMUNIDAD': 'personas'
+  };
+  function sinTildes(s) {
+    return (s.normalize ? s.normalize('NFD') : s).replace(/[̀-ͯ]/g, '').toUpperCase();
+  }
+  function iconoPara(t) {
+    var todo = sinTildes(t.titulo + ' ' + t.fecha);
+    if (/EMERGENCI|URGENTE|24 HORAS/.test(todo)) return 'telefono';
+    if (/VIAJ/.test(todo)) return 'mundo';
+    if (/TABLON|CONVOCATORIA/.test(todo)) return 'tablon';
+    return ICONO_CATEGORIA[sinTildes(t.categoria)] || 'info';
+  }
 
-    card.classList.toggle('is-playing', activar);
+  // URL permitida por el contrato. tipo 'media': http(s) o images/…
+  // tipo 'enlace': además mailto: y anclas internas #seccion / #id
+  function urlSegura(u, tipo) {
+    if (typeof u !== 'string') return null;
+    u = u.trim();
+    if (!u || /[\s\u0000-\u001F\u007F<>"'`\\]/.test(u)) return null;
+    if (u.charAt(0) === '#') {
+      if (tipo !== 'enlace' || !/^#[A-Za-z][A-Za-z0-9_-]*$/.test(u)) return null;
+      return destinoAncla(u) ? u : null;
+    }
+    // rutas del repo: sin %, sin .., sin barras invertidas ni dobles (evita images/%2e%2e/…)
+    if (/^images\//.test(u)) {
+      return (/^images\/[A-Za-z0-9._\/-]+$/.test(u) && u.indexOf('..') === -1 && u.indexOf('//') === -1) ? u : null;
+    }
+    var m = /^([A-Za-z][A-Za-z0-9+.-]*):/.exec(u);
+    if (!m) return null;
+    var esquema = m[1].toLowerCase();
+    if (esquema === 'https' || esquema === 'http') {
+      try {
+        var p = new URL(u);
+        return ((p.protocol === 'https:' || p.protocol === 'http:') && p.hostname) ? p.href : null;
+      } catch (e) { return null; }
+    }
+    if (esquema === 'mailto' && tipo === 'enlace') return u;
+    return null;
+  }
+  function esExterna(u) {
+    if (!/^https?:/i.test(u)) return false;
+    try { return new URL(u).origin !== window.location.origin; } catch (e) { return true; }
+  }
 
-    var despues = piezas.map(function (el) { return el.getBoundingClientRect(); });
+  // Anclas internas: "#emergencias" -> showSection('emergencias');
+  // "#comunidad" -> se queda en su sección y baja hasta el elemento.
+  function destinoAncla(hash) {
+    var id = hash.slice(1).replace(/^sec-/, '');
+    if (document.getElementById('sec-' + id)) return { seccion: id };
+    var nodo = document.getElementById(hash.slice(1));
+    if (!nodo) return null;
+    var sec = nodo.closest ? nodo.closest('.section') : null;
+    return { seccion: sec && sec.id ? sec.id.replace(/^sec-/, '') : null, nodo: nodo };
+  }
+  function irAncla(hash) {
+    var d = destinoAncla(hash);
+    if (!d) return;
+    var show = window.showSection;
+    if (!d.nodo) { if (typeof show === 'function') show(d.seccion); return; }
+    var sec = d.seccion ? document.getElementById('sec-' + d.seccion) : null;
+    if (sec && !sec.classList.contains('active') && typeof show === 'function') show(d.seccion);
+    var det = d.nodo.tagName === 'DETAILS' ? d.nodo : d.nodo.querySelector('details');
+    if (det) det.open = true;
+    // showSection sube arriba con scroll suave: se espera un instante y se baja al destino
+    setTimeout(function () {
+      d.nodo.scrollIntoView({ behavior: mqReduce.matches ? 'auto' : 'smooth', block: 'start' });
+      if (!d.nodo.hasAttribute('tabindex')) d.nodo.setAttribute('tabindex', '-1');
+      try { d.nodo.focus({ preventScroll: true }); } catch (e) {}
+    }, sec && sec.classList.contains('active') ? 60 : 0);
+  }
 
-    piezas.forEach(function (el, i) {
+  function enlace(url, clase, externoForzado) {
+    var a = el('a', clase);
+    a.href = url;
+    if (url.charAt(0) === '#') {
+      a.addEventListener('click', function (e) { e.preventDefault(); irAncla(url); });
+    } else if (externoForzado === true || (externoForzado == null && esExterna(url))) {
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      a._externo = true;
+    }
+    return a;
+  }
+  function marcaExterna(a) {
+    if (!a._externo) return;
+    var f = el('span', null, ' ↗'); f.setAttribute('aria-hidden', 'true');
+    a.appendChild(f);
+    a.appendChild(el('span', 'sr-only', ' (enlace externo, se abre en una ventana nueva)'));
+  }
+
+  function pedir(ruta) {
+    var ctrl = (typeof AbortController === 'function') ? new AbortController() : null;
+    var t = ctrl ? setTimeout(function () { ctrl.abort(); }, 8000) : null;
+    return fetch(BASE + ruta, ctrl ? { signal: ctrl.signal } : undefined)
+      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function (d) { clearTimeout(t); return d; }, function (e) { clearTimeout(t); throw e; });
+  }
+
+  // =================================================================
+  // 1 · DESTACADO (GET /api/destacado)
+  //     Sin respaldo estático: si la API falla o activo:false, no se ve.
+  // =================================================================
+  var dstVideo = null;
+
+  function hayWAAPI() { return typeof Element !== 'undefined' && typeof Element.prototype.animate === 'function'; }
+
+  // Expansión animada con FLIP (heredada de la banda de LORCA): se mide antes y
+  // después de cambiar la clase y se anima SOLO transform/opacity. Funciona
+  // aunque cambie grid-template-areas, que no es animable.
+  function expandir(card, piezas, medio, activar) {
+    if (card.classList.contains('is-expanded') === activar) return;
+    if (!hayWAAPI() || mqReduce.matches) { card.classList.toggle('is-expanded', activar); return; }
+    piezas.forEach(function (n) { if (n.getAnimations) n.getAnimations().forEach(function (a) { a.cancel(); }); });
+    var antes = piezas.map(function (n) { return n.getBoundingClientRect(); });
+    card.classList.toggle('is-expanded', activar);
+    var despues = piezas.map(function (n) { return n.getBoundingClientRect(); });
+    piezas.forEach(function (n, i) {
       var a = antes[i], d = despues[i];
       if (!d.width || !d.height || !a.width) return;
-
-      var dx  = a.left - d.left;
-      var dy  = a.top  - d.top;
-      var esc = a.width / d.width;
-
-      // Si esa pieza no se movio ni cambio de tamano, no se anima nada.
+      var dx = a.left - d.left, dy = a.top - d.top, esc = a.width / d.width;
       if (Math.abs(dx) < 1 && Math.abs(dy) < 1 && Math.abs(esc - 1) < 0.01) return;
-
-      // El poster si escala: es una imagen y aguanta. El texto solo se desplaza,
-      // porque escalar tipografia la deja borrosa durante la animacion.
-      var desde = (el === medio)
-        ? 'translate(' + dx + 'px,' + dy + 'px) scale(' + esc + ')'
-        : 'translate(' + dx + 'px,' + dy + 'px)';
-
-      // transform y opacity los compone el navegador en GPU sin recalcular layout,
-      // asi que no hace falta will-change. Ponerlo y quitarlo creaba una carrera
-      // entre el oncancel de una animacion y el arranque de la siguiente.
-      el.animate(
-        [ { transform: desde,   opacity: (el === medio ? 1 : 0.5) },
-          { transform: 'none',  opacity: 1 } ],
-        { duration: DUR, easing: EASE, fill: 'none' }
-      );
+      // la imagen/vídeo escala; el texto solo se desplaza (escalar letra la emborrona)
+      var desde = (n === medio) ? 'translate(' + dx + 'px,' + dy + 'px) scale(' + esc + ')' : 'translate(' + dx + 'px,' + dy + 'px)';
+      n.animate([{ transform: desde, opacity: (n === medio ? 1 : 0.5) }, { transform: 'none', opacity: 1 }],
+                { duration: 260, easing: 'cubic-bezier(.2,.7,.3,1)', fill: 'none' });
     });
   }
 
-  if (vid && card) {
-    vid.addEventListener('play',  function () { expandir(true);  });
-    vid.addEventListener('ended', function () { expandir(false); });
+  function abrirLightbox(src, alt, origen, alternativa) {
+    if (typeof HTMLDialogElement !== 'function') { alternativa(); return; }
+    var dlg = el('dialog', 'dst-lightbox');
+    dlg.setAttribute('aria-label', alt || 'Imagen ampliada');
+    var cerrar = el('button', 'dst-lightbox-close', 'Cerrar ');
+    cerrar.type = 'button';
+    var x = el('span', null, '✕'); x.setAttribute('aria-hidden', 'true'); cerrar.appendChild(x);
+    var img = el('img'); img.src = src; img.alt = alt || '';
+    dlg.appendChild(cerrar); dlg.appendChild(img);
+    document.body.appendChild(dlg);
+    cerrar.addEventListener('click', function () { dlg.close(); });
+    dlg.addEventListener('click', function (e) { if (e.target === dlg) dlg.close(); });   // clic en el fondo
+    dlg.addEventListener('close', function () {                                       // Escape incluido
+      if (dlg.parentNode) dlg.parentNode.removeChild(dlg);
+      if (origen && origen.focus) origen.focus();
+    });
+    dlg.showModal();
+    cerrar.focus();
   }
 
-  // 2 - display:none NO pausa un <video>. showSection oculta el hero al cambiar
-  //     de seccion y el audio seguiria sonando sobre Tramites o Emergencias.
-  function pausar() { if (vid && !vid.paused) vid.pause(); }
+  function pintarDestacado(d) {
+    var box = document.getElementById('destacado');
+    if (!box || !d || typeof d !== 'object' || d.activo !== true) return;
+    if (!vigente(d, hoyCaracas(true))) return;
+    var titulo = txt(d.titulo, 200);
+    if (!titulo) return;
+
+    var m = (d.media && typeof d.media === 'object') ? d.media : null;
+    var tipo = m && (m.tipo === 'video' || m.tipo === 'imagen') ? m.tipo : null;
+    var src = tipo ? urlSegura(m.url, 'media') : null;
+    if (!src) tipo = null;
+    var ori = (m && ['vertical', 'horizontal', 'cuadrada'].indexOf(m.orientacion) !== -1) ? m.orientacion : 'vertical';
+    var alt = m ? txt(m.alt, 300) : '';
+
+    var card = el('div', 'dst-card ' + (tipo ? 'dst--' + ori : 'dst--sin-media'));
+    var medio = null, cuerpo = el('div', 'dst-body'), pie = el('div', 'dst-foot');
+    var DIM = { vertical: [720, 1280], horizontal: [1280, 720], cuadrada: [1080, 1080] }[ori];
+
+    if (tipo) {
+      medio = el('div', 'dst-media');
+      if (tipo === 'video') {
+        var v = el('video', 'dst-video');
+        v.controls = true; v.preload = 'none'; v.playsInline = true;
+        v.setAttribute('playsinline', '');
+        v.setAttribute('controlslist', 'nodownload noremoteplayback');
+        v.setAttribute('disablepictureinpicture', '');
+        v.width = DIM[0]; v.height = DIM[1];
+        var poster = urlSegura(m.posterUrl, 'media');
+        if (poster) v.poster = poster;
+        v.setAttribute('aria-label', alt || titulo);
+        v.src = src;
+        var nv = el('p', 'dst-nota', 'Su navegador no puede reproducir este vídeo. ');
+        var dl = el('a', null, 'Abrir el vídeo'); dl.href = src; nv.appendChild(dl);
+        v.appendChild(nv);
+        medio.appendChild(v);
+        dstVideo = v;
+      } else {
+        var b = el('button', 'dst-img-btn');
+        b.type = 'button';
+        b.setAttribute('aria-label', 'Ampliar imagen' + (alt ? ': ' + alt : ''));
+        var im = el('img', 'dst-img');
+        im.src = src; im.alt = alt; im.width = DIM[0]; im.height = DIM[1]; im.decoding = 'async';
+        var z = el('span', 'dst-zoom');
+        z.appendChild(svg([['circle', { cx: '11', cy: '11', r: '7' }], P('M21 21l-4.35-4.35'), P('M11 8v6'), P('M8 11h6')]));
+        b.appendChild(im); b.appendChild(z);
+        medio.appendChild(b);
+      }
+      card.appendChild(medio);
+    }
+
+    var et = txt(d.etiqueta, 60);
+    if (et) cuerpo.appendChild(el('div', 'com-kicker', et));
+    var h = el('h2', 'dst-title', titulo); h.id = 'dst-titulo';
+    cuerpo.appendChild(h);
+    var meta = txt(d.meta, 240); if (meta) cuerpo.appendChild(el('p', 'dst-meta', meta));
+    var desc = txt(d.descripcion, 600); if (desc) cuerpo.appendChild(el('p', 'dst-desc', desc));
+
+    var cta = el('div', 'dst-cta');
+    (Array.isArray(d.botones) ? d.botones : []).slice(0, 4).forEach(function (bt) {
+      if (!bt || typeof bt !== 'object') return;
+      var t = txt(bt.texto, 60), u = urlSegura(bt.url, 'enlace');
+      if (!t || !u) return;
+      var ext = (bt.externo === true && u.charAt(0) !== '#' && !/^mailto:/i.test(u));
+      var a = enlace(u, 'btn ' + (bt.estilo === 'contorno' ? 'btn-outline' : 'btn-red') + ' btn-sm', ext);
+      a.appendChild(document.createTextNode(t));
+      marcaExterna(a);
+      cta.appendChild(a);
+    });
+    if (cta.childNodes.length) cuerpo.appendChild(cta);
+    card.appendChild(cuerpo);
+
+    var nota = txt(d.pie, 600);
+    if (nota) { pie.appendChild(el('p', 'dst-nota', nota)); card.appendChild(pie); }
+
+    box.textContent = '';
+    box.appendChild(card);
+    box.hidden = false;
+
+    var piezas = [medio, cuerpo, nota ? pie : null].filter(Boolean);
+    if (tipo === 'video') {
+      dstVideo.addEventListener('play',  function () { expandir(card, piezas, medio, true); });
+      dstVideo.addEventListener('ended', function () { expandir(card, piezas, medio, false); });
+      card.addEventListener('keydown', function (e) {
+        if ((e.key === 'Escape' || e.key === 'Esc') && card.classList.contains('is-expanded')) {
+          dstVideo.pause();
+          expandir(card, piezas, medio, false);
+          dstVideo.focus();
+        }
+      });
+    } else if (tipo === 'imagen') {
+      var boton = medio.querySelector('button');
+      boton.addEventListener('click', function () {
+        abrirLightbox(src, alt, boton, function () { expandir(card, piezas, medio, !card.classList.contains('is-expanded')); });
+      });
+      card.addEventListener('keydown', function (e) {   // alternativa sin <dialog>
+        if ((e.key === 'Escape' || e.key === 'Esc') && card.classList.contains('is-expanded')) { expandir(card, piezas, medio, false); boton.focus(); }
+      });
+    }
+  }
+
+  // display:none NO pausa un <video>: al salir de Inicio el audio seguiría sonando
+  function pausarDestacado() { if (dstVideo && !dstVideo.paused) dstVideo.pause(); }
+  document.addEventListener('visibilitychange', function () { if (document.hidden) pausarDestacado(); });
+
+  // Bandera anti-CLS (ver el script junto al aside #destacado): solo orientación y alto, nunca contenido.
+  function colapsarDestacado() {
+    var box = document.getElementById('destacado');
+    if (!box || box.querySelector('.dst-card')) return;
+    box.textContent = '';
+    box.removeAttribute('aria-busy');
+    box.hidden = true;
+  }
+  function guardarBandera(card) {
+    try {
+      var o = /dst--(vertical|horizontal|cuadrada|sin-media)/.exec(card.className);
+      var movil = window.matchMedia && window.matchMedia('(max-width: 768px)').matches;
+      var f = JSON.parse(localStorage.getItem('vc-destacado') || 'null') || {};
+      if (f.o !== (o ? o[1] : 'vertical')) f = {};        // otro formato: altos anteriores no valen
+      f.o = o ? o[1] : 'vertical';
+      f[movil ? 'hm' : 'hd'] = card.offsetHeight;
+      localStorage.setItem('vc-destacado', JSON.stringify(f));
+    } catch (e) {}
+  }
+  function borrarBandera() { try { localStorage.removeItem('vc-destacado'); } catch (e) {} }
+
+  pedir('/api/destacado').then(function (d) {
+    try { pintarDestacado(d); } catch (e) {}
+    var box = document.getElementById('destacado');
+    var card = box && box.querySelector('.dst-card');
+    if (card) { box.removeAttribute('aria-busy'); guardarBandera(card); }
+    else { colapsarDestacado(); borrarBandera(); }     // respuesta válida sin destacado vigente
+  }, function () {
+    colapsarDestacado();                                // API caída: se oculta, la bandera se conserva
+  });
+
+  // =================================================================
+  // 2 · ESPAÑA · PASADO Y PRESENTE (GET /api/portada)
+  // =================================================================
+  var AUTOPLAY_MS = 7000;
+
+  function limpiarTarjeta(t, i) {
+    var titulo = txt(t.titulo, 140);
+    if (!titulo) return null;
+    var img = null;
+    if (t.imagen && typeof t.imagen === 'object') {
+      var u = urlSegura(t.imagen.url, 'media');
+      if (u) img = { url: u, jpg: urlSegura(t.imagen.urlJpg, 'media'), alt: txt(t.imagen.alt, 250) };
+    }
+    var enl = null;
+    if (t.enlace && typeof t.enlace === 'object') {
+      var eu = urlSegura(t.enlace.url, 'enlace'), et = txt(t.enlace.texto, 50);
+      if (eu && et) enl = { url: eu, texto: et };
+    }
+    var pr = Number(t.prioridad), or = Number(t.orden);
+    return {
+      categoria: txt(t.categoria, 40), fecha: txt(t.fecha, 40), titulo: titulo, texto: txt(t.texto, 200),
+      img: img, enlace: enl,
+      prioridad: isFinite(pr) ? pr : 8, orden: isFinite(or) ? or : 0, _i: i
+    };
+  }
+
+  function prepararTarjetas(lista) {
+    var hoy = hoyCaracas();
+    var orden = (Array.isArray(lista) ? lista : [])
+      .filter(function (t) { return t && typeof t === 'object' && vigente(t, hoy); })
+      .map(limpiarTarjeta)
+      .filter(Boolean)
+      .sort(function (a, b) { return (a.prioridad - b.prioridad) || (a.orden - b.orden) || (a._i - b._i); });
+    return intercalar(orden);
+  }
+
+  // La primera tarjeta es la de mayor prioridad; el resto alterna tarjetas con
+  // foto y tarjetas institucionales (sin foto), cada grupo en su orden, para que
+  // no salgan varias rojas seguidas.
+  function intercalar(lista) {
+    if (lista.length < 3) return lista;
+    var primera = lista[0], resto = lista.slice(1);
+    var conFoto = resto.filter(function (t) { return !!t.img; });
+    var sinFoto = resto.filter(function (t) { return !t.img; });
+    var out = [primera], turnoFoto = !primera.img;
+    while (conFoto.length || sinFoto.length) {
+      if ((turnoFoto && conFoto.length) || !sinFoto.length) out.push(conFoto.shift());
+      else out.push(sinFoto.shift());
+      turnoFoto = !turnoFoto;
+    }
+    return out;
+  }
+
+  // srcset 400/800 solo para assets del repo con el patrón <slug>-800.webp.
+  // Las URL van en data-src / data-srcset: todas las tarjetas están apiladas "en
+  // pantalla", así que loading=lazy no basta. cargarFoto() las asigna cuando la
+  // tarjeta llega a |pos| <= 2.
+  function crearFoto(img, primera) {
+    var i = el('img', 'pf-foto');
+    i.alt = img.alt;
+    i.width = 800; i.height = 800;
+    i.decoding = 'async';
+    if (!primera) i.loading = 'lazy';
+    var sizes = '(max-width: 768px) 260px, 330px';
+    var m400 = /^(images\/.+)-800\.webp$/.exec(img.url);
+    if (!img.jpg && !m400) { i.setAttribute('data-src', img.url); return i; }
+    var pic = el('picture');
+    var s = el('source');
+    s.type = 'image/webp';
+    if (m400) { s.setAttribute('data-srcset', m400[1] + '-400.webp 400w, ' + img.url + ' 800w'); s.sizes = sizes; }
+    else s.setAttribute('data-srcset', img.url);
+    pic.appendChild(s);
+    i.setAttribute('data-src', img.jpg || img.url);
+    pic.appendChild(i);
+    return pic;
+  }
+  function cargarFoto(card) {
+    if (card._fotoCargada) return;
+    card._fotoCargada = true;
+    Array.prototype.forEach.call(card.querySelectorAll('source[data-srcset]'), function (s) {
+      s.srcset = s.getAttribute('data-srcset'); s.removeAttribute('data-srcset');
+    });
+    Array.prototype.forEach.call(card.querySelectorAll('img[data-src]'), function (i) {
+      i.src = i.getAttribute('data-src'); i.removeAttribute('data-src');
+    });
+  }
+
+  function decorarInstitucional(card, t) {
+    card.classList.add('pf-card--inst');
+    var deco = el('div', 'pf-deco');
+    var nombre = iconoPara(t);
+    deco.appendChild(svg(ICONOS[nombre], 'pf-marca'));
+    card.insertBefore(deco, card.firstChild);
+    var ic = el('span', 'pf-icono');
+    ic.appendChild(svg(ICONOS[nombre]));
+    card.insertBefore(ic, deco.nextSibling);
+  }
+
+  function crearTarjeta(t, i, n) {
+    var card = el('div', 'pf-card');
+    card.setAttribute('role', 'group');
+    card.setAttribute('aria-roledescription', 'diapositiva');
+    card.setAttribute('aria-label', (i + 1) + ' de ' + n);
+
+    if (t.img) {
+      var foto = crearFoto(t.img, i === 0);
+      card.appendChild(foto);
+      // si la foto no carga, la tarjeta pasa a la versión institucional (nunca un hueco)
+      var imgEl = foto.tagName === 'IMG' ? foto : foto.querySelector('img');
+      imgEl.addEventListener('error', function () {
+        if (card.classList.contains('pf-card--inst')) return;
+        if (foto.parentNode) foto.parentNode.removeChild(foto);
+        decorarInstitucional(card, t);
+      });
+    } else {
+      decorarInstitucional(card, t);
+    }
+    card.appendChild(el('div', 'pf-shade'));
+
+    var body = el('div', 'pf-body');
+    if (t.categoria || t.fecha) {
+      var cat = el('p', 'pf-cat', t.categoria);
+      if (t.fecha) cat.appendChild(el('span', 'pf-fecha', t.fecha));
+      body.appendChild(cat);
+    }
+    body.appendChild(el('h3', 'pf-title', t.titulo));
+    if (t.texto) body.appendChild(el('p', 'pf-text', t.texto));
+    if (t.enlace) {
+      var a = enlace(t.enlace.url, 'pf-link');
+      a.appendChild(document.createTextNode(t.enlace.texto + ' '));
+      var fl = el('span', null, '→'); fl.setAttribute('aria-hidden', 'true'); a.appendChild(fl);
+      if (a._externo) a.appendChild(el('span', 'sr-only', ' (enlace externo, se abre en una ventana nueva)'));
+      body.appendChild(a);
+    }
+    card.appendChild(body);
+    return card;
+  }
+
+  function montarPortada(lista) {
+    var sec = document.getElementById('portada-section');
+    var region = document.getElementById('pfCarousel');
+    var stage = document.getElementById('pfStage');
+    var estado = document.getElementById('pfEstado');
+    if (!sec || !region || !stage) return;
+
+    var tarjetas = prepararTarjetas(lista);
+    var N = tarjetas.length;
+    if (!N) { sec.hidden = true; return; }
+
+    stage.textContent = '';
+    var alt = 0;
+    var cards = tarjetas.map(function (t, i) {
+      var c = crearTarjeta(t, i, N);
+      if (c.classList.contains('pf-card--inst')) { if (alt++ % 2) c.classList.add('pf-alt'); }
+      stage.appendChild(c);
+      return c;
+    });
+    sec.hidden = false;
+
+    if (N === 1) {
+      region.classList.add('pf--solo');
+      cards[0].setAttribute('data-pos', '0');
+      cargarFoto(cards[0]);
+      return;
+    }
+
+    // ---- controles ----
+    function flecha(clase, etiqueta, d) {
+      var b = el('button', 'pf-arrow ' + clase);
+      b.type = 'button';
+      b.setAttribute('aria-label', etiqueta);
+      b.setAttribute('aria-controls', 'pfStage');
+      b.appendChild(svg([P(d)]));
+      region.appendChild(b);
+      return b;
+    }
+    var prev = flecha('pf-prev', 'Tarjeta anterior', 'M15 18l-6-6 6-6');
+    var next = flecha('pf-next', 'Tarjeta siguiente', 'M9 18l6-6-6-6');
+
+    var controles = el('div', 'pf-controls');
+    var dotsBox = el('div', 'pf-dots');
+    var dots = tarjetas.map(function (t, i) {
+      var d = el('button', 'pf-dot');
+      d.type = 'button';
+      d.setAttribute('aria-label', 'Ir a la tarjeta ' + (i + 1) + ': ' + t.titulo);
+      d.addEventListener('click', function () { ir(i); });
+      dotsBox.appendChild(d);
+      return d;
+    });
+    controles.appendChild(dotsBox);
+
+    var autoplay = !mqReduce.matches;
+    // El botón existe siempre: si la preferencia de movimiento cambia en caliente
+    // y arranca el autoplay, tiene que haber con qué pararlo (WCAG 2.2.2).
+    var pausaBtn = el('button', 'pf-pausa');
+    pausaBtn.type = 'button';
+    pausaBtn.hidden = !autoplay;
+    controles.appendChild(pausaBtn);
+    sec.appendChild(controles);
+
+    // ---- estado ----
+    var actual = 0, timer = null;
+    var pausadoUsuario = false, hover = false, foco = false, visible = true;
+
+    function pos(i) {
+      var d = (i - actual) % N; if (d < 0) d += N;
+      if (d > Math.floor(N / 2)) d -= N;     // con N par, la del medio va a la derecha
+      return d;
+    }
+
+    function pintar(origen) {
+      var enfocado = document.activeElement, focoPerdido = false;
+      cards.forEach(function (c, i) {
+        var p = pos(i);
+        c.setAttribute('data-pos', String(Math.max(-3, Math.min(3, p))));
+        if (Math.abs(p) <= 2) cargarFoto(c);
+        var activa = p === 0;
+        if (!activa && enfocado && c.contains(enfocado)) focoPerdido = true;
+        c.setAttribute('aria-hidden', activa ? 'false' : 'true');
+        Array.prototype.forEach.call(c.querySelectorAll('a, button'), function (f) {
+          if (activa) f.removeAttribute('tabindex'); else f.setAttribute('tabindex', '-1');
+        });
+      });
+      dots.forEach(function (d, i) { d.setAttribute('aria-current', i === actual ? 'true' : 'false'); });
+      // el foco no puede quedarse dentro de una tarjeta que ya es aria-hidden
+      if (focoPerdido) {
+        var dest = cards[actual].querySelector('a') || origen || next;
+        try { dest.focus({ preventScroll: true }); } catch (e) { dest.focus(); }
+      }
+    }
+
+    function girando() { return autoplay && !pausadoUsuario && !hover && !foco && visible && !document.hidden; }
+
+    function programar() {
+      clearTimeout(timer); timer = null;
+      if (girando()) timer = setTimeout(function () { ir(actual + 1, true); }, AUTOPLAY_MS);
+      // aria-live solo cuando NO gira solo, para no interrumpir al lector de pantalla
+      if (estado) estado.setAttribute('aria-live', (autoplay && !pausadoUsuario && !foco && !hover) ? 'off' : 'polite');
+      pausaBtn.textContent = '';
+      pausaBtn.setAttribute('aria-label', pausadoUsuario ? 'Reanudar el carrusel' : 'Pausar el carrusel');
+      pausaBtn.appendChild(pausadoUsuario ? svg([['path', { d: 'M7 4l13 8-13 8z' }]])
+                                          : svg([['rect', { x: '6', y: '4', width: '4', height: '16', rx: '1' }], ['rect', { x: '14', y: '4', width: '4', height: '16', rx: '1' }]]));
+    }
+
+    function ir(n, auto, origen) {
+      actual = ((n % N) + N) % N;
+      pintar(origen);
+      if (estado && !auto) estado.textContent = 'Tarjeta ' + (actual + 1) + ' de ' + N + ': ' + tarjetas[actual].titulo;
+      programar();
+    }
+
+    prev.addEventListener('click', function () { ir(actual - 1, false, prev); });
+    next.addEventListener('click', function () { ir(actual + 1, false, next); });
+    pausaBtn.addEventListener('click', function () { pausadoUsuario = !pausadoUsuario; programar(); });
+
+    // clic en una lateral: pasa al centro y NO sigue su enlace. En fase de captura,
+    // para que el listener del propio enlace (anclas internas) no llegue a ejecutarse.
+    var tragarClic = false;
+    cards.forEach(function (c, i) {
+      c.addEventListener('click', function (e) {
+        var lateral = pos(i) !== 0;
+        if (tragarClic || lateral) {
+          e.preventDefault();
+          e.stopPropagation();
+          if (lateral && !tragarClic) ir(i);
+        }
+      }, true);
+    });
+
+    region.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowLeft' || e.key === 'Left')  { e.preventDefault(); ir(actual - 1); }
+      else if (e.key === 'ArrowRight' || e.key === 'Right') { e.preventDefault(); ir(actual + 1); }
+    });
+
+    // solo ratón: en táctil mouseenter se queda "pegado" y pararía el autoplay
+    region.addEventListener('pointerenter', function (e) { if (e.pointerType === 'mouse') { hover = true;  programar(); } });
+    region.addEventListener('pointerleave', function (e) { if (e.pointerType === 'mouse') { hover = false; programar(); } });
+    sec.addEventListener('focusin',  function () { foco = true; programar(); });
+    sec.addEventListener('focusout', function (e) {
+      if (e.relatedTarget && sec.contains(e.relatedTarget)) return;
+      foco = false; programar();
+    });
+    document.addEventListener('visibilitychange', programar);
+    if ('IntersectionObserver' in window) {
+      visible = false;
+      new IntersectionObserver(function (en) { visible = en[0].isIntersecting; programar(); }, { threshold: 0.3 }).observe(stage);
+    }
+
+    // deslizar con el dedo (pointer events; pan-y deja el scroll vertical al navegador)
+    var x0 = null, y0 = 0;
+    stage.addEventListener('pointerdown', function (e) {
+      if (e.pointerType === 'mouse') return;
+      x0 = e.clientX; y0 = e.clientY;
+    }, { passive: true });
+    stage.addEventListener('pointerup', function (e) {
+      if (x0 === null) return;
+      var dx = e.clientX - x0, dy = e.clientY - y0;
+      x0 = null;
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
+        tragarClic = true; setTimeout(function () { tragarClic = false; }, 350);
+        ir(actual + (dx < 0 ? 1 : -1));
+      }
+    }, { passive: true });
+    stage.addEventListener('pointercancel', function () { x0 = null; }, { passive: true });
+
+    // cambio de preferencia de movimiento en caliente
+    var alCambiar = function () {
+      autoplay = !mqReduce.matches;
+      pausaBtn.hidden = !autoplay;
+      programar();
+    };
+    if (mqReduce.addEventListener) mqReduce.addEventListener('change', alCambiar);
+
+    pintar();
+    programar();
+  }
+
+  // Un único montaje: si montarPortada fallase a medias no se vuelve a montar encima.
+  var portadaMontada = false;
+  function montarUnaVez(lista) {
+    if (portadaMontada) return;
+    portadaMontada = true;
+    try { montarPortada(lista); }
+    catch (e) { var s = document.getElementById('portada-section'); if (s) s.hidden = true; }
+  }
+  function usarRespaldo() { montarUnaVez(PORTADA_FALLBACK); }
+
+  if (FECHA_FORZADA) {
+    usarRespaldo();
+  } else {
+    pedir('/api/portada').then(function (d) {
+      if (!d || typeof d !== 'object') return usarRespaldo();
+      if (d.activa === false) { portadaMontada = true; var s = document.getElementById('portada-section'); if (s) s.hidden = true; return; }
+      if (d.configurado === false) return usarRespaldo();
+      montarUnaVez(d.tarjetas);   // configurado:true con 0 vigentes => oculta
+    }, usarRespaldo);
+  }
+
+  // =================================================================
+  // 3 · Al cambiar de sección: pausar el vídeo del destacado.
+  //     Se envuelve showSection igual que los demás envoltorios del archivo.
+  // =================================================================
 
   var _show = window.showSection;
   if (typeof _show === 'function') {
     window.showSection = function (id) {
-      if (id !== 'inicio') pausar();
+      if (id !== 'inicio') { pausarDestacado(); }
       return _show.apply(this, arguments);
     };
-  }
-  document.addEventListener('visibilitychange', function () { if (document.hidden) pausar(); });
-
-  // 3 - contador de pulsaciones: sin cookies, sin terceros, sin identificadores.
-  //     Si el endpoint aun no existe, falla en silencio y la banda funciona igual.
-  function pintar(n) {
-    if (!box || !num) return;
-    if (typeof n !== 'number' || !isFinite(n) || n < UMBRAL) return;
-    num.textContent = n.toLocaleString('es-ES');
-    box.hidden = false;
-  }
-
-  fetch(EP)
-    .then(function (r) { return r.ok ? r.json() : null; })
-    .then(function (d) { if (d) pintar(d.pulsaciones); })
-    .catch(function () {});
-
-  function contar() {
-    try {
-      fetch(EP + '/pulsacion', {
-        method: 'POST',
-        keepalive: true,
-        headers: { 'Content-Type': 'application/json' },
-        body: '{"origen":"web-publica"}'
-      })
-      .then(function (r) { return r.ok ? r.json() : null; })
-      .then(function (d) { if (d) pintar(d.pulsaciones); })
-      .catch(function () {});
-    } catch (e) {}
-  }
-
-  if (link) {
-    // NO se llama a preventDefault ni a stopPropagation: el enlace debe abrirse
-    // siempre, y el listener global de cierre de menu debe seguir recibiendo el evento.
-    link.addEventListener('click', contar);
-    link.addEventListener('auxclick', function (e) { if (e.button === 1) contar(); });
   }
 })();
 </script>
