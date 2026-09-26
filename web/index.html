@@ -4694,9 +4694,14 @@ function renderCarousel(banners) {
     var cls   = SLIDE_CLASSES[i % SLIDE_CLASSES.length];
     var slide = document.createElement('div');
     slide.className = 'carousel-slide ' + cls;
-    slide.innerHTML = (b.categoria ? '<div class="slide-label">' + b.categoria + '</div>' : '')
-      + '<div class="slide-title">' + b.titulo + '</div>'
-      + '<div class="slide-body">' + b.cuerpo + '</div>';
+    // Texto del panel: siempre con textContent, nunca como HTML (XSS)
+    [['slide-label', b.categoria], ['slide-title', b.titulo], ['slide-body', b.cuerpo]].forEach(function (p) {
+      if (p[0] === 'slide-label' && !p[1]) return;
+      var d = document.createElement('div');
+      d.className = p[0];
+      d.textContent = p[1] == null ? '' : String(p[1]);
+      slide.appendChild(d);
+    });
     track.appendChild(slide);
     var dot = document.createElement('button');
     dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
