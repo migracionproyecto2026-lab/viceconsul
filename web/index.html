@@ -6033,7 +6033,13 @@ var PORTADA_FALLBACK = [
   }
   function usarRespaldo() { montarUnaVez(PORTADA_FALLBACK); }
 
-  if (FECHA_FORZADA) {
+  // Retirado de la web oficial (2026-09-28) hasta que el consulado dé el visto bueno:
+  // el carrusel solo se ve en la copia de revisión (repo cambios). Para publicarlo,
+  // cambiar PORTADA_EN_OFICIAL a true.
+  var PORTADA_EN_OFICIAL = false;
+  if (!PORTADA_EN_OFICIAL) {
+    portadaMontada = true;
+  } else if (FECHA_FORZADA) {
     usarRespaldo();
   } else {
     pedir('/api/portada').then(function (d) {
