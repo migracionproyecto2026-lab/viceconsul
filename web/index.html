@@ -1388,55 +1388,6 @@ body.nav-open .sticky-cta, body.nav-open .sticky-wa { opacity: 0 !important; poi
 /* ── CHANNEL DESCRIPTIONS (contacto) ── */
 .channel-label { font-family:'DM Sans'; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1.1px; color:#aaa; margin-bottom:3px; }
 
-/* ===============================================================
-   ACTIVIDAD INSTITUCIONAL · Cultura y Comunidad — eventos realizados
-   Prefijo evt-. Bloque autónomo: no modifica ninguna regla existente.
-   =============================================================== */
-.evt-section { margin-top: 44px; }
-.evt-heading { font-size: clamp(24px, 3vw, 30px); line-height: 1.2; margin: 0 0 8px; }
-.evt-intro { font-family:'DM Sans',sans-serif; font-size:15px; color:var(--gris); line-height:1.65; margin:0 0 22px; max-width:760px; }
-.evt-card {
-  display: grid;
-  grid-template-columns: 170px 1fr;
-  gap: 24px;
-  align-items: start;
-  background: #fff;
-  border: 1px solid var(--borde);
-  border-top: 3px solid var(--dorado-oscuro);
-  border-radius: 12px;
-  padding: 22px 24px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
-}
-.evt-media img, .evt-video { display:block; width:100%; height:auto; border-radius:8px; border:1px solid var(--borde); }
-.evt-video { aspect-ratio: 9 / 16; object-fit: cover; background: #000; }
-.evt-card { transition: grid-template-columns .25s ease; }
-.evt-card.is-playing { grid-template-columns: 300px 1fr; }   /* al reproducir, el vídeo crece (como la banda de LORCA) */
-.evt-label { font-family:'DM Sans',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.4px; text-transform:uppercase; color:var(--dorado-oscuro); margin:0 0 8px; }
-.evt-title { font-size: 22px; line-height: 1.3; margin: 0 0 8px; }
-.evt-meta  { font-family:'DM Sans',sans-serif; font-size:14px; color:var(--gris); margin:0 0 12px; }
-.evt-summary { font-family:'DM Sans',sans-serif; font-size:15px; line-height:1.7; color:#444; margin:0 0 14px; }
-.evt-details summary {
-  font-family:'DM Sans',sans-serif; font-size:14px; font-weight:600; color:var(--rojo);
-  cursor:pointer; list-style:none; display:inline-flex; align-items:center; gap:8px;
-  padding:9px 16px; border:1.5px solid var(--rojo); border-radius:6px;
-}
-.evt-details summary::-webkit-details-marker { display:none; }
-.evt-details summary::after { content:'+'; font-weight:700; }
-.evt-details[open] summary::after { content:'−'; }
-.evt-details summary:hover { background: rgba(var(--marca-rgb),0.06); }
-.evt-cronica { margin-top:16px; border-left:3px solid var(--borde); padding-left:18px; }
-.evt-cronica p { font-family:'DM Sans',sans-serif; font-size:15px; line-height:1.75; color:var(--gris); margin:0 0 12px; }
-.evt-cronica p:last-child { margin-bottom:0; }
-
-@media (max-width: 768px) {
-  .evt-card { grid-template-columns: 1fr; gap: 16px; padding: 18px 16px; }
-  .evt-media { max-width: 200px; }
-  .evt-card.is-playing { grid-template-columns: 1fr; }
-  .evt-card.is-playing .evt-media { max-width: none; width: min(72vw, 260px); margin: 0 auto; }
-  .evt-title { font-size: 19px; }
-  .evt-details summary { width:100%; justify-content:center; }
-}
-
 /* Fuente oficial y última revisión al pie de cada ficha de trámite */
 .rev-fuente {
   font-family:'DM Sans',sans-serif; font-size:12.5px; line-height:1.6; color:var(--gris-claro);
@@ -2012,46 +1963,6 @@ body.nav-open .sticky-cta, body.nav-open .sticky-wa { opacity: 0 !important; poi
       </button>
     </div>
   </div>
-
-  <!-- ACTIVIDAD INSTITUCIONAL · Cultura y Comunidad — eventos realizados -->
-  <section class="evt-section" aria-labelledby="evt-heading">
-    <div class="com-kicker">Actividad institucional</div>
-    <h2 class="evt-heading" id="evt-heading">Cultura y Comunidad</h2>
-    <p class="evt-intro">Eventos realizados. Iniciativas culturales desarrolladas en Nueva Esparta, vinculadas a la difusión de la cultura española y al encuentro con la comunidad.</p>
-
-    <article class="evt-card" id="evt-lorca-2026">
-      <div class="evt-media">
-        <video class="evt-video" id="evt-lorca-video"
-               controls preload="none" playsinline
-               poster="images/lorca-cartel.jpg"
-               width="720" height="1280"
-               controlslist="nodownload noremoteplayback"
-               disablepictureinpicture
-               aria-label="Vídeo de La Casa de Bernarda Alba, representada en Cines Unidos La Vela el 19 de septiembre de 2026">
-          <source src="media/lorca-2026.mp4" type='video/mp4; codecs="avc1.64001F, mp4a.40.2"'>
-          <p>Su navegador no puede reproducir este vídeo. <a href="media/lorca-2026.mp4">Abrir el vídeo (3,3 MB)</a>.</p>
-        </video>
-      </div>
-      <div class="evt-body">
-        <div class="evt-label">Cultura y Comunidad · 19 de septiembre de 2026</div>
-        <h3 class="evt-title">Lorca en Margarita: <em>La Casa de Bernarda Alba</em> llevó el teatro español a Nueva Esparta</h3>
-        <p class="evt-meta">Sábado 19 de septiembre de 2026 · Cines Unidos C.C. La Vela · Porlamar, Isla de Margarita</p>
-        <p class="evt-summary">El Viceconsulado Honorario de España en Nueva Esparta acompañó la representación de <em>La Casa de Bernarda Alba</em>, de Federico García Lorca, a cargo de Spectros Teatro y Fuego Gitano con participación de artistas neoespartanos. La jornada contó con la presencia del Embajador de España en Venezuela, D. Álvaro Albacete, y del Vicecónsul Honorario de España en Nueva Esparta, D. Manuel Leiros.</p>
-        <details class="evt-details">
-          <summary>Leer la crónica completa</summary>
-          <div class="evt-cronica">
-            <p>El sábado 19 de septiembre de 2026, Cines Unidos del C.C. La Vela, en Porlamar, acogió la representación de <em>La Casa de Bernarda Alba</em>, una de las obras fundamentales de Federico García Lorca y uno de los grandes clásicos del teatro español del siglo XX.</p>
-            <p>La presentación, realizada por Spectros Teatro y Fuego Gitano con participación de artistas neoespartanos, reunió sobre el escenario tradición teatral española y talento local.</p>
-            <p>La jornada contó con la presencia del Embajador de España en Venezuela, D. Álvaro Albacete, y del Vicecónsul Honorario de España en Nueva Esparta, Manuel Leiros, quienes acompañaron a los organizadores, artistas y público asistente.</p>
-            <p>Escrita en 1936, <em>La Casa de Bernarda Alba</em> aborda temas como la autoridad, la libertad, el deseo y las convenciones sociales. Su vigencia ha permitido que continúe representándose ante públicos de distintas generaciones y contextos.</p>
-            <p>En Margarita, la obra adquirió una expresión propia gracias al trabajo de artistas de Nueva Esparta, demostrando la capacidad del teatro para tender puentes entre distintas comunidades culturales.</p>
-            <p>Para el Viceconsulado Honorario de España en Nueva Esparta, la difusión de iniciativas de esta naturaleza contribuye a acercar el patrimonio cultural español a la comunidad y a reconocer el trabajo de quienes mantienen vivo el intercambio cultural entre España y Venezuela.</p>
-            <p>La función del 19 de septiembre pasa así a formar parte de la memoria cultural de Nueva Esparta en 2026, dejando una imagen de teatro, participación local y presencia institucional española alrededor de la obra de uno de los autores más universales de nuestra literatura.</p>
-          </div>
-        </details>
-      </div>
-    </article>
-  </section>
 
   <!-- ESPAÑA · PASADO Y PRESENTE — tarjetas desde GET /api/portada (respaldo: PORTADA_FALLBACK).
        Oculta hasta que hay al menos una tarjeta vigente. -->
@@ -5537,7 +5448,7 @@ var PORTADA_FALLBACK = [
     texto: 'Cines Unidos La Vela acogió la obra de Lorca, con artistas neoespartanos y la presencia del Embajador de España y del Vicecónsul Honorario.',
     imagen: { url: 'images/portada/lorca-cartel-800.webp', urlJpg: 'images/portada/lorca-cartel-800.jpg',
               alt: 'Cartel de La Casa de Bernarda Alba, Cines Unidos La Vela, Porlamar, 19 de septiembre de 2026' },
-    enlace: { texto: 'Ver la crónica', url: '#evt-lorca-2026' },
+    enlace: { texto: 'Ver la crónica', url: '#comunidad' },
     desde: '2026-09-25', hasta: '2026-10-31', prioridad: 6, orden: 13 }
 ];
 
@@ -5664,7 +5575,7 @@ var PORTADA_FALLBACK = [
   }
 
   // Anclas internas: "#emergencias" -> showSection('emergencias');
-  // "#evt-lorca-2026" -> se queda en su sección y baja hasta el elemento.
+  // "#comunidad" -> se queda en su sección y baja hasta el elemento.
   function destinoAncla(hash) {
     var id = hash.slice(1).replace(/^sec-/, '');
     if (document.getElementById('sec-' + id)) return { seccion: id };
@@ -6244,20 +6155,11 @@ var PORTADA_FALLBACK = [
   // 3 · Al cambiar de sección: pausar el vídeo del destacado.
   //     Se envuelve showSection igual que los demás envoltorios del archivo.
   // =================================================================
-  // Vídeo de LORCA en "Cultura y Comunidad": crece al reproducir y vuelve al acabar
-  var evtVideo = document.getElementById('evt-lorca-video');
-  var evtCard = evtVideo && evtVideo.closest ? evtVideo.closest('.evt-card') : null;
-  function pausarEvento() { if (evtVideo && !evtVideo.paused) evtVideo.pause(); }
-  if (evtVideo && evtCard) {
-    evtVideo.addEventListener('play',  function () { evtCard.classList.add('is-playing'); });
-    evtVideo.addEventListener('ended', function () { evtCard.classList.remove('is-playing'); });
-    document.addEventListener('visibilitychange', function () { if (document.hidden) pausarEvento(); });
-  }
 
   var _show = window.showSection;
   if (typeof _show === 'function') {
     window.showSection = function (id) {
-      if (id !== 'inicio') { pausarDestacado(); pausarEvento(); }
+      if (id !== 'inicio') { pausarDestacado(); }
       return _show.apply(this, arguments);
     };
   }
