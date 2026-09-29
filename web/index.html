@@ -825,7 +825,7 @@ footer { background: #1a1a1a; margin-top: 60px; }
 /* TABLET (≤ 960px) */
 @media (max-width: 960px) {
   .hero-inner { gap: 32px; }
-  .hero-shield { width: 110px; }
+  .hero-shield { width: 110px; height: 110px; }
   .bio-inner { grid-template-columns: 1fr; gap: 32px; }
   .bio-images { grid-template-columns: repeat(3, 1fr); }
   .bio-img-main { grid-column: auto; aspect-ratio: 4/3; }
@@ -1388,6 +1388,102 @@ body.nav-open .sticky-cta, body.nav-open .sticky-wa { opacity: 0 !important; poi
 /* ── CHANNEL DESCRIPTIONS (contacto) ── */
 .channel-label { font-family:'DM Sans'; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1.1px; color:#aaa; margin-bottom:3px; }
 
+/* ===============================================================
+   ACTIVIDAD INSTITUCIONAL · Cultura y Comunidad — eventos realizados
+   Prefijo evt-. Bloque autónomo: no modifica ninguna regla existente.
+   =============================================================== */
+.evt-section { margin-top: 44px; }
+.evt-heading { font-size: clamp(24px, 3vw, 30px); line-height: 1.2; margin: 0 0 8px; }
+.evt-intro { font-family:'DM Sans',sans-serif; font-size:15px; color:var(--gris); line-height:1.65; margin:0 0 22px; max-width:760px; }
+.evt-card {
+  display: grid;
+  grid-template-columns: 170px 1fr;
+  gap: 24px;
+  align-items: start;
+  background: #fff;
+  border: 1px solid var(--borde);
+  border-top: 3px solid var(--dorado-oscuro);
+  border-radius: 12px;
+  padding: 22px 24px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+.evt-media img, .evt-video { display:block; width:100%; height:auto; border-radius:8px; border:1px solid var(--borde); }
+.evt-video { aspect-ratio: 9 / 16; object-fit: cover; background: #000; }
+.evt-card { transition: grid-template-columns .25s ease; }
+.evt-card.is-playing { grid-template-columns: 300px 1fr; }   /* al reproducir, el vídeo crece (como la banda de LORCA) */
+.evt-label { font-family:'DM Sans',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.4px; text-transform:uppercase; color:var(--dorado-oscuro); margin:0 0 8px; }
+.evt-title { font-size: 22px; line-height: 1.3; margin: 0 0 8px; }
+.evt-meta  { font-family:'DM Sans',sans-serif; font-size:14px; color:var(--gris); margin:0 0 12px; }
+.evt-summary { font-family:'DM Sans',sans-serif; font-size:15px; line-height:1.7; color:#444; margin:0 0 14px; }
+.evt-details summary {
+  font-family:'DM Sans',sans-serif; font-size:14px; font-weight:600; color:var(--rojo);
+  cursor:pointer; list-style:none; display:inline-flex; align-items:center; gap:8px;
+  padding:9px 16px; border:1.5px solid var(--rojo); border-radius:6px;
+}
+.evt-details summary::-webkit-details-marker { display:none; }
+.evt-details summary::after { content:'+'; font-weight:700; }
+.evt-details[open] summary::after { content:'−'; }
+.evt-details summary:hover { background: rgba(var(--marca-rgb),0.06); }
+.evt-cronica { margin-top:16px; border-left:3px solid var(--borde); padding-left:18px; }
+.evt-cronica p { font-family:'DM Sans',sans-serif; font-size:15px; line-height:1.75; color:var(--gris); margin:0 0 12px; }
+.evt-cronica p:last-child { margin-bottom:0; }
+
+@media (max-width: 768px) {
+  .evt-card { grid-template-columns: 1fr; gap: 16px; padding: 18px 16px; }
+  .evt-media { max-width: 200px; }
+  .evt-card.is-playing { grid-template-columns: 1fr; }
+  .evt-card.is-playing .evt-media { max-width: none; width: min(72vw, 260px); margin: 0 auto; }
+  .evt-title { font-size: 19px; }
+  .evt-details summary { width:100%; justify-content:center; }
+}
+
+/* Fuente oficial y última revisión al pie de cada ficha de trámite */
+.rev-fuente {
+  font-family:'DM Sans',sans-serif; font-size:12.5px; line-height:1.6; color:var(--gris-claro);
+  border-top:1px dashed var(--borde); margin-top:18px; padding-top:10px;
+}
+.rev-fuente--cabecera { border-top:0; margin:-18px 0 26px; padding-top:0; }
+
+/* Emergencias: rótulo de alcance sobre el teléfono */
+.emg-hero-kicker {
+  font-family:'DM Sans',sans-serif; font-size:12px; font-weight:700; letter-spacing:1.8px;
+  text-transform:uppercase; color:var(--dorado); margin:0 0 10px;
+  display:inline-flex; align-items:center; gap:8px;
+}
+.emg-hero-kicker svg { width:16px; height:16px; }
+.emg-hero .emg-phone { margin-top: 14px; }
+.emg-hero-note { font-family:'DM Sans',sans-serif; font-size:14px; color:rgba(255,255,255,0.85); margin:14px 0 0; line-height:1.6; }
+
+/* ===============================================================
+   LOGOTIPOS INSTITUCIONALES — ficha de cabecera y tarjetas de Comunidad
+   Caja siempre blanca: los logos son a color y deben leerse sobre cualquier fondo.
+   =============================================================== */
+.inst-ficha { display: flex; align-items: center; margin-bottom: 8px; }   /* márgenes en vez de gap: iOS < 14.5 */
+.inst-ficha-txt { min-width: 0; flex: 1; }
+.inst-logo {
+  flex: none; display: flex; align-items: center; justify-content: center; margin-right: 24px;
+  background: #fff; border: 1px solid var(--borde); border-radius: 12px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+.inst-logo picture { display: contents; }
+.inst-logo img { display: block; width: auto; height: auto; }
+.inst-logo--circle { width: 120px; height: 120px; padding: 8px; }
+.inst-logo--circle img { width: 102px; height: 102px; border-radius: 50%; object-fit: cover; }
+.inst-logo--wide { width: 252px; height: 96px; padding: 14px 16px; }
+.inst-logo--wide img { max-width: 220px; max-height: 64px; }
+@media (max-width: 640px) {
+  .inst-ficha { flex-direction: column; align-items: flex-start; }
+  .inst-logo { margin: 0 0 16px; }
+  .inst-logo--circle { width: 104px; height: 104px; }
+  .inst-logo--circle img { width: 88px; height: 88px; }
+  .inst-logo--wide { width: auto; max-width: 100%; height: 80px; padding: 12px 16px; }
+  .inst-logo--wide img { max-width: min(220px, 100%); max-height: 54px; }
+}
+.com-logo { height: 44px; display: flex; align-items: center; margin-bottom: 12px; }
+.com-logo picture { display: contents; }
+.com-logo img { display: block; width: auto; height: 40px; max-width: 170px; object-fit: contain; }
+.com-logo--circle img { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; }
+
 /* Texto solo para lectores de pantalla */
 .sr-only { position:absolute !important; width:1px; height:1px; margin:-1px; padding:0; border:0;
            overflow:hidden; clip:rect(0 0 0 0); clip-path:inset(50%); white-space:nowrap; }
@@ -1806,7 +1902,7 @@ body.nav-open .sticky-cta, body.nav-open .sticky-wa { opacity: 0 !important; poi
         <div class="nav-dropdown-menu">
           <button class="nav-btn" data-section="tramites">Servicios Consulares</button>
           <button class="nav-btn" data-section="citas">Citas</button>
-          <a class="nav-btn" href="https://sutramiteconsular.maec.es" target="_blank" rel="noopener noreferrer" title="Consulta del Ministerio: solo visados y pasaportes tramitados en el Consulado General en Caracas. No cubre los trámites presentados en el Viceconsulado Honorario.">Consulta MAEC (Caracas) ↗</a>
+          <a class="nav-btn" href="https://sutramiteconsular.maec.es" target="_blank" rel="noopener noreferrer" title="Disponible únicamente para trámites que dispongan de código de consulta: visados y pasaportes tramitados en el Consulado General en Caracas. No cubre los trámites presentados en el Viceconsulado Honorario.">Consultar expediente en MAEC ↗</a>
           <button class="nav-btn" data-section="descargas">Descargas</button>
         </div>
       </div>
@@ -1916,6 +2012,47 @@ body.nav-open .sticky-cta, body.nav-open .sticky-wa { opacity: 0 !important; poi
       </button>
     </div>
   </div>
+
+  <!-- ACTIVIDAD INSTITUCIONAL · Cultura y Comunidad — eventos realizados -->
+  <section class="evt-section" aria-labelledby="evt-heading">
+    <div class="com-kicker">Actividad institucional</div>
+    <h2 class="evt-heading" id="evt-heading">Cultura y Comunidad</h2>
+    <p class="evt-intro">Eventos realizados. Iniciativas culturales desarrolladas en Nueva Esparta, vinculadas a la difusión de la cultura española y al encuentro con la comunidad.</p>
+
+    <article class="evt-card" id="evt-lorca-2026">
+      <div class="evt-media">
+        <video class="evt-video" id="evt-lorca-video"
+               controls preload="none" playsinline
+               poster="images/lorca-cartel.jpg"
+               width="720" height="1280"
+               controlslist="nodownload noremoteplayback"
+               disablepictureinpicture
+               aria-label="Vídeo de La Casa de Bernarda Alba, representada en Cines Unidos La Vela el 19 de septiembre de 2026">
+          <source src="media/lorca-2026.mp4" type='video/mp4; codecs="avc1.64001F, mp4a.40.2"'>
+          <p>Su navegador no puede reproducir este vídeo. <a href="media/lorca-2026.mp4">Abrir el vídeo (3,3 MB)</a>.</p>
+        </video>
+      </div>
+      <div class="evt-body">
+        <div class="evt-label">Cultura y Comunidad · 19 de septiembre de 2026</div>
+        <h3 class="evt-title">Lorca en Margarita: <em>La Casa de Bernarda Alba</em> llevó el teatro español a Nueva Esparta</h3>
+        <p class="evt-meta">Sábado 19 de septiembre de 2026 · Cines Unidos C.C. La Vela · Porlamar, Isla de Margarita</p>
+        <p class="evt-summary">El Viceconsulado Honorario de España en Nueva Esparta acompañó la representación de <em>La Casa de Bernarda Alba</em>, de Federico García Lorca, a cargo de Spectros Teatro y Fuego Gitano con participación de artistas neoespartanos. La jornada contó con la presencia del Embajador de España en Venezuela, D. Álvaro Albacete, y del Vicecónsul Honorario de España en Nueva Esparta, D. Manuel Leiros.</p>
+        <details class="evt-details">
+          <summary>Leer la crónica completa</summary>
+          <div class="evt-cronica">
+            <p>El sábado 19 de septiembre de 2026, Cines Unidos del C.C. La Vela, en Porlamar, acogió la representación de <em>La Casa de Bernarda Alba</em>, una de las obras fundamentales de Federico García Lorca y uno de los grandes clásicos del teatro español del siglo XX.</p>
+            <p>La presentación, realizada por Spectros Teatro y Fuego Gitano con participación de artistas neoespartanos, reunió sobre el escenario tradición teatral española y talento local.</p>
+            <p>La jornada contó con la presencia del Embajador de España en Venezuela, D. Álvaro Albacete, y del Vicecónsul Honorario de España en Nueva Esparta, Manuel Leiros, quienes acompañaron a los organizadores, artistas y público asistente.</p>
+            <p>Escrita en 1936, <em>La Casa de Bernarda Alba</em> aborda temas como la autoridad, la libertad, el deseo y las convenciones sociales. Su vigencia ha permitido que continúe representándose ante públicos de distintas generaciones y contextos.</p>
+            <p>En Margarita, la obra adquirió una expresión propia gracias al trabajo de artistas de Nueva Esparta, demostrando la capacidad del teatro para tender puentes entre distintas comunidades culturales.</p>
+            <p>Para el Viceconsulado Honorario de España en Nueva Esparta, la difusión de iniciativas de esta naturaleza contribuye a acercar el patrimonio cultural español a la comunidad y a reconocer el trabajo de quienes mantienen vivo el intercambio cultural entre España y Venezuela.</p>
+            <p>La función del 19 de septiembre pasa así a formar parte de la memoria cultural de Nueva Esparta en 2026, dejando una imagen de teatro, participación local y presencia institucional española alrededor de la obra de uno de los autores más universales de nuestra literatura.</p>
+          </div>
+        </details>
+      </div>
+    </article>
+  </section>
+
   <!-- ESPAÑA · PASADO Y PRESENTE — tarjetas desde GET /api/portada (respaldo: PORTADA_FALLBACK).
        Oculta hasta que hay al menos una tarjeta vigente. -->
   <section class="pf-section" id="portada-section" aria-labelledby="pf-heading" hidden>
@@ -1951,8 +2088,8 @@ body.nav-open .sticky-cta, body.nav-open .sticky-wa { opacity: 0 !important; poi
         </p>
         <p>
           Brindamos asistencia consular en materia de documentación, registro civil, nacionalidad y
-          servicios de identificación. Todos los servicios se prestan exclusivamente con cita previa,
-          garantizando una atención de calidad y ordenada a cada ciudadano.
+          servicios de identificación. Los trámites consulares se realizan exclusivamente con cita previa.
+          Para consultas e información general, la oficina atiende de lunes a viernes de 8:00 a 12:00.
         </p>
       </div>
       <div class="bio-photo-carousel" id="bioCarousel">
@@ -1980,6 +2117,7 @@ body.nav-open .sticky-cta, body.nav-open .sticky-wa { opacity: 0 !important; poi
   <button class="back-btn" onclick="showSection('inicio')">← Volver al inicio</button>
   <h1 class="page-title">Servicios Consulares</h1>
   <p class="page-desc">Seleccione un servicio para ver los requisitos completos y los documentos necesarios para su cita.</p>
+  <p class="rev-fuente rev-fuente--cabecera">Información contrastada con el Consulado General de España en Caracas. Última revisión: septiembre de 2026.</p>
 
   <!-- Buscador + pestañas por categoría (propuesta, pantalla 3) -->
   <div class="dl-toolbar">
@@ -2012,11 +2150,11 @@ body.nav-open .sticky-cta, body.nav-open .sticky-wa { opacity: 0 !important; poi
 
         <p class="subsection-label">Primera Expedición</p>
         <ul>
-          <li>Certificación literal de nacimiento del Registro Civil español (original y fotocopia)</li>
+          <li>Certificación literal de nacimiento del Registro Civil español (original y copia)</li>
           <li>3 fotografías recientes, 32 × 26 mm, fondo blanco, de frente <em>— La cara debe ocupar el 80% de la superficie total de la foto</em></li>
-          <li>Cédula de Identidad venezolana del interesado (original y fotocopia recortada)</li>
-          <li>Cédula de Identidad de Extranjero <em>o</em> Gaceta de Naturalización del progenitor que transmite la nacionalidad española (fotocopia)</li>
-          <li>Pasaporte del progenitor español (original y fotocopia)</li>
+          <li>Cédula de Identidad venezolana del interesado (original y copia recortada)</li>
+          <li>Cédula de Identidad de Extranjero <em>o</em> Gaceta de Naturalización del progenitor que transmite la nacionalidad española (copia)</li>
+          <li>Pasaporte del progenitor español (original y copia)</li>
         </ul>
         <div class="tramite-note" style="margin-top:12px">
           El trámite debe hacerse <strong>personalmente</strong>. Los menores de edad deben venir acompañados del <strong>padre y la madre</strong>.
@@ -2028,9 +2166,9 @@ body.nav-open .sticky-cta, body.nav-open .sticky-wa { opacity: 0 !important; poi
         <ul>
           <li>Pasaporte anterior <em>(si fue robado o extraviado: denuncia policial)</em></li>
           <li><strong>3 fotografías</strong> recientes, 32 × 26 mm, fondo blanco, de frente</li>
-          <li>Cédula de identidad (original y fotocopia recortada) del solicitante. <strong>Si es menor de edad:</strong> original y fotocopia recortada de la cédula del padre y la madre</li>
-          <li>Partida literal de nacimiento (original y fotocopia)</li>
-          <li>Fotocopia de la <strong>página 2</strong> del pasaporte del progenitor español</li>
+          <li>Cédula de identidad (original y copia recortada) del solicitante. <strong>Si es menor de edad:</strong> original y copia recortada de la cédula del padre y la madre</li>
+          <li>Partida literal de nacimiento (original y copia)</li>
+          <li>Copia de la <strong>página 2</strong> del pasaporte del progenitor español</li>
           <li><strong>Menores de edad:</strong> deben acudir con padre <em>y</em> madre. Si alguno no comparece: autorización notariada (apostillada si el notario no es español)</li>
         </ul>
 
@@ -2064,19 +2202,19 @@ body.nav-open .sticky-cta, body.nav-open .sticky-wa { opacity: 0 !important; poi
           <li>Hoja declaratoria de datos para inscripción de nacimiento (firmada)</li>
           <li>Formulario de inscripción como residente y municipio electoral</li>
           <li>Acta de nacimiento venezolana apostillada (Apostilla de La Haya)</li>
-          <li>Cédula de identidad del interesado (original y <strong>copia compulsada</strong>)</li>
+          <li>Cédula de identidad del interesado (original y copia)</li>
           <li>2 fotografías 3×4 cm, fondo blanco, cara al 80%</li>
           <li><strong>Progenitor español:</strong>
             <ul style="margin-top:8px;margin-left:18px;line-height:2.0">
               <li><strong>Original</strong> de la literal (no copia).</li>
-              <li>Original y fotocopia del pasaporte español (páginas 2 y 7).</li>
-              <li>Cédula de identidad venezolana (original y fotocopia).</li>
+              <li>Original y copia del pasaporte español (páginas 2 y 7).</li>
+              <li>Cédula de identidad venezolana (original y copia).</li>
               <li>Si es naturalizado, <strong>Gaceta Oficial original</strong>.</li>
             </ul>
           </li>
           <li><strong>Progenitor extranjero:</strong>
             <ul style="margin-top:8px;margin-left:18px;line-height:2.0">
-              <li>Original y fotocopia de la cédula venezolana.</li>
+              <li>Original y copia de la cédula venezolana.</li>
               <li>Acta de nacimiento <strong>original</strong>.</li>
             </ul>
           </li>
@@ -2114,15 +2252,15 @@ body.nav-open .sticky-cta, body.nav-open .sticky-wa { opacity: 0 !important; poi
           <li><strong>Contrayente español:</strong>
             <ul>
               <li>Literal de nacimiento <strong>original</strong> (no copia)</li>
-              <li><strong>Copia compulsada del DNI</strong>, en caso de poseerlo</li>
-              <li>Pasaporte español (original y <strong>fotocopia compulsada</strong>, páginas 2 y 7)</li>
-              <li>Cédula de identidad venezolana (original y <strong>fotocopia compulsada</strong>)</li>
+              <li>DNI, en caso de poseerlo (original y copia)</li>
+              <li>Pasaporte español (original y copia, páginas 2 y 7)</li>
+              <li>Cédula de identidad venezolana (original y copia)</li>
               <li>Si es naturalizado venezolano, <strong>Gaceta Oficial</strong> o constancia de la fecha de naturalización</li>
             </ul>
           </li>
           <li><strong>Contrayente extranjero:</strong>
             <ul>
-              <li>Cédula de identidad venezolana (original y fotocopia)</li>
+              <li>Cédula de identidad venezolana (original y copia)</li>
               <li>Acta de nacimiento <strong>original</strong></li>
               <li><em>No es necesario el pasaporte venezolano.</em></li>
             </ul>
@@ -2130,7 +2268,7 @@ body.nav-open .sticky-cta, body.nav-open .sticky-wa { opacity: 0 !important; poi
           <li>Si hubo matrimonio anterior: acta de ese matrimonio y sentencia de divorcio</li>
         </ul>
         <div class="tramite-note">
-          Trámite <strong>GRATUITO</strong>. Se expide Libro de Familia. Deben acudir <strong>ambos contrayentes</strong>. La cita la obtiene el ciudadano español.
+          Trámite <strong>GRATUITO</strong>. Una vez practicada la inscripción, se expide el correspondiente <strong>certificado literal de matrimonio</strong>; la Oficina Consular no expide Libros de Familia. Deben acudir <strong>ambos contrayentes</strong>. La cita la obtiene el ciudadano español.
         </div>
         <div class="tramite-links">
           <a class="tramite-link" href="https://www.exteriores.gob.es/DocumentosAuxiliaresSC/Venezuela/CARACAS%20(C)/Hoja%20declaratoria%20inscripci%C3%B3n%20matrimonio.pdf" target="_blank" rel="noopener noreferrer">Hoja declaratoria ↗</a>
@@ -2158,7 +2296,7 @@ body.nav-open .sticky-cta, body.nav-open .sticky-wa { opacity: 0 !important; poi
           <li>Hoja declaratoria de datos para defunción</li>
           <li>Acta de defunción venezolana (original)</li>
           <li>Literal de nacimiento española <strong>solo en original</strong> (no es necesaria la copia)</li>
-          <li><strong>Copia compulsada</strong> del pasaporte y del DNI del español</li>
+          <li>Pasaporte y DNI del español (original y copia)</li>
           <li>Cédula si era venezolano o residente</li>
           <li><strong>Gaceta Oficial original</strong>, si se nacionalizó después del <strong>28-12-1978</strong></li>
           <li>Copia de la cédula del <strong>declarante</strong></li>
@@ -2189,8 +2327,8 @@ body.nav-open .sticky-cta, body.nav-open .sticky-wa { opacity: 0 !important; poi
       <div class="tramite-body"><div class="tramite-content">
         <ul>
           <li>Certificado médico no mayor a 3 meses</li>
-          <li>Pasaporte español (original y fotocopia, páginas 2, 3, 6 y 7)</li>
-          <li>Cédula de identidad (original y fotocopia)</li>
+          <li>Pasaporte español (original y copia, páginas 2, 3, 6 y 7)</li>
+          <li>Cédula de identidad (original y copia)</li>
         </ul>
         <div class="tramite-note">Requiere cita previa en el Viceconsulado.</div>
         <div style="margin-top:16px"><button class="btn btn-red btn-sm" onclick="showSection('citas')">Solicitar cita</button></div>
@@ -2258,9 +2396,12 @@ body.nav-open .sticky-cta, body.nav-open .sticky-wa { opacity: 0 !important; poi
       <ul style="font-family:'DM Sans';font-size:15px;color:#444;line-height:2.2;padding-left:20px;margin-bottom:16px">
         <li>Visados (todos los tipos: turista, estudiante, trabajo, etc.)</li>
         <li>Compulsas de documentos</li>
-        <li>Legalización y Apostilla</li>
+        <li>Legalizaciones consulares</li>
         <li>Homologaciones de títulos</li>
       </ul>
+      <div style="background:#f8f7f4;border:1px solid var(--borde);border-left:4px solid var(--dorado-oscuro);border-radius:7px;padding:14px 16px;font-family:'DM Sans';font-size:14px;color:#444;margin-bottom:16px">
+        <strong>Apostilla:</strong> la apostilla de un documento venezolano la emite la <strong>autoridad venezolana competente</strong>, no el Consulado de España. Las legalizaciones consulares que correspondan se realizan en el Consulado General en Caracas.
+      </div>
       <div style="background:#fff8f0;border:1px solid #f0c070;border-left:4px solid #d07000;border-radius:7px;padding:14px 16px;font-family:'DM Sans';font-size:14px;color:#7a4000;margin-bottom:16px">
         <strong>Poderes Notariales:</strong> la documentación inicial se tramita aquí, pero la firma debe realizarse obligatoriamente en persona en el Consulado General en Caracas.
       </div>
@@ -2356,6 +2497,7 @@ body.nav-open .sticky-cta, body.nav-open .sticky-wa { opacity: 0 !important; poi
         <option>Recuperación de nacionalidad</option>
         <option>Ley de Memoria Democrática (LMD)</option>
         <option>Cambio de censo electoral</option>
+        <option>Ayuda en los trámites</option>
         <option>Otro trámite</option>
       </select>
       <div class="req-box" id="reqBox"></div>
@@ -2378,8 +2520,6 @@ body.nav-open .sticky-cta, body.nav-open .sticky-wa { opacity: 0 !important; poi
         <button type="button" class="slot-btn" data-hora="10:30" onclick="selectSlot(this)">10:30<br><span style="font-size:11px;font-weight:400">AM</span></button>
         <button type="button" class="slot-btn" data-hora="11:00" onclick="selectSlot(this)">11:00<br><span style="font-size:11px;font-weight:400">AM</span></button>
         <button type="button" class="slot-btn" data-hora="11:30" onclick="selectSlot(this)">11:30<br><span style="font-size:11px;font-weight:400">AM</span></button>
-        <button type="button" class="slot-btn" data-hora="12:00" onclick="selectSlot(this)">12:00<br><span style="font-size:11px;font-weight:400">PM</span></button>
-        <button type="button" class="slot-btn" data-hora="12:30" onclick="selectSlot(this)">12:30<br><span style="font-size:11px;font-weight:400">PM</span></button>
       </div>
       <input type="hidden" name="hora" id="horaInput">
       <div class="form-hint">Duración: 30 min por cita · Su hora queda sujeta a confirmación</div>
@@ -2390,6 +2530,9 @@ body.nav-open .sticky-cta, body.nav-open .sticky-wa { opacity: 0 !important; poi
     </div>
     <div class="form-info">
       <strong>Antes de su cita,</strong> consulte los requisitos en la sección de Trámites. Debe traer toda la documentación el día de la cita. No se atenderá sin documentación completa.
+    </div>
+    <div class="form-info" id="form-rgpd" style="font-size:13px;line-height:1.65">
+      <strong>Protección de datos.</strong> Responsable: Viceconsulado Honorario de España en Nueva Esparta. Finalidad: gestionar su solicitud de cita y contactarle para confirmarla. Sus datos se registran en el sistema de citas del Viceconsulado y se comunican al Consulado General de España en Caracas solo cuando el trámite lo requiere. Puede ejercer sus derechos de acceso, rectificación y supresión escribiendo a <a href="mailto:ch.porlamar@maec.es">ch.porlamar@maec.es</a>. Más información en la <a href="politica-privacidad.html">política de privacidad</a>.
     </div>
     <button type="submit" class="btn btn-red" style="width:100%;justify-content:center;font-size:17px;padding:16px 26px;">Enviar solicitud de cita</button>
   </form>
@@ -2413,15 +2556,16 @@ body.nav-open .sticky-cta, body.nav-open .sticky-wa { opacity: 0 !important; poi
   </p>
 
   <div class="emg-hero">
+    <div class="emg-hero-kicker"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>Solo emergencias consulares</div>
     <h2 class="emg-hero-title">Emergencias 24 horas</h2>
-    <div class="emg-hero-sub">
-      Atendido por el Consulado General de España en Caracas.<br>
-      Para consultas y trámites que no sean urgentes, utilice el horario de atención habitual.
-    </div>
     <a class="emg-phone" href="tel:+584242090264">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 010 1.18 2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg>
       +58 424 209 0264
     </a>
+    <p class="emg-hero-note">
+      Atendido las 24 horas por el Consulado General de España en Caracas.<br>
+      Para consultas y trámites que no sean urgentes, utilice el horario de atención habitual del Viceconsulado.
+    </p>
   </div>
 
   <div class="com-kicker">Situaciones que atiende la asistencia consular</div>
@@ -2654,7 +2798,7 @@ body.nav-open .sticky-cta, body.nav-open .sticky-wa { opacity: 0 !important; poi
           <span style="display:block"><strong>Circunscripción:</strong> Estado Nueva Esparta</span>
           <span style="display:block"><strong>Vicecónsul Honorario:</strong> <span id="cfg-viceconsul-nombre">D. Manuel Leiros Pampinella</span></span>
         </div>
-        Representante del Gobierno de España en el estado Nueva Esparta. Dependiente del Consulado General de España en Caracas. Encargado de las obligaciones consulares y las relaciones institucionales en la región insular.
+        Vicecónsul Honorario de España en Nueva Esparta, bajo la dependencia y supervisión del Consulado General de España en Caracas. Encargado de las obligaciones consulares y las relaciones institucionales en la región insular.
       </div>
     </div>
   </div>
@@ -2663,8 +2807,9 @@ body.nav-open .sticky-cta, body.nav-open .sticky-wa { opacity: 0 !important; poi
   <div class="info-strip">
     <div class="info-block">
       <div class="info-block-title">Dirección</div>
-      <div>Av. José Asunción Rodríguez</div>
-      <div>Porlamar 6301, Nueva Esparta</div>
+      <div>Edif. Grupo Leiros</div>
+      <div>Av. José Asunción Rodríguez, sector Conejeros</div>
+      <div>Porlamar 6301, Estado Nueva Esparta</div>
       <div style="margin-top:16px">
         <a class="btn btn-red btn-sm" href="https://maps.app.goo.gl/d9gfnNzqo79YbMp48" target="_blank" rel="noopener noreferrer">Ver en Google Maps ↗</a>
       </div>
@@ -2726,21 +2871,25 @@ body.nav-open .sticky-cta, body.nav-open .sticky-wa { opacity: 0 !important; poi
         <div style="margin-top:8px"><a href="https://www.exteriores.gob.es/Consulados/caracas/es/Paginas/index.aspx" target="_blank" rel="noopener noreferrer">Web oficial del Consulado General ↗</a></div>
       </div>
       <div class="com-block">
+        <div class="com-logo com-logo--wide" aria-hidden="true"><img src="images/logos/consejeria.svg" width="225" height="71" alt="" loading="lazy" decoding="async"></div>
         <div class="info-block-title">Consejería de Trabajo, Migraciones y Seguridad Social</div>
         <div>Atención en empleo, pensiones, Seguridad Social, ayudas asistenciales y programas para los españoles residentes en Venezuela.</div>
         <div style="margin-top:8px"><a href="#" onclick="showSection('consejeria');return false;">Ver Consejería →</a></div>
       </div>
       <div class="com-block">
+        <div class="com-logo com-logo--circle" aria-hidden="true"><picture><source srcset="images/logos/cre.webp" type="image/webp"><img src="images/logos/cre.jpg" width="320" height="320" alt="" loading="lazy" decoding="async"></picture></div>
         <div class="info-block-title">Consejo de Residentes Españoles (CRE)</div>
         <div>Órgano consultivo y representativo de la comunidad española residente, que colabora con el Consulado General para trasladar sus necesidades e inquietudes.</div>
         <div style="margin-top:8px"><a href="#" onclick="showSection('cre');return false;">Ver CRE →</a></div>
       </div>
       <div class="com-block">
+        <div class="com-logo com-logo--wide" aria-hidden="true"><picture><source srcset="images/logos/cavespa.webp" type="image/webp"><img src="images/logos/cavespa.png" width="614" height="163" alt="" loading="lazy" decoding="async"></picture></div>
         <div class="info-block-title">Cámara Venezolano-Española de Industria y Comercio (CAVESPA)</div>
         <div>Promueve las relaciones económicas, empresariales y comerciales entre España y Venezuela, fortaleciendo la cooperación entre empresas e instituciones de ambos países.</div>
         <div style="margin-top:8px"><a href="#" onclick="showSection('cavespa');return false;">Ver CAVESPA →</a></div>
       </div>
       <div class="com-block">
+        <div class="com-logo com-logo--wide" aria-hidden="true"><picture><source srcset="images/logos/feceve.webp" type="image/webp"><img src="images/logos/feceve.png" width="600" height="166" alt="" loading="lazy" decoding="async"></picture></div>
         <div class="info-block-title">Federación de Centros Españoles de Venezuela (FECEVE)</div>
         <div>Federación que agrupa a los centros, hermandades y asociaciones españolas del país y promueve su cooperación cultural, social y asistencial.</div>
         <div style="margin-top:8px"><a href="#" onclick="showSection('feceve');return false;">Ver FECEVE →</a></div>
@@ -3324,6 +3473,7 @@ body.nav-open .sticky-cta, body.nav-open .sticky-wa { opacity: 0 !important; poi
 
   <div class="com-grid">
     <div class="com-block">
+      <div class="com-logo com-logo--circle" aria-hidden="true"><picture><source srcset="images/logos/cre.webp" type="image/webp"><img src="images/logos/cre.jpg" width="320" height="320" alt="" loading="lazy" decoding="async"></picture></div>
       <div class="info-block-title">Representación de residentes</div>
       <div style="font-family:'Libre Baskerville',Georgia,serif;font-size:18px;color:var(--texto);margin:6px 0 8px">Consejo de Residentes Españoles (CRE)</div>
       <div>Órgano consultivo y representativo de la comunidad española residente, que colabora con el Consulado General para trasladar sus necesidades e inquietudes.</div>
@@ -3331,6 +3481,7 @@ body.nav-open .sticky-cta, body.nav-open .sticky-wa { opacity: 0 !important; poi
     </div>
 
     <div class="com-block">
+      <div class="com-logo com-logo--wide" aria-hidden="true"><img src="images/logos/consejeria.svg" width="225" height="71" alt="" loading="lazy" decoding="async"></div>
       <div class="info-block-title">Organismo de la Embajada</div>
       <div style="font-family:'Libre Baskerville',Georgia,serif;font-size:18px;color:var(--texto);margin:6px 0 8px">Consejería de Trabajo, Migraciones y Seguridad Social</div>
       <div>Atención en empleo, pensiones, Seguridad Social, ayudas asistenciales y programas para los españoles residentes en Venezuela.</div>
@@ -3338,6 +3489,7 @@ body.nav-open .sticky-cta, body.nav-open .sticky-wa { opacity: 0 !important; poi
     </div>
 
     <div class="com-block">
+      <div class="com-logo com-logo--wide" aria-hidden="true"><picture><source srcset="images/logos/cavespa.webp" type="image/webp"><img src="images/logos/cavespa.png" width="614" height="163" alt="" loading="lazy" decoding="async"></picture></div>
       <div class="info-block-title">Comercio e industria</div>
       <div style="font-family:'Libre Baskerville',Georgia,serif;font-size:18px;color:var(--texto);margin:6px 0 8px">Cámara Venezolano-Española de Industria y Comercio (CAVESPA)</div>
       <div>Promueve las relaciones económicas, empresariales y comerciales entre España y Venezuela, fortaleciendo la cooperación entre empresas e instituciones de ambos países.</div>
@@ -3345,6 +3497,7 @@ body.nav-open .sticky-cta, body.nav-open .sticky-wa { opacity: 0 !important; poi
     </div>
 
     <div class="com-block">
+      <div class="com-logo com-logo--wide" aria-hidden="true"><picture><source srcset="images/logos/feceve.webp" type="image/webp"><img src="images/logos/feceve.png" width="600" height="166" alt="" loading="lazy" decoding="async"></picture></div>
       <div class="info-block-title">Red de centros españoles</div>
       <div style="font-family:'Libre Baskerville',Georgia,serif;font-size:18px;color:var(--texto);margin:6px 0 8px">Federación de Centros Españoles de Venezuela (FECEVE)</div>
       <div>Reúne a los centros, hermandades, clubes y asociaciones españolas del país, y promueve la cultura, la acción social y la cooperación entre sus instituciones.</div>
@@ -3361,8 +3514,13 @@ body.nav-open .sticky-cta, body.nav-open .sticky-wa { opacity: 0 !important; poi
 <!-- ==================== CRE ==================== -->
 <div id="sec-cre" class="section">
   <button class="back-btn" onclick="showSection('comunidad')">← Volver a Comunidad Española</button>
-  <div class="com-kicker">Comunidad · Representación de residentes</div>
-  <h1 class="page-title com-title">Consejo de Residentes Españoles (CRE)</h1>
+  <div class="inst-ficha">
+    <div class="inst-logo inst-logo--circle"><picture><source srcset="images/logos/cre.webp" type="image/webp"><img src="images/logos/cre.jpg" width="320" height="320" alt="Logotipo del Consejo de Residentes Españoles (CRE)" loading="lazy" decoding="async"></picture></div>
+    <div class="inst-ficha-txt">
+      <div class="com-kicker">Comunidad · Representación de residentes</div>
+      <h1 class="page-title com-title">Consejo de Residentes Españoles (CRE)</h1>
+    </div>
+  </div>
   <p class="com-intro">
     El Consejo de Residentes Españoles (CRE) es el órgano oficial de representación, consulta y
     participación de los ciudadanos españoles residentes en el exterior. Está adscrito al Consulado
@@ -3448,8 +3606,13 @@ body.nav-open .sticky-cta, body.nav-open .sticky-wa { opacity: 0 !important; poi
 <!-- ==================== CAVESPA ==================== -->
 <div id="sec-cavespa" class="section">
   <button class="back-btn" onclick="showSection('comunidad')">← Volver a Comunidad Española</button>
-  <div class="com-kicker">Comunidad · Comercio e industria</div>
-  <h1 class="page-title com-title">CAVESPA</h1>
+  <div class="inst-ficha">
+    <div class="inst-logo inst-logo--wide"><picture><source srcset="images/logos/cavespa.webp" type="image/webp"><img src="images/logos/cavespa.png" width="614" height="163" alt="Logotipo de la Cámara Venezolano-Española de Industria y Comercio (CAVESPA)" loading="lazy" decoding="async"></picture></div>
+    <div class="inst-ficha-txt">
+      <div class="com-kicker">Comunidad · Comercio e industria</div>
+      <h1 class="page-title com-title">CAVESPA</h1>
+    </div>
+  </div>
   <p class="com-intro">
     La Cámara Venezolano-Española de Industria y Comercio (CAVESPA) es una institución empresarial
     binacional cuya misión es fortalecer las relaciones económicas y comerciales entre España y
@@ -3535,8 +3698,13 @@ body.nav-open .sticky-cta, body.nav-open .sticky-wa { opacity: 0 !important; poi
 <!-- ==================== FECEVE ==================== -->
 <div id="sec-feceve" class="section">
   <button class="back-btn" onclick="showSection('comunidad')">← Volver a Comunidad Española</button>
-  <div class="com-kicker">Comunidad · Red de centros españoles</div>
-  <h1 class="page-title com-title">FECEVE</h1>
+  <div class="inst-ficha">
+    <div class="inst-logo inst-logo--wide"><picture><source srcset="images/logos/feceve.webp" type="image/webp"><img src="images/logos/feceve.png" width="600" height="166" alt="Logotipo de la Federación de Centros Españoles de Venezuela (FECEVE)" loading="lazy" decoding="async"></picture></div>
+    <div class="inst-ficha-txt">
+      <div class="com-kicker">Comunidad · Red de centros españoles</div>
+      <h1 class="page-title com-title">FECEVE</h1>
+    </div>
+  </div>
   <p class="com-intro">
     La Federación de Centros Españoles de Venezuela (FECEVE) reúne a centros, hermandades, clubes y
     asociaciones españolas presentes en distintas regiones del país. Desde su fundación, el 25 de
@@ -3802,8 +3970,13 @@ body.nav-open .sticky-cta, body.nav-open .sticky-wa { opacity: 0 !important; poi
 <!-- ==================== CONSEJERÍA LABORAL ==================== -->
 <div id="sec-consejeria" class="section">
   <button class="back-btn" onclick="showSection('comunidad')">← Volver a Comunidad Española</button>
-  <div class="com-kicker">Comunidad · Organismo de la Embajada</div>
-  <h1 class="page-title com-title">Consejería de Trabajo, Migraciones y Seguridad Social</h1>
+  <div class="inst-ficha">
+    <div class="inst-logo inst-logo--wide"><img src="images/logos/consejeria.svg" width="225" height="71" alt="Logotipo de la Consejería de Trabajo, Migraciones y Seguridad Social (Gobierno de España, Ministerio de Trabajo y Economía Social)" loading="lazy" decoding="async"></div>
+    <div class="inst-ficha-txt">
+      <div class="com-kicker">Comunidad · Organismo de la Embajada</div>
+      <h1 class="page-title com-title">Consejería de Trabajo, Migraciones y Seguridad Social</h1>
+    </div>
+  </div>
   <p class="com-intro">
     La Consejería de Trabajo, Migraciones y Seguridad Social de la Embajada de España en Venezuela
     es la unidad administrativa especializada del Gobierno de España encargada de las políticas de
@@ -3968,7 +4141,7 @@ body.nav-open .sticky-cta, body.nav-open .sticky-wa { opacity: 0 !important; poi
         <span class="faq-arrow">▼</span>
       </div>
       <div class="faq-a"><div class="faq-a-inner">
-        <strong>No se puede consultar el estado del trámite.</strong> Una vez que el expediente sale hacia el <strong>Consulado General en Caracas</strong>, no hay consulta en línea disponible para los trámites presentados en un consulado honorario. Cuando el Consulado General nos remite el trámite resuelto, el <strong>encargado del Viceconsulado le avisa por correo electrónico</strong> para que acuda a retirar su documento. Por eso es importante que el correo que indique en la cita sea correcto y esté activo.
+        <strong>Solo para los trámites que disponen de código de consulta.</strong> El <strong>Consulado General en Caracas</strong> entrega, al completar determinadas solicitudes como la de pasaporte, un resguardo con un código que permite seguir el expediente en el portal <em>Su Trámite Consular</em> del Ministerio. Para los demás expedientes presentados en un consulado honorario no hay consulta en línea disponible. Cuando el Consulado General nos remite el trámite resuelto, el <strong>encargado del Viceconsulado le avisa por correo electrónico</strong> para que acuda a retirar su documento. Por eso es importante que el correo que indique en la cita sea correcto y esté activo.
       </div></div>
     </div>
 
@@ -3978,7 +4151,7 @@ body.nav-open .sticky-cta, body.nav-open .sticky-wa { opacity: 0 !important; poi
         <span class="faq-arrow">▼</span>
       </div>
       <div class="faq-a"><div class="faq-a-inner">
-        El <strong>Viceconsulado Honorario de Nueva Esparta</strong> es una representación auxiliar del Consulado General, con jurisdicción en el Estado Nueva Esparta (Margarita, Coche, Cubagua). Atendemos los trámites más comunes para residentes en estas islas. El <strong>Consulado General en Caracas</strong> tiene competencia sobre toda Venezuela y ofrece todos los servicios, incluidos visados, apostillas y trámites que no podemos gestionar aquí.
+        El <strong>Viceconsulado Honorario de Nueva Esparta</strong> es una representación auxiliar del Consulado General, con jurisdicción en el Estado Nueva Esparta (Margarita, Coche, Cubagua). Atendemos los trámites más comunes para residentes en estas islas. El <strong>Consulado General en Caracas</strong> tiene competencia sobre toda Venezuela y ofrece todos los servicios, incluidos visados, legalizaciones y los trámites que no podemos gestionar aquí.
       </div></div>
     </div>
 
@@ -4135,9 +4308,9 @@ body.nav-open .sticky-cta, body.nav-open .sticky-wa { opacity: 0 !important; poi
               <tr><td>TIE</td><td>Tarjeta física de identidad de extranjero</td></tr>
               <tr><td>Pasaporte en vigor</td><td>Pasaporte vigente</td></tr>
               <tr><td>Documento caducado</td><td>Documento vencido</td></tr>
-              <tr><td>Fotocopia compulsada</td><td>Copia revisada oficialmente frente al original</td></tr>
+              <tr><td>Copia compulsada</td><td>Copia cotejada con el original por un funcionario consular de carrera. No se realiza en el Viceconsulado Honorario; para los expedientes de Registro Civil basta presentar original y copia</td></tr>
               <tr><td>Copia auténtica</td><td>Copia con validez oficial</td></tr>
-              <tr><td>Original y copia</td><td>Documento original acompañado de una fotocopia</td></tr>
+              <tr><td>Original y copia</td><td>Documento original acompañado de una copia</td></tr>
               <tr><td>Justificante</td><td>Comprobante</td></tr>
               <tr><td>Resguardo</td><td>Constancia de haber presentado o pagado algo</td></tr>
               <tr><td>Certificado</td><td>Documento oficial que confirma un hecho</td></tr>
@@ -4185,7 +4358,7 @@ body.nav-open .sticky-cta, body.nav-open .sticky-wa { opacity: 0 !important; poi
               <tr><td>Sentencia firme de divorcio</td><td>Decisión definitiva de un tribunal</td></tr>
               <tr><td>Defunción</td><td>Fallecimiento</td></tr>
               <tr><td>Certificado de defunción</td><td>Documento que acredita el fallecimiento</td></tr>
-              <tr><td>Libro de Familia</td><td>Documento familiar tradicional español, hoy sustituido en muchos trámites por registros digitales</td></tr>
+              <tr><td>Libro de Familia</td><td>Documento familiar tradicional español. La Oficina Consular ya no lo expide: en su lugar se emiten certificados literales de nacimiento o de matrimonio</td></tr>
               <tr><td>Filiación</td><td>Relación legal entre una persona y sus padres</td></tr>
               <tr><td>Reconocimiento de filiación</td><td>Declaración legal de maternidad o paternidad</td></tr>
               <tr><td>Cambio de nombre</td><td>Modificación oficial del nombre</td></tr>
@@ -4331,8 +4504,9 @@ body.nav-open .sticky-cta, body.nav-open .sticky-wa { opacity: 0 !important; poi
       </div>
       <div class="footer-col">
         <div class="footer-col-title">Ubicación</div>
-        <div>Av. José Asunción Rodríguez</div>
-        <div>Porlamar 6301, Nueva Esparta</div>
+        <div>Edif. Grupo Leiros</div>
+        <div>Av. José Asunción Rodríguez, sector Conejeros</div>
+        <div>Porlamar 6301, Estado Nueva Esparta</div>
         <div style="margin-top:8px"><strong style="color:#ccc">Vicecónsul Honorario:</strong></div>
         <div id="cfg-viceconsul">D. Manuel Leiros</div>
         <div style="margin-top:8px"><strong style="color:#ccc">Circunscripción:</strong></div>
@@ -4385,7 +4559,7 @@ body.nav-open .sticky-cta, body.nav-open .sticky-wa { opacity: 0 !important; poi
         <a href="#" onclick="showSection('inicio');return false;">Inicio</a>
         <a href="#" onclick="showSection('tramites');return false;">Servicios Consulares</a>
         <a href="#" onclick="showSection('citas');return false;">Citas</a>
-        <a href="https://sutramiteconsular.maec.es" target="_blank" rel="noopener noreferrer" title="Solo visados y pasaportes tramitados en el Consulado General en Caracas. No cubre los trámites presentados en el Viceconsulado Honorario.">Consulta MAEC — visados y pasaportes (Caracas) ↗</a>
+        <a href="https://sutramiteconsular.maec.es" target="_blank" rel="noopener noreferrer" title="Disponible únicamente para trámites que dispongan de código de consulta: visados y pasaportes tramitados en el Consulado General en Caracas. No cubre los trámites presentados en el Viceconsulado Honorario.">Consultar expediente en MAEC ↗</a>
         <a href="#" onclick="showSection('descargas');return false;">Centro de Descargas</a>
         <a href="#" onclick="showSection('emergencias');return false;">Emergencias 24 h</a>
         <a href="#" onclick="showSection('faq');return false;">Preguntas Frecuentes</a>
@@ -4682,11 +4856,10 @@ var API_URL = window.location.hostname === 'localhost' || window.location.hostna
 // Clases de estilo por índice (rota entre los 3 estilos disponibles)
 var SLIDE_CLASSES = ['slide-jornada', 'slide-aviso', 'slide-info'];
 
-// Banners de respaldo si la API no responde (sincronizados con la BD)
+// Banners de respaldo si la API no responde. SOLO avisos sin fecha: cualquier aviso
+// fechado (jornadas, cierres) se publica y se retira desde el panel, nunca desde aquí.
 var BANNERS_FALLBACK = [
-  { titulo: 'Próxima Jornada de Pasaportes', cuerpo: 'El 21 de julio de 2026 se realizará una Jornada Especial de Toma de Huellas, Pasaportes primera vez o renovación, en el Viceconsulado Honorario de España. Se aceptan solicitudes hasta el 3 de julio de 2026. Reserve su cita con anticipación.' },
-  { titulo: 'Aviso — Información General y Cita Previa', cuerpo: 'La oficina está abierta de 8:00 a 12:00, lunes a viernes, para consultas e información general. Los servicios consulares requieren cita previa obligatoria.' },
-  { titulo: 'Cierre por Festividad Nacional — 19 de Abril', cuerpo: 'El Viceconsulado permanecerá cerrado el 19 de abril por festividad nacional (Día de la Declaración de Independencia). Las citas de esa fecha serán reagendadas.' },
+  { titulo: 'Información general y cita previa', cuerpo: 'La oficina atiende de lunes a viernes de 8:00 a 12:00 para consultas e información general. Los trámites consulares se realizan exclusivamente con cita previa.' },
 ];
 
 function renderCarousel(banners) {
@@ -4698,8 +4871,8 @@ function renderCarousel(banners) {
     var cls   = SLIDE_CLASSES[i % SLIDE_CLASSES.length];
     var slide = document.createElement('div');
     slide.className = 'carousel-slide ' + cls;
-    // Texto del panel: siempre con textContent, nunca como HTML (XSS)
-    [['slide-label', b.categoria], ['slide-title', b.titulo], ['slide-body', b.cuerpo]].forEach(function (p) {
+    // Texto del panel: siempre con textContent, nunca innerHTML (vector XSS).
+    [['slide-label', b.categoria], ['slide-title', b.titulo], ['slide-body', b.cuerpo]].forEach(function(p) {
       if (p[0] === 'slide-label' && !p[1]) return;
       var d = document.createElement('div');
       d.className = p[0];
@@ -4988,35 +5161,35 @@ function resetSlots() {
 // ============================================
 var _tramiteReq = {
   'Pasaporte — Solicitud inicial': {
-    docs: ['Certificación literal de nacimiento del Registro Civil español (original)', '3 fotografías 32×26 mm, fondo blanco, de frente', 'Cédula venezolana del interesado (original y fotocopia)', 'Pasaporte del progenitor español (original y fotocopia)'],
+    docs: ['Certificación literal de nacimiento del Registro Civil español (original)', '3 fotografías 32×26 mm, fondo blanco, de frente', 'Cédula venezolana del interesado (original y copia)', 'Pasaporte del progenitor español (original y copia)'],
     nota: 'Mayores de 12 años: toma de huellas en Caracas o durante operativo especial en Margarita.', tasa: true, caracas: false
   },
   'Pasaporte — Renovación': {
-    docs: ['Pasaporte anterior (o denuncia policial si fue robado/extraviado)', '3 fotografías 32×26 mm, fondo blanco, de frente', 'Cédula venezolana del titular, padre y madre (original y fotocopia de cada uno)', 'Partida literal de nacimiento'],
+    docs: ['Pasaporte anterior (o denuncia policial si fue robado/extraviado)', '3 fotografías 32×26 mm, fondo blanco, de frente', 'Cédula venezolana del titular, padre y madre (original y copia de cada uno)', 'Partida literal de nacimiento'],
     nota: 'Renovable cuando quede menos de 1 año de vigencia. Trámite personal obligatorio.', tasa: true, caracas: false
   },
   'Pasaporte — Menores de 12 años': {
-    docs: ['Pasaporte anterior o certificado de nacimiento español', '3 fotografías 32×26 mm, fondo blanco, de frente', 'Cédula venezolana del menor y fotocopia de ambos progenitores', 'Deben comparecer padre y madre (o autorización notariada del ausente)'],
+    docs: ['Pasaporte anterior o certificado de nacimiento español', '3 fotografías 32×26 mm, fondo blanco, de frente', 'Cédula venezolana del menor y copia de ambos progenitores', 'Deben comparecer padre y madre (o autorización notariada del ausente)'],
     nota: 'Sin toma de huellas para menores de 12 años.', tasa: true, caracas: false
   },
   'Inscripción de Nacimiento': {
-    docs: ['Acta de nacimiento venezolana apostillada (La Haya)', 'Hoja declaratoria de inscripción de nacimiento (firmada)', 'Cédula del interesado (original y copia compulsada)', '2 fotografías 3×4 cm, fondo blanco', 'Progenitor español: original de la literal (no copia); si es naturalizado, Gaceta Oficial original', 'Progenitor extranjero: acta de nacimiento original'],
+    docs: ['Acta de nacimiento venezolana apostillada (La Haya)', 'Hoja declaratoria de inscripción de nacimiento (firmada)', 'Cédula del interesado (original y copia)', '2 fotografías 3×4 cm, fondo blanco', 'Progenitor español: original de la literal (no copia); si es naturalizado, Gaceta Oficial original', 'Progenitor extranjero: acta de nacimiento original'],
     nota: 'Trámite GRATUITO. Debe acudir el interesado personalmente. Una vez revisado el expediente en Caracas pueden solicitarse otros documentos.', tasa: false, caracas: false
   },
   'Inscripción de Matrimonio': {
-    docs: ['Acta de matrimonio venezolana apostillada', 'Hoja declaratoria para matrimonio', 'Contrayente español: literal de nacimiento original (no copia) y copia compulsada del DNI, en caso de poseerlo', 'Contrayente extranjero: acta de nacimiento original'],
+    docs: ['Acta de matrimonio venezolana apostillada', 'Hoja declaratoria para matrimonio', 'Contrayente español: literal de nacimiento original (no copia) y DNI, en caso de poseerlo (original y copia)', 'Contrayente extranjero: acta de nacimiento original'],
     nota: 'GRATUITO. Deben acudir ambos contrayentes. No es necesario el pasaporte venezolano del contrayente extranjero.', tasa: false, caracas: false
   },
   'Inscripción de Defunción': {
-    docs: ['Acta de defunción venezolana (original)', 'Hoja declaratoria de defunción', 'Literal de nacimiento española del difunto, solo en original', 'Copia compulsada del pasaporte y del DNI del español', 'Gaceta Oficial original, si se nacionalizó después del 28-12-1978', 'Copia de la cédula del declarante'],
+    docs: ['Acta de defunción venezolana (original)', 'Hoja declaratoria de defunción', 'Literal de nacimiento española del difunto, solo en original', 'Pasaporte y DNI del español (original y copia)', 'Gaceta Oficial original, si se nacionalizó después del 28-12-1978', 'Copia de la cédula del declarante'],
     nota: 'Debe ser gestionado por un familiar directo.', tasa: false, caracas: false
   },
   'Fe de Vida': {
-    docs: ['Certificado médico no mayor a 3 meses', 'Pasaporte español (original y fotocopia, páginas 2, 3, 6 y 7)', 'Cédula de identidad (original y fotocopia)'],
+    docs: ['Certificado médico no mayor a 3 meses', 'Pasaporte español (original y copia, páginas 2, 3, 6 y 7)', 'Cédula de identidad (original y copia)'],
     nota: '', tasa: false, caracas: false
   },
   'Alta Consular': {
-    docs: ['Pasaporte español vigente (original y fotocopia)', 'Cédula venezolana (original y fotocopia)', 'Formulario de solicitud de inscripción como residente (descargable en la web)'],
+    docs: ['Pasaporte español vigente (original y copia)', 'Cédula venezolana (original y copia)', 'Formulario de solicitud de inscripción como residente (descargable en la web)'],
     nota: 'GRATUITO. Permite inscribirse en el Registro de Matrícula Consular del Estado Nueva Esparta.', tasa: false, caracas: false
   },
   'Baja Consular': {
@@ -5024,11 +5197,11 @@ var _tramiteReq = {
     nota: 'GRATUITO. Solicitar con al menos 1 mes de anticipación al traslado.', tasa: false, caracas: false
   },
   'Certificado de Residencia': {
-    docs: ['Fotocopia del pasaporte español (páginas 2 y 7)', 'Fotocopia de la cédula venezolana'],
+    docs: ['Copia del pasaporte español (páginas 2 y 7)', 'Copia de la cédula venezolana'],
     nota: '', tasa: false, caracas: false
   },
   'Certificado de No Residente': {
-    docs: ['Pasaporte vigente (original y fotocopia completa)', 'Carta de solicitud dirigida al Viceconsulado', 'Formulario EX-15 (disponible en la oficina)', 'Pago de tasas — Modelo 790 Código 012'],
+    docs: ['Pasaporte vigente (original y copia completa)', 'Carta de solicitud dirigida al Viceconsulado', 'Formulario EX-15 (disponible en la oficina)', 'Pago de tasas — Modelo 790 Código 012'],
     nota: 'La solicitud se gestiona en este Viceconsulado. Consulte disponibilidad y tasas vigentes.', tasa: true, caracas: false
   },
   'Certificado de Antecedentes Penales': {
@@ -5048,7 +5221,7 @@ var _tramiteReq = {
     nota: 'Para ciudadanos no españoles con interés legítimo en España.', tasa: false, caracas: false
   },
   'Conservación de Nacionalidad': {
-    docs: ['Copia de la literal de nacimiento española', 'Original y fotocopia del pasaporte español (páginas 2 y 7)', 'Original y fotocopia de la cédula venezolana (recortada)', '1 fotografía reciente 3×4 cm, fondo blanco'],
+    docs: ['Copia de la literal de nacimiento española', 'Original y copia del pasaporte español (páginas 2 y 7)', 'Original y copia de la cédula venezolana (recortada)', '1 fotografía reciente 3×4 cm, fondo blanco'],
     nota: 'GRATUITO. Consúltenos por WhatsApp para más información.', tasa: false, caracas: false
   },
   'Recuperación de Nacionalidad': {
@@ -5058,6 +5231,10 @@ var _tramiteReq = {
   'Otro (especificar en observaciones)': {
     docs: [],
     nota: 'Por favor detalle el trámite en las observaciones. Le contactaremos para informarle sobre los requisitos.', tasa: false, caracas: false
+  },
+  'Ayuda en los trámites': {
+    docs: ['Documento de identidad del interesado', 'La documentación que ya tenga del trámite, aunque esté incompleta'],
+    nota: 'Cita de orientación: le explicamos qué documentos hacen falta, cómo se rellenan los formularios y dónde se presenta cada cosa. Indique en las observaciones sobre qué trámite necesita ayuda. No sustituye a la cita del trámite en sí.', tasa: false, caracas: false
   }
 };
 
@@ -5163,7 +5340,7 @@ function toggleFaq(btn) {
       
       var hint = document.getElementById('cfg-citas-hint');
       if (hint && cfg.horario_citas) {
-        hint.innerHTML = 'Horario de citas: ' + cfg.horario_citas;
+        hint.textContent = 'Horario de citas: ' + cfg.horario_citas;
       }
 
       // Actualizar número de WhatsApp global si es necesario
@@ -5220,6 +5397,25 @@ function toggleFaq(btn) {
       else if (ready) setTimeout(function(){ ScrollTrigger.refresh(); }, 80);
     };
   }
+})();
+</script>
+
+
+
+<!-- ====== Fuente oficial y última revisión al pie de cada ficha de trámite ====== -->
+<script>
+(function () {
+  var TEXTO = 'Información contrastada con el Consulado General de España en Caracas. ' +
+              'Última revisión: septiembre de 2026. La Oficina Consular podrá requerir ' +
+              'documentación adicional durante la revisión del expediente.';
+  // Solo las fichas de Servicios Consulares: .tramite-item se reutiliza en Conoce y Glosario.
+  var fichas = document.querySelectorAll('#tramitesList .tramite-content');
+  Array.prototype.forEach.call(fichas, function (c) {
+    var p = document.createElement('p');
+    p.className = 'rev-fuente';
+    p.textContent = TEXTO;
+    c.appendChild(p);
+  });
 })();
 </script>
 
@@ -5341,7 +5537,7 @@ var PORTADA_FALLBACK = [
     texto: 'Cines Unidos La Vela acogió la obra de Lorca, con artistas neoespartanos y la presencia del Embajador de España y del Vicecónsul Honorario.',
     imagen: { url: 'images/portada/lorca-cartel-800.webp', urlJpg: 'images/portada/lorca-cartel-800.jpg',
               alt: 'Cartel de La Casa de Bernarda Alba, Cines Unidos La Vela, Porlamar, 19 de septiembre de 2026' },
-    enlace: { texto: 'Ver la crónica', url: '#comunidad' },
+    enlace: { texto: 'Ver la crónica', url: '#evt-lorca-2026' },
     desde: '2026-09-25', hasta: '2026-10-31', prioridad: 6, orden: 13 }
 ];
 
@@ -5468,7 +5664,7 @@ var PORTADA_FALLBACK = [
   }
 
   // Anclas internas: "#emergencias" -> showSection('emergencias');
-  // "#comunidad" -> se queda en su sección y baja hasta el elemento.
+  // "#evt-lorca-2026" -> se queda en su sección y baja hasta el elemento.
   function destinoAncla(hash) {
     var id = hash.slice(1).replace(/^sec-/, '');
     if (document.getElementById('sec-' + id)) return { seccion: id };
@@ -6033,13 +6229,7 @@ var PORTADA_FALLBACK = [
   }
   function usarRespaldo() { montarUnaVez(PORTADA_FALLBACK); }
 
-  // Retirado de la web oficial (2026-09-28) hasta que el consulado dé el visto bueno:
-  // el carrusel solo se ve en la copia de revisión (repo cambios). Para publicarlo,
-  // cambiar PORTADA_EN_OFICIAL a true.
-  var PORTADA_EN_OFICIAL = false;
-  if (!PORTADA_EN_OFICIAL) {
-    portadaMontada = true;
-  } else if (FECHA_FORZADA) {
+  if (FECHA_FORZADA) {
     usarRespaldo();
   } else {
     pedir('/api/portada').then(function (d) {
@@ -6054,11 +6244,20 @@ var PORTADA_FALLBACK = [
   // 3 · Al cambiar de sección: pausar el vídeo del destacado.
   //     Se envuelve showSection igual que los demás envoltorios del archivo.
   // =================================================================
+  // Vídeo de LORCA en "Cultura y Comunidad": crece al reproducir y vuelve al acabar
+  var evtVideo = document.getElementById('evt-lorca-video');
+  var evtCard = evtVideo && evtVideo.closest ? evtVideo.closest('.evt-card') : null;
+  function pausarEvento() { if (evtVideo && !evtVideo.paused) evtVideo.pause(); }
+  if (evtVideo && evtCard) {
+    evtVideo.addEventListener('play',  function () { evtCard.classList.add('is-playing'); });
+    evtVideo.addEventListener('ended', function () { evtCard.classList.remove('is-playing'); });
+    document.addEventListener('visibilitychange', function () { if (document.hidden) pausarEvento(); });
+  }
 
   var _show = window.showSection;
   if (typeof _show === 'function') {
     window.showSection = function (id) {
-      if (id !== 'inicio') { pausarDestacado(); }
+      if (id !== 'inicio') { pausarDestacado(); pausarEvento(); }
       return _show.apply(this, arguments);
     };
   }
