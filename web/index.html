@@ -1663,6 +1663,37 @@ body.nav-open .sticky-cta, body.nav-open .sticky-wa { opacity: 0 !important; poi
 }
 .pf-link:hover { border-bottom-color: currentColor; }
 .pf-link:focus-visible { outline: 2px solid var(--dorado-oscuro); outline-offset: 3px; border-radius: 2px; }
+.pf-link--btn { background: none; border-top: 0; border-left: 0; border-right: 0; padding: 0; cursor: pointer; text-align: left; }
+
+/* Crónica de una tarjeta: ventana emergente */
+html.crn-abierta { overflow: hidden; }
+.crn-dialog { border: 0; padding: 0; background: transparent; margin: auto; max-width: min(680px, 94vw); width: 100%; max-height: 90vh; overflow: visible; }
+div.crn-dialog { position: fixed; inset: 0; z-index: 10000; max-width: none; max-height: none; display: flex; align-items: center; justify-content: center; background: rgba(10,10,10,0.72); }
+.crn-dialog::backdrop { background: rgba(10,10,10,0.72); }
+.crn-caja {
+  position: relative; background: #fff; border-radius: 12px; box-shadow: 0 24px 64px rgba(0,0,0,0.35);
+  max-height: 90vh; overflow-y: auto; overscroll-behavior: contain; width: 100%; max-width: min(680px, 94vw);
+  border-top: 4px solid var(--rojo);
+}
+.crn-foto { display: block; width: 100%; height: 42vh; object-fit: contain; background: #f3f1ec; }
+.crn-cuerpo { padding: 26px 30px 30px; }
+.crn-cat { font-family:'DM Sans',sans-serif; font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--rojo); margin:0 0 8px; }
+.crn-fecha { color: var(--gris); font-weight: 500; margin-left: 10px; }
+.crn-titulo { font-family:'Libre Baskerville',Georgia,serif; font-size:24px; line-height:1.3; color:var(--texto); margin:0 0 16px; }
+.crn-p { font-family:'DM Sans',sans-serif; font-size:15.5px; line-height:1.75; color:#444; margin:0 0 14px; }
+.crn-p:last-child { margin-bottom: 0; }
+.crn-cerrar {
+  position: sticky; top: 10px; float: right; margin: 10px 10px -46px 0; z-index: 1;
+  width: 38px; height: 38px; border-radius: 50%; border: 0; cursor: pointer;
+  font-size: 16px; line-height: 1; color: #fff; background: rgba(20,20,20,0.62);
+}
+.crn-cerrar:hover { background: rgba(20,20,20,0.82); }
+.crn-cerrar:focus-visible { outline: 3px solid var(--dorado); outline-offset: 2px; }
+@media (max-width: 768px) {
+  .crn-cuerpo { padding: 20px 18px 24px; }
+  .crn-titulo { font-size: 20px; }
+  .crn-p { font-size: 15px; }
+}
 
 /* Tarjeta institucional (sin foto): rojo profundo con banda gualda */
 .pf-card--inst { background: linear-gradient(155deg, var(--marca) 0%, var(--marca-oscuro) 52%, var(--hero-b) 100%); }
@@ -5342,6 +5373,9 @@ function toggleFaq(btn) {
    Se filtran por desde/hasta (inclusivos, hora de Venezuela) en el navegador
    y se ordenan por prioridad y luego por orden.
    Vista previa de otra fecha: ?portada_fecha=AAAA-MM-DD (usa este respaldo).
+   cronica (opcional): texto largo, párrafos separados por una línea en
+   blanco. Si existe, el enlace de la tarjeta abre una ventana emergente con
+   ese texto y se ignora su url.
    ------------------------------------------------------------------ */
 var PORTADA_FALLBACK = [
   { id: 'f01', categoria: 'EFEMÉRIDE', fecha: '7 OCT · 1571',
@@ -5448,7 +5482,15 @@ var PORTADA_FALLBACK = [
     texto: 'Cines Unidos La Vela acogió la obra de Lorca, con artistas neoespartanos y la presencia del Embajador de España y del Vicecónsul Honorario.',
     imagen: { url: 'images/portada/lorca-cartel-800.webp', urlJpg: 'images/portada/lorca-cartel-800.jpg',
               alt: 'Cartel de La Casa de Bernarda Alba, Cines Unidos La Vela, Porlamar, 19 de septiembre de 2026' },
-    enlace: { texto: 'Ver la crónica', url: '#comunidad' },
+    enlace: { texto: 'Ver la crónica', url: null },
+    cronica: 'Sábado 19 de septiembre de 2026 · Cines Unidos C.C. La Vela · Porlamar, Isla de Margarita\n\n' +
+      'El sábado 19 de septiembre de 2026, Cines Unidos del C.C. La Vela, en Porlamar, acogió la representación de La Casa de Bernarda Alba, una de las obras fundamentales de Federico García Lorca y uno de los grandes clásicos del teatro español del siglo XX.\n\n' +
+      'La presentación, realizada por Spectros Teatro y Fuego Gitano con participación de artistas neoespartanos, reunió sobre el escenario tradición teatral española y talento local.\n\n' +
+      'La jornada contó con la presencia del Embajador de España en Venezuela, D. Álvaro Albacete, y del Vicecónsul Honorario de España en Nueva Esparta, Manuel Leiros, quienes acompañaron a los organizadores, artistas y público asistente.\n\n' +
+      'Escrita en 1936, La Casa de Bernarda Alba aborda temas como la autoridad, la libertad, el deseo y las convenciones sociales. Su vigencia ha permitido que continúe representándose ante públicos de distintas generaciones y contextos.\n\n' +
+      'En Margarita, la obra adquirió una expresión propia gracias al trabajo de artistas de Nueva Esparta, demostrando la capacidad del teatro para tender puentes entre distintas comunidades culturales.\n\n' +
+      'Para el Viceconsulado Honorario de España en Nueva Esparta, la difusión de iniciativas de esta naturaleza contribuye a acercar el patrimonio cultural español a la comunidad y a reconocer el trabajo de quienes mantienen vivo el intercambio cultural entre España y Venezuela.\n\n' +
+      'La función del 19 de septiembre pasa así a formar parte de la memoria cultural de Nueva Esparta en 2026, dejando una imagen de teatro, participación local y presencia institucional española alrededor de la obra de uno de los autores más universales de nuestra literatura.',
     desde: '2026-09-25', hasta: '2026-10-31', prioridad: 6, orden: 13 }
 ];
 
@@ -5818,6 +5860,75 @@ var PORTADA_FALLBACK = [
   // =================================================================
   var AUTOPLAY_MS = 7000;
 
+  // Crónica de una tarjeta: texto plano, párrafos separados por línea en blanco.
+  var CRONICA_MAX = 8000;
+  var cronicaAbierta = false;   // con la crónica abierta el carrusel no gira
+  function parrafosCronica(v) {
+    if (typeof v !== 'string') return null;
+    var ps = v.slice(0, CRONICA_MAX).split(/\n\s*\n/)
+      .map(function (p) { return txt(p); })
+      .filter(Boolean)
+      .slice(0, 40);
+    return ps.length ? ps : null;
+  }
+
+  // Ventana emergente con la crónica. Con <dialog> el foco queda atrapado y
+  // Escape cierra; sin él, una capa fija con el mismo aspecto.
+  function abrirCronica(t, origen) {
+    cronicaAbierta = true;
+    var nativo = typeof HTMLDialogElement === 'function';
+    var dlg = el(nativo ? 'dialog' : 'div', 'crn-dialog');
+    var tid = 'crn-titulo-' + Date.now();
+    dlg.setAttribute('aria-labelledby', tid);
+    if (!nativo) { dlg.setAttribute('role', 'dialog'); dlg.setAttribute('aria-modal', 'true'); }
+
+    var caja = el('div', 'crn-caja');
+    var cerrar = el('button', 'crn-cerrar');
+    cerrar.type = 'button';
+    cerrar.setAttribute('aria-label', 'Cerrar la crónica');
+    var x = el('span', null, '✕'); x.setAttribute('aria-hidden', 'true'); cerrar.appendChild(x);
+    caja.appendChild(cerrar);
+
+    if (t.img) {
+      var fig = el('img', 'crn-foto');
+      fig.src = t.img.jpg || t.img.url; fig.alt = t.img.alt || '';
+      fig.decoding = 'async';
+      fig.addEventListener('error', function () { if (fig.parentNode) fig.parentNode.removeChild(fig); });
+      caja.appendChild(fig);
+    }
+    var cuerpo = el('div', 'crn-cuerpo');
+    if (t.categoria || t.fecha) {
+      var cat = el('p', 'crn-cat', t.categoria);
+      if (t.fecha) cat.appendChild(el('span', 'crn-fecha', t.fecha));
+      cuerpo.appendChild(cat);
+    }
+    var h = el('h2', 'crn-titulo', t.titulo); h.id = tid;
+    cuerpo.appendChild(h);
+    t.cronica.forEach(function (p) { cuerpo.appendChild(el('p', 'crn-p', p)); });
+    caja.appendChild(cuerpo);
+    dlg.appendChild(caja);
+    document.body.appendChild(dlg);
+    document.documentElement.classList.add('crn-abierta');
+
+    var cerrado = false;
+    function alCerrar() {
+      if (cerrado) return; cerrado = true;
+      cronicaAbierta = false;
+      document.documentElement.classList.remove('crn-abierta');
+      document.removeEventListener('keydown', escTecla);
+      if (dlg.parentNode) dlg.parentNode.removeChild(dlg);
+      if (origen && origen.focus) { try { origen.focus({ preventScroll: true }); } catch (e) { origen.focus(); } }
+    }
+    function cerrarYa() { if (nativo && dlg.open) dlg.close(); else alCerrar(); }
+    function escTecla(e) { if (!nativo && (e.key === 'Escape' || e.key === 'Esc')) cerrarYa(); }
+
+    cerrar.addEventListener('click', cerrarYa);
+    dlg.addEventListener('click', function (e) { if (e.target === dlg) cerrarYa(); });   // clic en el fondo
+    if (nativo) { dlg.addEventListener('close', alCerrar); dlg.showModal(); }
+    else document.addEventListener('keydown', escTecla);
+    cerrar.focus();
+  }
+
   function limpiarTarjeta(t, i) {
     var titulo = txt(t.titulo, 140);
     if (!titulo) return null;
@@ -5826,15 +5937,18 @@ var PORTADA_FALLBACK = [
       var u = urlSegura(t.imagen.url, 'media');
       if (u) img = { url: u, jpg: urlSegura(t.imagen.urlJpg, 'media'), alt: txt(t.imagen.alt, 250) };
     }
-    var enl = null;
-    if (t.enlace && typeof t.enlace === 'object') {
-      var eu = urlSegura(t.enlace.url, 'enlace'), et = txt(t.enlace.texto, 50);
+    var enl = null, cron = parrafosCronica(t.cronica);
+    var et = (t.enlace && typeof t.enlace === 'object') ? txt(t.enlace.texto, 50) : '';
+    if (cron) {
+      enl = { texto: et || 'Ver la crónica' };
+    } else if (t.enlace && typeof t.enlace === 'object') {
+      var eu = urlSegura(t.enlace.url, 'enlace');
       if (eu && et) enl = { url: eu, texto: et };
     }
     var pr = Number(t.prioridad), or = Number(t.orden);
     return {
       categoria: txt(t.categoria, 40), fecha: txt(t.fecha, 40), titulo: titulo, texto: txt(t.texto, 200),
-      img: img, enlace: enl,
+      img: img, enlace: enl, cronica: cron,
       prioridad: isFinite(pr) ? pr : 8, orden: isFinite(or) ? or : 0, _i: i
     };
   }
@@ -5940,7 +6054,14 @@ var PORTADA_FALLBACK = [
     }
     body.appendChild(el('h3', 'pf-title', t.titulo));
     if (t.texto) body.appendChild(el('p', 'pf-text', t.texto));
-    if (t.enlace) {
+    if (t.enlace && t.cronica) {
+      var b = el('button', 'pf-link pf-link--btn', t.enlace.texto + ' ');
+      b.type = 'button';
+      b.setAttribute('aria-haspopup', 'dialog');
+      var fb = el('span', null, '→'); fb.setAttribute('aria-hidden', 'true'); b.appendChild(fb);
+      b.addEventListener('click', function () { abrirCronica(t, b); });
+      body.appendChild(b);
+    } else if (t.enlace) {
       var a = enlace(t.enlace.url, 'pf-link');
       a.appendChild(document.createTextNode(t.enlace.texto + ' '));
       var fl = el('span', null, '→'); fl.setAttribute('aria-hidden', 'true'); a.appendChild(fl);
@@ -6039,12 +6160,12 @@ var PORTADA_FALLBACK = [
       dots.forEach(function (d, i) { d.setAttribute('aria-current', i === actual ? 'true' : 'false'); });
       // el foco no puede quedarse dentro de una tarjeta que ya es aria-hidden
       if (focoPerdido) {
-        var dest = cards[actual].querySelector('a') || origen || next;
+        var dest = cards[actual].querySelector('a, button') || origen || next;
         try { dest.focus({ preventScroll: true }); } catch (e) { dest.focus(); }
       }
     }
 
-    function girando() { return autoplay && !pausadoUsuario && !hover && !foco && visible && !document.hidden; }
+    function girando() { return autoplay && !pausadoUsuario && !hover && !foco && visible && !document.hidden && !cronicaAbierta; }
 
     function programar() {
       clearTimeout(timer); timer = null;
