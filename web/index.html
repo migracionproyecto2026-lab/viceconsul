@@ -3149,6 +3149,7 @@ div.crn-dialog { position: fixed; inset: 0; z-index: 10000; max-width: none; max
         <div class="tramite-body"><div class="tramite-content">
           <div>Las fotografías proceden de Wikimedia Commons y se reproducen bajo licencias Creative Commons, con indicación de autoría. Los escudos son las versiones oficiales de cada comunidad y ciudad autónoma.</div>
           <div class="ccaa-creditos">
+            <div style="margin-bottom:8px"><strong>Portada · España, Pasado y Presente (noviembre de 2026)</strong>: Huesos de santo — Tamorlan, CC BY 3.0 (<a href="https://commons.wikimedia.org/wiki/File:Huesos_del_Santo_(Yema).jpg" target="_blank" rel="noopener noreferrer">Wikimedia Commons</a>); Catedral de la Almudena — Diego Delso, CC BY-SA 4.0 (<a href="https://commons.wikimedia.org/wiki/File:Catedral_de_la_Almudena,_Madrid,_Espa%C3%B1a,_2014-12-27,_DD_21.JPG" target="_blank" rel="noopener noreferrer">Wikimedia Commons</a>); Teatro Alameda de Sevilla — El Mono Español, CC BY-SA 4.0 (<a href="https://commons.wikimedia.org/wiki/File:Teatro_Alameda_(Sevilla).jpg" target="_blank" rel="noopener noreferrer">Wikimedia Commons</a>); Estadio Metropolitano — Zarateman, CC0; estatua de Velázquez en el Prado — IGOLEA, CC0. Los retratos de Alfonso X, Lope de Vega e Isabel la Católica son obras de dominio público.</div>
             <div><strong>Andalucía</strong>: Plaza de España, Sevilla — Carlos Delgado, CC BY-SA 4.0 (<a href="https://commons.wikimedia.org/wiki/File%3APlaza_de_Espa%C3%B1a_%28Sevilla%29_-_01.jpg" target="_blank" rel="noopener">Wikimedia Commons</a>).</div>
             <div><strong>Aragón</strong>: Basílica del Pilar, Zaragoza — Rab Lawrence, CC BY 2.0 (<a href="https://commons.wikimedia.org/wiki/File%3AZaragoza_-_Basilica_de_Nuestra_Se%C3%B1ora_del_Pilar_01.jpg" target="_blank" rel="noopener">Wikimedia Commons</a>).</div>
             <div><strong>Principado de Asturias</strong>: Catedral de Oviedo — Fernando, CC BY-SA 4.0 (<a href="https://commons.wikimedia.org/wiki/File%3ACathedral_of_Oviedo_2021_-_exterior.jpg" target="_blank" rel="noopener">Wikimedia Commons</a>).</div>
@@ -5378,104 +5379,112 @@ function toggleFaq(btn) {
    ese texto y se ignora su url.
    ------------------------------------------------------------------ */
 var PORTADA_FALLBACK = [
-  { id: 'f01', categoria: 'EFEMÉRIDE', fecha: '7 OCT · 1571',
-    titulo: '455 años de la Batalla de Lepanto',
-    texto: 'El 7 de octubre de 1571 la Liga Santa, con la Monarquía Hispánica, se enfrentó al Imperio otomano. Cervantes participó en la batalla.',
-    imagen: { url: 'images/portada/lepanto-800.webp', urlJpg: 'images/portada/lepanto-800.jpg',
-              alt: 'Escena de la Batalla de Lepanto, pintura histórica de colección pública española' },
-    enlace: { texto: 'Conocer la historia', url: 'https://www.museodelprado.es/' },
-    desde: '2026-09-25', hasta: '2026-10-09', prioridad: 3, orden: 0 },
+  { id: 'n01', categoria: 'EFEMÉRIDE', fecha: '1 NOV',
+    titulo: 'Todos los Santos, una tradición que une a España',
+    texto: 'El 1 de noviembre, festivo nacional, las familias visitan a sus difuntos y las pastelerías ofrecen huesos de santo y buñuelos de viento. Muchos teatros representan Don Juan Tenorio.',
+    imagen: { url: 'images/portada/todos-santos-800.webp', urlJpg: 'images/portada/todos-santos-800.jpg',
+              alt: 'Huesos de santo, dulce tradicional de Todos los Santos' },
+    enlace: { texto: 'Conocer la tradición', url: 'https://www.spain.info/es/' },
+    desde: '2026-11-01', hasta: '2026-11-03', prioridad: 3, orden: 0 },
 
-  { id: 'f02', categoria: 'EFEMÉRIDE', fecha: '12 OCT',
-    titulo: 'Fiesta Nacional de España',
-    texto: 'Cada 12 de octubre se celebra la Fiesta Nacional, establecida por la Ley 18/1987 por su dimensión histórica y su proyección cultural.',
-    imagen: { url: 'images/portada/fiesta-nacional-800.webp', urlJpg: 'images/portada/fiesta-nacional-800.jpg',
-              alt: 'Bandera de España ondeando' },
-    enlace: { texto: 'Conocer más', url: 'https://www.boe.es/buscar/doc.php?id=BOE-A-1987-22831' },
-    desde: '2026-09-25', hasta: '2026-10-13', prioridad: 3, orden: 1 },
+  { id: 'n02', categoria: 'CULTURA', fecha: '6–14 NOV',
+    titulo: 'Sevilla vuelve a ser capital del cine europeo',
+    texto: 'La 23.ª edición del Festival de Cine Europeo de Sevilla (SEFF) se celebra del 6 al 14 de noviembre de 2026, con proyecciones en salas históricas de la ciudad.',
+    imagen: { url: 'images/portada/seff-800.webp', urlJpg: 'images/portada/seff-800.jpg',
+              alt: 'Fachada del Teatro Alameda de Sevilla, una de las sedes del festival' },
+    enlace: { texto: 'Descubrir el festival', url: 'https://festivalcinesevilla.eu/' },
+    desde: '2026-11-01', hasta: '2026-11-14', prioridad: 6, orden: 1 },
 
-  { id: 'f03', categoria: 'EFEMÉRIDE', fecha: '25 OCT · 1881',
-    titulo: 'Picasso: 145 años de su nacimiento',
-    texto: 'Pablo Ruiz Picasso nació en Málaga el 25 de octubre de 1881. Su obra transformó el arte del siglo XX y su ciudad natal conserva su legado.',
-    imagen: { url: 'images/portada/picasso-malaga-800.webp', urlJpg: 'images/portada/picasso-malaga-800.jpg',
-              alt: 'Estatua de bronce de Pablo Picasso sentado en un banco de una plaza de Málaga' },
-    enlace: { texto: 'Descubrir su historia', url: 'https://www.museopicassomalaga.org/' },
-    desde: '2026-09-25', hasta: '2026-10-27', prioridad: 3, orden: 2 },
+  { id: 'n03', categoria: 'AHORA EN ESPAÑA', fecha: '9 NOV',
+    titulo: 'Madrid celebra a su patrona, la Virgen de la Almudena',
+    texto: 'Cada 9 de noviembre, festivo local en la capital, Madrid honra a la Virgen de la Almudena con la misa en la plaza Mayor y la procesión hasta la catedral.',
+    imagen: { url: 'images/portada/almudena-800.webp', urlJpg: 'images/portada/almudena-800.jpg',
+              alt: 'Fachada de la catedral de la Almudena, en Madrid, con el Palacio Real al fondo' },
+    enlace: { texto: 'Descubrir Madrid', url: 'https://www.esmadrid.com/' },
+    desde: '2026-11-01', hasta: '2026-11-10', prioridad: 4, orden: 2 },
 
-  { id: 'f04', categoria: 'EFEMÉRIDE', fecha: '31 OCT · 1978',
-    titulo: 'Un momento decisivo de la Constitución de 1978',
-    texto: 'El 31 de octubre de 1978 Congreso y Senado votaron el dictamen sobre el proyecto de Constitución, sometido a referéndum el 6 de diciembre.',
+  { id: 'n04', categoria: 'DEPORTE', fecha: '12 Y 15 NOV · 20:45 H',
+    titulo: 'La Selección cierra la fase de grupos de la Nations League',
+    texto: 'España visita a la República Checa el 12 de noviembre y recibe a Inglaterra el 15 en el Estadio Metropolitano de Madrid (UEFA Nations League).',
+    imagen: { url: 'images/portada/metropolitano-800.webp', urlJpg: 'images/portada/metropolitano-800.jpg',
+              alt: 'Fachada del Estadio Metropolitano de Madrid' },
+    enlace: { texto: 'Agenda de la Selección', url: 'https://www.rfef.es/' },
+    desde: '2026-11-01', hasta: '2026-11-15', prioridad: 7, orden: 3 },
+
+  { id: 'n05', categoria: 'EFEMÉRIDE', fecha: '19 NOV · 1819',
+    titulo: '207 años del Museo del Prado',
+    texto: 'El 19 de noviembre de 1819 abrió sus puertas el Real Museo de Pinturas, hoy Museo Nacional del Prado, una de las grandes pinacotecas del mundo.',
+    imagen: { url: 'images/portada/prado-800.webp', urlJpg: 'images/portada/prado-800.jpg',
+              alt: 'Estatua de Velázquez ante la puerta principal del Museo del Prado' },
+    enlace: { texto: 'Visitar el Prado', url: 'https://www.museodelprado.es/' },
+    desde: '2026-11-01', hasta: '2026-11-21', prioridad: 3, orden: 4 },
+
+  { id: 'n06', categoria: 'EFEMÉRIDE', fecha: '23 NOV · 1221',
+    titulo: 'Alfonso X el Sabio: 805 años de su nacimiento',
+    texto: 'Nacido en Toledo el 23 de noviembre de 1221, impulsó la Escuela de Traductores, las Cantigas de Santa María y el castellano como lengua de cultura.',
+    imagen: { url: 'images/portada/alfonso-x-800.webp', urlJpg: 'images/portada/alfonso-x-800.jpg',
+              alt: 'Alfonso X el Sabio en una miniatura del Libro de los juegos' },
+    enlace: { texto: 'Conocer su legado', url: 'https://www.cervantesvirtual.com/portales/alfonso_x_el_sabio/' },
+    desde: '2026-11-01', hasta: '2026-11-25', prioridad: 3, orden: 5 },
+
+  { id: 'n07', categoria: 'EFEMÉRIDE', fecha: '25 NOV · 1562',
+    titulo: 'Lope de Vega, el Fénix de los Ingenios',
+    texto: 'Félix Lope de Vega nació en Madrid el 25 de noviembre de 1562. Renovó el teatro español con cientos de comedias y su casa madrileña es hoy un museo.',
+    imagen: { url: 'images/portada/lope-vega-800.webp', urlJpg: 'images/portada/lope-vega-800.jpg',
+              alt: 'Retrato de Lope de Vega, Museo Lázaro Galdiano, Madrid' },
+    enlace: { texto: 'Descubrir su casa museo', url: 'https://casamuseolopedevega.org/' },
+    desde: '2026-11-01', hasta: '2026-11-27', prioridad: 3, orden: 6 },
+
+  { id: 'n08', categoria: 'EFEMÉRIDE', fecha: '26 NOV · 1504',
+    titulo: 'Isabel la Católica: 522 años de su muerte',
+    texto: 'La reina Isabel I de Castilla murió en Medina del Campo el 26 de noviembre de 1504. Su reinado unió coronas y abrió la época de los grandes viajes.',
+    imagen: { url: 'images/portada/isabel-catolica-800.webp', urlJpg: 'images/portada/isabel-catolica-800.jpg',
+              alt: 'Retrato de Isabel la Católica pintado por Juan de Flandes' },
+    enlace: { texto: 'Conocer su historia', url: 'https://www.patrimonionacional.es/' },
+    desde: '2026-11-01', hasta: '2026-11-30', prioridad: 3, orden: 7 },
+
+  { id: 'n09', categoria: 'EFEMÉRIDE', fecha: '6 DIC · 1978',
+    titulo: 'Día de la Constitución Española',
+    texto: 'El 6 de diciembre de 1978 el pueblo español aprobó en referéndum la Constitución, en vigor desde el 29 de diciembre de ese mismo año.',
     imagen: { url: 'images/portada/constitucion-1978-800.webp', urlJpg: 'images/portada/constitucion-1978-800.jpg',
               alt: 'Ejemplar original de la Constitución Española de 1978 con las firmas' },
-    enlace: { texto: 'Conocer el proceso', url: 'https://www.congreso.es/' },
-    desde: '2026-09-25', hasta: '2026-11-01', prioridad: 3, orden: 3 },
-
-  { id: 'f05', categoria: 'AHORA EN ESPAÑA', fecha: '10–18 OCT',
-    titulo: 'Zaragoza celebra las Fiestas del Pilar',
-    texto: 'Del 10 al 18 de octubre Zaragoza vive sus fiestas mayores, de Interés Turístico Internacional, con la Ofrenda de Flores el día 12.',
-    imagen: { url: 'images/portada/ofrenda-pilar-800.webp', urlJpg: 'images/portada/ofrenda-pilar-800.jpg',
-              alt: 'Ofrenda de Flores a la Virgen del Pilar en la plaza del Pilar de Zaragoza' },
-    enlace: { texto: 'Descubrir las fiestas', url: 'https://www.spain.info/es/' },
-    desde: '2026-09-25', hasta: '2026-10-18', prioridad: 4, orden: 4 },
-
-  { id: 'f06', categoria: 'CULTURA', fecha: '8–18 OCT',
-    titulo: 'Sitges vuelve a ser capital del cine fantástico',
-    texto: 'La 59.ª edición del Festival Internacional de Cinema Fantàstic de Catalunya se celebra del 8 al 18 de octubre de 2026 en Sitges.',
-    imagen: { url: 'images/portada/sitges-3-800.webp', urlJpg: 'images/portada/sitges-3-800.jpg',
-              alt: 'Cartel oficial del Festival de Sitges 2026, del 8 al 18 de octubre' },
-    enlace: { texto: 'Descubrir Sitges 2026', url: 'https://sitgesfilmfestival.com/' },
-    desde: '2026-09-25', hasta: '2026-10-18', prioridad: 6, orden: 5 },
-
-  { id: 'f07', categoria: 'DEPORTE', fecha: '3 OCT · 20:45 H',
-    titulo: 'España juega en casa: España–República Checa',
-    texto: 'La Selección absoluta recibe a República Checa en el Carlos Tartiere de Oviedo (UEFA Nations League). El 6 de octubre, Croacia en Split.',
-    imagen: { url: 'images/portada/seleccion-oviedo-800.webp', urlJpg: 'images/portada/seleccion-oviedo-800.jpg',
-              alt: 'Estadio Carlos Tartiere de Oviedo, sede del partido de la Selección Española' },
-    enlace: { texto: 'Agenda de la Selección', url: 'https://www.rfef.es/' },
-    desde: '2026-09-25', hasta: '2026-10-03', prioridad: 7, orden: 6 },
-
-  { id: 'f08', categoria: 'ESPAÑA POR DESCUBRIR', fecha: '1–12 OCT',
-    titulo: 'Galicia celebra el mar: Fiesta del Marisco de O Grove',
-    texto: 'O Grove, en Pontevedra, celebra del 1 al 12 de octubre la Fiesta del Marisco, de Interés Turístico Nacional, en las Rías Baixas.',
-    imagen: { url: 'images/portada/o-grove-800.webp', urlJpg: 'images/portada/o-grove-800.jpg',
-              alt: 'Puerto de O Grove, en las Rías Baixas de Pontevedra' },
-    enlace: { texto: 'Descubrir O Grove', url: 'https://www.spain.info/es/' },
-    desde: '2026-09-25', hasta: '2026-10-12', prioridad: 8, orden: 7 },
+    enlace: { texto: 'Conocer la Constitución', url: 'https://www.congreso.es/' },
+    desde: '2026-11-28', hasta: '2026-12-06', prioridad: 3, orden: 8 },
 
   { id: 'f09', categoria: 'CONSULAR', fecha: 'AVISO DE SERVICIO',
     titulo: 'Atención presencial en el Consulado General de Caracas',
     texto: 'El Consulado General sigue prestando determinados servicios presenciales con limitaciones operativas. Consulte la información oficial.',
     imagen: null,
     enlace: { texto: 'Información oficial', url: 'https://www.exteriores.gob.es/Consulados/caracas/es/Paginas/index.aspx' },
-    desde: '2026-09-25', hasta: '2026-10-31', prioridad: 2, orden: 8 },
+    desde: '2026-09-25', hasta: '2026-11-30', prioridad: 2, orden: 8 },
 
   { id: 'f10', categoria: 'CONSULAR', fecha: 'ACTUALIZADO · 17 SEP 2026',
     titulo: 'Recomendaciones para viajar a Venezuela',
     texto: 'El Ministerio de Asuntos Exteriores mantiene actualizadas sus recomendaciones de viaje a Venezuela: documentación, seguridad y emergencias.',
     imagen: null,
     enlace: { texto: 'Ver recomendaciones', url: 'https://www.exteriores.gob.es/es/ServiciosAlCiudadano/Paginas/Detalle-recomendaciones-de-viaje.aspx?trc=Venezuela' },
-    desde: '2026-09-25', hasta: '2026-10-31', prioridad: 4, orden: 9 },
+    desde: '2026-09-25', hasta: '2026-11-30', prioridad: 4, orden: 9 },
 
   { id: 'f11', categoria: 'CONSULAR', fecha: 'INFORMACIÓN DE SERVICIO',
     titulo: 'Asistencia consular urgente las 24 horas',
     texto: 'El Consulado General de Caracas mantiene una línea de emergencia consular 24 horas para situaciones graves que afecten a españoles.',
     imagen: null,
     enlace: { texto: 'Emergencias consulares', url: '#emergencias' },
-    desde: '2026-09-25', hasta: '2026-10-31', prioridad: 2, orden: 10 },
+    desde: '2026-09-25', hasta: '2026-11-30', prioridad: 2, orden: 10 },
 
   { id: 'f12', categoria: 'EMBAJADA', fecha: 'ESPAÑA EN VENEZUELA',
     titulo: 'Embajada de España en Venezuela',
     texto: 'La Embajada desarrolla actividad institucional, cultural y de cooperación, y cuenta con una Oficina Cultural para la cultura española.',
     imagen: null,
     enlace: { texto: 'Actualidad Embajada', url: 'https://www.exteriores.gob.es/Embajadas/caracas/es/Paginas/index.aspx' },
-    desde: '2026-09-25', hasta: '2026-10-31', prioridad: 5, orden: 11 },
+    desde: '2026-09-25', hasta: '2026-11-30', prioridad: 5, orden: 11 },
 
   { id: 'f13', categoria: 'CONSULAR', fecha: 'TABLÓN DE ANUNCIOS',
     titulo: 'Convocatorias de interés para la comunidad española',
     texto: 'El Consulado General publica convocatorias, ayudas y oportunidades, como proyectos asistenciales para la emigración y selección de personal.',
     imagen: null,
     enlace: { texto: 'Ver tablón de anuncios', url: 'https://www.exteriores.gob.es/Consulados/caracas/es/Consulado/Paginas/Tabl%c3%b3n-de-anuncios.aspx' },
-    desde: '2026-09-25', hasta: '2026-10-31', prioridad: 5, orden: 12 },
+    desde: '2026-09-25', hasta: '2026-11-30', prioridad: 5, orden: 12 },
 
   { id: 'f14', categoria: 'COMUNIDAD', fecha: '19 SEP 2026',
     titulo: 'La Casa de Bernarda Alba llegó a Margarita',
@@ -5491,7 +5500,7 @@ var PORTADA_FALLBACK = [
       'En Margarita, la obra adquirió una expresión propia gracias al trabajo de artistas de Nueva Esparta, demostrando la capacidad del teatro para tender puentes entre distintas comunidades culturales.\n\n' +
       'Para el Viceconsulado Honorario de España en Nueva Esparta, la difusión de iniciativas de esta naturaleza contribuye a acercar el patrimonio cultural español a la comunidad y a reconocer el trabajo de quienes mantienen vivo el intercambio cultural entre España y Venezuela.\n\n' +
       'La función del 19 de septiembre pasa así a formar parte de la memoria cultural de Nueva Esparta en 2026, dejando una imagen de teatro, participación local y presencia institucional española alrededor de la obra de uno de los autores más universales de nuestra literatura.',
-    desde: '2026-09-25', hasta: '2026-10-31', prioridad: 6, orden: 13 }
+    desde: '2026-09-25', hasta: '2026-11-30', prioridad: 6, orden: 13 }
 ];
 
 (function () {
