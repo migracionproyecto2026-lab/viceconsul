@@ -5500,7 +5500,7 @@ var PORTADA_FALLBACK = [
       'En Margarita, la obra adquirió una expresión propia gracias al trabajo de artistas de Nueva Esparta, demostrando la capacidad del teatro para tender puentes entre distintas comunidades culturales.\n\n' +
       'Para el Viceconsulado Honorario de España en Nueva Esparta, la difusión de iniciativas de esta naturaleza contribuye a acercar el patrimonio cultural español a la comunidad y a reconocer el trabajo de quienes mantienen vivo el intercambio cultural entre España y Venezuela.\n\n' +
       'La función del 19 de septiembre pasa así a formar parte de la memoria cultural de Nueva Esparta en 2026, dejando una imagen de teatro, participación local y presencia institucional española alrededor de la obra de uno de los autores más universales de nuestra literatura.',
-    desde: '2026-09-25', hasta: '2026-11-30', prioridad: 6, orden: 13 }
+    desde: '2026-09-25', hasta: '2026-11-30', prioridad: 1, orden: 13 }
 ];
 
 (function () {
@@ -5972,21 +5972,14 @@ var PORTADA_FALLBACK = [
     return intercalar(orden);
   }
 
-  // La primera tarjeta es la de mayor prioridad; el resto alterna tarjetas con
-  // foto y tarjetas institucionales (sin foto), cada grupo en su orden, para que
-  // no salgan varias rojas seguidas.
+  // Orden pedido por el Viceconsulado (nov. 2026): primero todas las tarjetas
+  // con foto (comunidad, efemérides, cultura…) seguidas, y después las
+  // institucionales sin foto (consulares, embajada). Dentro de cada grupo se
+  // respeta prioridad y orden.
   function intercalar(lista) {
-    if (lista.length < 3) return lista;
-    var primera = lista[0], resto = lista.slice(1);
-    var conFoto = resto.filter(function (t) { return !!t.img; });
-    var sinFoto = resto.filter(function (t) { return !t.img; });
-    var out = [primera], turnoFoto = !primera.img;
-    while (conFoto.length || sinFoto.length) {
-      if ((turnoFoto && conFoto.length) || !sinFoto.length) out.push(conFoto.shift());
-      else out.push(sinFoto.shift());
-      turnoFoto = !turnoFoto;
-    }
-    return out;
+    var conFoto = lista.filter(function (t) { return !!t.img; });
+    var sinFoto = lista.filter(function (t) { return !t.img; });
+    return conFoto.concat(sinFoto);
   }
 
   // srcset 400/800 solo para assets del repo con el patrón <slug>-800.webp.
