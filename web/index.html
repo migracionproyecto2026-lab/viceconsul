@@ -2445,8 +2445,8 @@ div.crn-dialog { position: fixed; inset: 0; z-index: 10000; max-width: none; max
       <div class="req-box" id="reqBox"></div>
     </div>
     <div class="form-group">
-      <label class="form-label">Fecha preferida</label>
-      <input class="form-input" name="fecha" type="date" id="fechaInput">
+      <label class="form-label">Fecha preferida *</label>
+      <input class="form-input" name="fecha" type="date" id="fechaInput" required>
       <div class="form-hint" id="cfg-citas-hint">
         <div class="desc" id="cfg-horario-atencion">8:00 AM — 12:00 PM</div>
         <div class="small">Solo con cita previa</div>
@@ -4915,7 +4915,14 @@ function submitForm(e) {
   var form = document.getElementById('citaForm');
   var fechaVal = form.querySelector('[name="fecha"]').value;
   var horaVal  = form.querySelector('[name="hora"]').value;
-  if (fechaVal && !horaVal) {
+  // Fecha y hora son obligatorias: una cita sin fecha llegaba al panel
+  // como "pendiente" sin día y no se podía atender.
+  if (!fechaVal || !evaluarDisponibilidadPub(fechaVal).ok) {
+    alert('Por favor seleccione una fecha disponible para su cita.');
+    form.querySelector('[name="hora"]').value = '';
+    return false;
+  }
+  if (!horaVal) {
     alert('Por favor seleccione una hora preferida.');
     return false;
   }
@@ -5046,6 +5053,7 @@ function _initFechaInput() {
       alert(r.motivo + '. Por favor elija otra fecha.');
       this.value = '';
       horaGroup.style.display = 'none';
+      horaInput.value = '';   // sin fecha no puede quedar una hora "huérfana"
       resetSlots();
       return;
     }
